@@ -1,15 +1,14 @@
-
-import { ImageBackground, KeyboardAvoidingView, ScrollView, Platform, StatusBar, SafeAreaView, View, StyleSheet } from "react-native";
+import { ImageBackground, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet } from "react-native";
+import { SetText } from "./SetText";
 
 export default function WrapBackground({ children }: { children: React.ReactNode }) {
     return (
-        <ImageBackground source={require('@/assets/images/background.png')} style={{ width: '100%', height: '100%'}}>
-            <KeyboardAvoidingView style={{ flex: 1 }} keyboardVerticalOffset={60} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-                <SafeAreaView style={styles.body}>
+        <ImageBackground source={require('@/assets/images/background.png')} style={{ width: '100%', height: '100%' }}>
+            <SafeAreaView style={{ flex: 1 }}>
+                <KeyboardAvoidingView style={{ flex: 1 }} keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} behavior={Platform.OS === "ios" ? "padding" : undefined}>
                     {children}
-                </SafeAreaView>
-            </KeyboardAvoidingView>
-            <StatusBar backgroundColor={'#FF7FA8'} />
+                </KeyboardAvoidingView>
+            </SafeAreaView>
         </ImageBackground>
     );
 
@@ -17,8 +16,7 @@ export default function WrapBackground({ children }: { children: React.ReactNode
 
 const styles = StyleSheet.create({
     body: {
-        width: "100%",
-        height: "100%",
-        fontFamily: 'notoSansThai',
+        flexGrow: 1,
+        paddingTop: 8
     }
 });

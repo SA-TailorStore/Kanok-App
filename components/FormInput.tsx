@@ -4,6 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
 import { Iconify } from 'react-native-iconify';
+import { styles } from '@/utils/styles';
 
 export type FormInputProps = TextInputProps & {
     type?: 'default' | 'bold';
@@ -33,13 +34,13 @@ export function FormInput({
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[stylesForm.container, styles.shadowCustom]}>
             <TextInput style={[,
-                type == 'default' ? styles.default : undefined,
-                type === 'bold' ? styles.bold : undefined,
-                styles.textInput,
+                type == 'default' ? stylesForm.default : undefined,
+                type === 'bold' ? stylesForm.bold : undefined,
+                stylesForm.textInput,
             ]} {...rest} secureTextEntry={rest.eye && !showPassword} />
-            <SafeAreaView style={styles.iconContainer}>
+            <SafeAreaView style={stylesForm.iconContainer}>
                 {rest.iconHeader}
                 {rest.eye && <View onTouchEnd={() => setShowPassword(!showPassword)}>
                     {showPassword ? <Iconify icon="mdi:eye-outline" size={25} color="#C8C8C8" /> : <Iconify icon="mdi:eye-off-outline" size={25} color="#C8C8C8" />}
@@ -49,7 +50,7 @@ export function FormInput({
     );
 }
 
-const styles = StyleSheet.create({
+const stylesForm = StyleSheet.create({
     default: {
         fontFamily: 'notoSansThai',
     },
@@ -57,27 +58,26 @@ const styles = StyleSheet.create({
         fontFamily: 'notoSansThaiBold',
     },
     container: {
-        marginTop: 20, // mt-5
+        marginTop: 20, 
         position: 'relative',
         justifyContent: 'center',
+        borderRadius:999,
         height: 50,
     },
     textInput: {
-        paddingLeft: 48, // pl-12
-        paddingRight: 64, // pr-16
-        paddingVertical: 8, // py-2
+        paddingLeft: 48,
+        paddingRight: 64,
+        paddingVertical: 8, 
         height: "auto",
-        borderRadius: 999, // rounded-full
+        borderRadius: 999,
         backgroundColor: 'white',
-        // Add custom shadow here if needed
-        // e.g., shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4,
     },
     iconContainer: {
         position: 'absolute',
-        left: 12, // left-3
+        left: 12,
         flexDirection: 'row',
         width: '100%',
         justifyContent: 'space-between',
-        paddingRight: 25, // pr-3
+        paddingRight: 25, 
     },
 });

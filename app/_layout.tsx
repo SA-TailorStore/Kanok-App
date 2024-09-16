@@ -1,5 +1,5 @@
 import { useFonts } from "expo-font";
-import { Slot, SplashScreen } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 
 export default function RootLayout() {
@@ -17,6 +17,12 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
-  
-  return ( <Slot/> );
+
+  return (
+    <Stack screenOptions={{ 
+      headerShown: false,
+      // statusBarStyle: 'auto',
+      statusBarColor: '#FF7FA8',
+    }} />
+  );
 }

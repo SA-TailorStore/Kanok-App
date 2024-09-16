@@ -1,49 +1,52 @@
+import { colors } from '@/utils/styles';
 import { Text, type TextProps, StyleSheet } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
-
-import { useFonts } from "expo-font";
-import { useEffect } from "react";
 
 export type SetTextProps = TextProps & {
-  type?: 'default' | 'bold';
-  className?: string;
+
+  type?: 'default' | 'bold' | 'small' | 'title';
+  size?: number;
+  color?: string;
+
 };
 
 export function SetText({
   type = 'default',
+  size,
+  color,
   ...rest
 }: SetTextProps) {
 
-  const [loaded] = useFonts({
-    notoSansThai: require('@/assets/fonts/Noto_Sans_Thai/NotoSansThai-Regular.ttf'),
-    notoSansThaiBold: require('@/assets/fonts/Noto_Sans_Thai/NotoSansThai_Condensed-Bold.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
-    <Text
+    <Text 
       style={[rest.style,
         type == 'default' ? styles.default : undefined,
         type === 'bold' ? styles.bold : undefined,
+        type === 'small' ? styles.small : undefined,
+        type === 'title' ? styles.title : undefined,
+        size ? {fontSize: size} : undefined,
+        color ? {color: color} : {color: colors.whereblack}
       ]}
       >{rest.children}</Text>
   );
 }
 
+const defaultFont = 'notoSansThai';
+const boldFont = 'notoSansThaiBold';
 const styles = StyleSheet.create({
   default: {
     fontFamily: 'notoSansThai',
   },
   bold: {
     fontFamily: 'notoSansThaiBold',
+    transform: [{ scaleY: 0.85}],
+  },
+  small: {
+    fontFamily: defaultFont,
+    fontSize: 12,
+  },
+  title: {
+    fontFamily: boldFont,
+    fontSize: 27,
+    transform: [{ scaleY: 0.85}],
   },
 });

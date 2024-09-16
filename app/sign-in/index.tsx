@@ -4,42 +4,46 @@ import { Iconify } from 'react-native-iconify';
 import { FormInput } from "@/components/FormInput";
 import { Link, useRouter } from "expo-router";
 import { SetText } from "@/components/SetText";
+import { ScrollView } from "react-native";
+import { colors } from "@/utils/styles";
 
 export default function SignIn() {
     const router = useRouter();
     return (
         <WrapBackground>
-            <View style={styles.container}>
-                <Image source={require('@/assets/images/logo-black.png')} style={styles.logo} />
-                <View style={styles.formContainer}>
-                    <SetText style={styles.signInText}>ลงชื่อเข้าใช้งาน</SetText>
-                    <View style={styles.formContent}>
-                        <FormInput
-                            key="username"
-                            iconHeader={<Iconify icon="ic:round-account-circle" size={25} color="#C8C8C8" />}
-                            textContentType="username"
-                            placeholder="ชื่อผู้ใช้งาน"
-                        />
-                        <FormInput
-                            key="password"
-                            iconHeader={<Iconify icon="mdi:password" size={25} color="#C8C8C8" />}
-                            textContentType="password"
-                            placeholder="รหัสผ่าน"
-                            eye
-                        />
-                        <SetText style={styles.errorText}>The password isn't correct.</SetText>
-                    </View>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <View style={styles.container}>
+                    <Image source={require('@/assets/images/logo-black.png')} style={styles.logo} />
+                    <View style={styles.formContainer}>
+                        <SetText type="bold" size={35}>ลงชื่อเข้าใช้งาน</SetText>
+                        <View style={styles.formContent}>
+                            <FormInput
+                                key="username"
+                                iconHeader={<Iconify icon="ic:round-account-circle" size={25} color="#C8C8C8" />}
+                                textContentType="username"
+                                placeholder="ชื่อผู้ใช้งาน"
+                            />
+                            <FormInput
+                                key="password"
+                                iconHeader={<Iconify icon="mdi:password" size={25} color="#C8C8C8" />}
+                                textContentType="password"
+                                placeholder="รหัสผ่าน"
+                                eye
+                            />
+                            <SetText style={styles.errorText} color={colors.red}>The password isn't correct.</SetText>
+                        </View>
 
-                    <View style={styles.signInButton} onTouchEnd={() => router.push('/')}>
-                        <SetText style={styles.signInButtonText}>เข้าสู่ระบบ</SetText>
-                    </View>
+                        <View style={styles.signInButton} onTouchEnd={() => router.push('/user/home-page')}>
+                            <SetText type="bold" color={colors.wherewhite} style={styles.signInButtonText}>เข้าสู่ระบบ</SetText>
+                        </View>
 
-                    <View style={styles.signUpLinkContainer}>
-                        <SetText>ยังไม่มีบัญชี?</SetText>
-                        <Link href="/sign-up"><Text style={styles.signUpLink}>สร้างบัญชี</Text></Link>
+                        <View style={styles.signUpLinkContainer}>
+                            <SetText>ยังไม่มีบัญชี?</SetText>
+                            <Link href="/sign-up"><SetText color={colors.primary} style={styles.signUpLink}>สร้างบัญชี</SetText></Link>
+                        </View>
                     </View>
                 </View>
-            </View>
+            </ScrollView>
         </WrapBackground>
     )
 }
@@ -62,12 +66,8 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 50,
         paddingHorizontal: 30,
         paddingVertical: 12,
+        paddingTop: 30,
         flexDirection: 'column',
-    },
-    signInText: {
-        fontSize: 32,
-        paddingTop: 16,
-        fontFamily: 'notoSansThaiBold',
     },
     formContent: {
         paddingBottom: 32,
@@ -76,7 +76,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         left: 12,
-        color: 'red',
     },
     signInButton: {
         backgroundColor: '#000000',
@@ -103,8 +102,6 @@ const styles = StyleSheet.create({
         marginTop: 12,
     },
     signUpLink: {
-        color: '#0000FF',
         textDecorationLine: 'underline',
-        fontFamily: 'notoSansThai',
     },
 });

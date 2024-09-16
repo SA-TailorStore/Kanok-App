@@ -5,6 +5,7 @@ import { FormInput } from "@/components/FormInput";
 import { Link, Redirect } from "expo-router";
 import { ScrollView } from "react-native";
 import { SetText } from "@/components/SetText";
+import { colors } from "@/utils/styles";
 
 export default function SignUp() {
     return (
@@ -42,16 +43,16 @@ export default function SignUp() {
                                 eye
                             />
 
-                            <SetText style={styles.errorText}>The password isn't correct.</SetText>
+                            <SetText color={colors.red} style={styles.errorText}>The password isn't correct.</SetText>
                         </View>
 
                         <View style={styles.signUpButton}>
-                            <SetText style={styles.signUpButtonText}>สร้างบัญชี</SetText>
+                            <SetText color={colors.wherewhite} style={styles.signUpButtonText}>สร้างบัญชี</SetText>
                         </View>
 
-                        <View style={styles.signInLinkContainer} onTouchEnd={() => <Redirect href="/sign-in" />}>
+                        <View style={styles.signUpLinkContainer} onTouchEnd={() => <Redirect href="/sign-in" />}>
                             <SetText>มีบัญชีอยู่แล้ว?</SetText>
-                            <Link href="/sign-in"><SetText style={styles.signInLink}>ลงชื่อเข้าใช้งาน</SetText></Link>
+                            <Link href="/sign-in"><SetText color={colors.primary} style={styles.signUpLink}>ลงชื่อเข้าใช้งาน</SetText></Link>
                         </View>
                     </View>
                 </View>
@@ -84,7 +85,6 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 32,
         paddingTop: 16,
-        fontFamily: 'notoSansThaiBold',
     },
     formContent: {
         paddingBottom: 32,
@@ -112,15 +112,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 20,
     },
-    signInLinkContainer: {
+    signUpLinkContainer: {
         flexDirection: 'row',
         gap: 4,
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 12,
     },
-    signInLink: {
-        color: '#0000FF',
+    signUpLink: {
         textDecorationLine: 'underline',
     },
 });
