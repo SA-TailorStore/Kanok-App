@@ -2,12 +2,22 @@ import WrapBackground from "@/components/WrapBackground";
 import { Text, View, Image, StyleSheet } from "react-native";
 import { Iconify } from 'react-native-iconify';
 import { FormInput } from "@/components/FormInput";
-import { Link, Redirect } from "expo-router";
+import { Link, Redirect, useRouter } from "expo-router";
 import { ScrollView } from "react-native";
 import { SetText } from "@/components/SetText";
 import { colors } from "@/utils/styles";
+import { useToast } from "@/contexts/ToastContext";
 
 export default function SignUp() {
+    const { showToast } = useToast();
+    const router = useRouter();
+
+    const signUpButtonClicked = () => {
+        showToast('สมัครสมาชิกสำเร็จ', 'ตอนนี้คุณสามารถลงชื่อเข้าใช้งานได้แล้ว', 4000);
+        router.replace('/user/home-page');
+        router.dismissAll();
+    }
+
     return (
         <WrapBackground>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -46,7 +56,7 @@ export default function SignUp() {
                             <SetText color={colors.red} style={styles.errorText}>The password isn't correct.</SetText>
                         </View>
 
-                        <View style={styles.signUpButton}>
+                        <View style={styles.signUpButton} onTouchEnd={() => signUpButtonClicked()}>
                             <SetText color={colors.wherewhite} style={styles.signUpButtonText}>สร้างบัญชี</SetText>
                         </View>
 

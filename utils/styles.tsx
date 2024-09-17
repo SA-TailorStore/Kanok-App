@@ -9,6 +9,8 @@ export const colors = {
     grey: '#AAAAAA',
     white: '#fff',
     red: '#FF4044',
+    danger: '#FF4044',
+    success: '#00DF80',
     primary: '#F875AA'
 };
 
@@ -89,8 +91,9 @@ export const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: 'white',
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
+        left: 30,
+        // justifyContent: 'space-around',
+        // alignItems: 'center',
         zIndex: 999,
         bottom: 15,
     },
@@ -105,5 +108,35 @@ export const styles = StyleSheet.create({
         backgroundColor: "#fff",
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    toasterContainer: {
+        borderRadius: 8,
+        width: 343,
+        alignSelf: 'center', 
+        position: "absolute", 
+        top: 20,
+        zIndex: 999,
+        overflow: 'hidden',
+        gap: 8,
+    },
+    toastContainer: {
+        backgroundColor: colors.white,
+        borderRadius: 8,
+        width: 343,
+        height: 65, 
+        alignSelf: 'center', 
+        zIndex: 999,
+        overflow: 'hidden'
+    },
+    toastTop: {
+        height: 62,
+        flexDirection: 'row',
+    },
+    toastHeader: {
+        justifyContent: 'center',
+    },
+    toastIcon: {
+        justifyContent: 'center',
+        marginHorizontal: 20,
     }
 });

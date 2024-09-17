@@ -5,7 +5,7 @@ import WrapBackground from "./WrapBackground";
 export default function UserTemplate({ children }: { children: React.ReactNode }) {
     return (
         <WrapBackground>
-            <TabBar />
+            {/* <TabBar /> */}
             {children}
         </WrapBackground>
     );

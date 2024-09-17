@@ -1,3 +1,4 @@
+import { ToastProvider } from "@/contexts/ToastContext";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
@@ -19,10 +20,12 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ 
-      headerShown: false,
-      // statusBarStyle: 'auto',
-      statusBarColor: '#FF7FA8',
-    }} />
+    <ToastProvider>
+      <Stack screenOptions={{
+        headerShown: false,
+        // statusBarStyle: 'auto',
+        statusBarColor: '#FF7FA8',
+      }} />
+    </ToastProvider>
   );
 }

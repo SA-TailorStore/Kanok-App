@@ -1,5 +1,5 @@
 import WrapBackground from "@/components/WrapBackground";
-import { Text, View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 import { Iconify } from 'react-native-iconify';
 import { FormInput } from "@/components/FormInput";
 import { Link, useRouter } from "expo-router";
@@ -9,6 +9,10 @@ import { colors } from "@/utils/styles";
 
 export default function SignIn() {
     const router = useRouter();
+
+    const signButtonClicked = () => {
+        router.push("/user/home");
+    }
     return (
         <WrapBackground>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -33,7 +37,7 @@ export default function SignIn() {
                             <SetText style={styles.errorText} color={colors.red}>The password isn't correct.</SetText>
                         </View>
 
-                        <View style={styles.signInButton} onTouchEnd={() => router.push('/user/home-page')}>
+                        <View style={styles.signInButton} onTouchEnd={() => signButtonClicked()}>
                             <SetText type="bold" color={colors.wherewhite} style={styles.signInButtonText}>เข้าสู่ระบบ</SetText>
                         </View>
 
