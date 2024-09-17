@@ -14,7 +14,7 @@ export default function SignUp() {
 
     const signUpButtonClicked = () => {
         showToast('สมัครสมาชิกสำเร็จ', 'ตอนนี้คุณสามารถลงชื่อเข้าใช้งานได้แล้ว', 4000);
-        router.replace('/user/home-page');
+        router.replace('/user/home');
         router.dismissAll();
     }
 
@@ -57,7 +57,7 @@ export default function SignUp() {
                         </View>
 
                         <View style={styles.signUpButton} onTouchEnd={() => signUpButtonClicked()}>
-                            <SetText color={colors.wherewhite} style={styles.signUpButtonText}>สร้างบัญชี</SetText>
+                            <SetText color={colors.wherewhite} type="bold" style={styles.signUpButtonText}>สร้างบัญชี</SetText>
                         </View>
 
                         <View style={styles.signUpLinkContainer} onTouchEnd={() => <Redirect href="/sign-in" />}>

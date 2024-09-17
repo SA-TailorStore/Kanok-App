@@ -25,6 +25,7 @@ export default function RootLayout() {
         headerShown: false,
         // statusBarStyle: 'auto',
         statusBarColor: '#FF7FA8',
+        navigationBarColor: 'auto',
       }} />
     </ToastProvider>
   );

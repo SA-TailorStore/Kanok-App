@@ -5,8 +5,7 @@ import { useRouter } from "expo-router";
 import Knitwork from "@/assets/icons/knitwork";
 import StoreFront from "@/assets/icons/storefront-plus";
 import Slider from "@/components/Slider";
-import UserTemplate from "@/components/UserTemplate";
-import { ScrollView } from "react-native";
+import WrapBackground from "@/components/WrapBackground";
 
 export type ChoiceProps = {
     title: string;
@@ -51,7 +50,7 @@ export default function HomePage() {
     const router = useRouter();
 
     return (
-        <UserTemplate>
+        <WrapBackground>
             <View style={styles.logoUserContainer}>
                 <Image source={require('@/assets/images/logo-with-kanok.png')} />
                 <Image source={require('@/assets/images/Avatar.png')} style={styles.avatar} />
@@ -80,6 +79,6 @@ export default function HomePage() {
                     </View>
                 </View>
             </View>            
-        </UserTemplate>
+        </WrapBackground>
     );
 }

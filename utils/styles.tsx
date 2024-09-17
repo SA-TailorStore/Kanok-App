@@ -11,7 +11,8 @@ export const colors = {
     red: '#FF4044',
     danger: '#FF4044',
     success: '#00DF80',
-    primary: '#F875AA'
+    primary: '#F875AA',
+    mediumpink: '#F47E9A',
 };
 
 export const styles = StyleSheet.create({
