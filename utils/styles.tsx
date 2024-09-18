@@ -9,10 +9,17 @@ export const colors = {
     grey: '#AAAAAA',
     white: '#fff',
     red: '#FF4044',
-    danger: '#FF4044',
+    danger: '#D62C01',
     success: '#00DF80',
     primary: '#F875AA',
     mediumpink: '#F47E9A',
+    line: '#CCCCCC'
+};
+
+export const headerTitleStyle = {
+    fontFamily: 'notoSansThaiBold',
+    color: colors.whereblack,
+    fontSize: 25,
 };
 
 export const styles = StyleSheet.create({

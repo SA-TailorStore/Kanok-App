@@ -1,5 +1,5 @@
 import WrapBackground from "@/components/WrapBackground";
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, SafeAreaView } from "react-native";
 import { Iconify } from 'react-native-iconify';
 import { FormInput } from "@/components/FormInput";
 import { Link, useRouter } from "expo-router";
@@ -11,7 +11,7 @@ export default function SignIn() {
     const router = useRouter();
 
     const signButtonClicked = () => {
-        router.push("/user/home");
+        router.replace("/user-tab/home");
     }
     return (
         <WrapBackground>

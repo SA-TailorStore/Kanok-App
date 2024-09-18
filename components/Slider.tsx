@@ -1,4 +1,4 @@
-import { SliderItemProps } from "@/app/user/home-page";
+import { SliderItemProps } from "@/app/user-tab/home";
 import { View, FlatList, StyleSheet, Dimensions } from "react-native";
 import SliderItem from "@/components/SliderItem";
 import { styles } from "@/utils/styles";
@@ -27,7 +27,7 @@ export default function Slider({ items }: { items: SliderItemProps[] }) {
             />
 
             <View style={{ flexDirection: 'row', alignSelf: 'center' }}>
-                {items.map((_, index) => <SetText size={40} key={index} style={selected === index ? style.pointSelected : style.point}>.</SetText>)}
+                {items.map((_, index) => <SetText size={40} key={index} style={style.point} color={index === selected ? '#524A4E' : '#E4E2E2'}>.</SetText>)}
             </View>
         </View>
     );
@@ -37,11 +37,5 @@ const style = StyleSheet.create({
     point: {
         marginTop: -27,
         fontSize: 40,
-        color: '#E4E2E2'
     },
-    pointSelected: {
-        marginTop: -27,
-        fontSize: 40,
-        color: '#524A4E'
-    }
 })

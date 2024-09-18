@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
   bold: {
     fontFamily: 'notoSansThaiBold',
-    transform: [{ scaleY: 0.85}],
+    // transform: [{ scaleY: 0.85}],
   },
   small: {
     fontFamily: defaultFont,
@@ -47,6 +47,6 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: boldFont,
     fontSize: 27,
-    transform: [{ scaleY: 0.85}],
+    // transform: [{ scaleY: 0.85}],
   },
 });

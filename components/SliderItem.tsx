@@ -1,4 +1,4 @@
-import { SliderItemProps } from "@/app/user/home-page";
+import { SliderItemProps } from "@/app/user-tab/home";
 import { View, Image, type ViewProps} from "react-native";
 import { styles } from "@/utils/styles";
 

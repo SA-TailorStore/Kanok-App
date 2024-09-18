@@ -14,8 +14,7 @@ export default function SignUp() {
 
     const signUpButtonClicked = () => {
         showToast('สมัครสมาชิกสำเร็จ', 'ตอนนี้คุณสามารถลงชื่อเข้าใช้งานได้แล้ว', 4000);
-        router.replace('/user/home');
-        router.dismissAll();
+        router.replace('/user-tab/home');
     }
 
     return (
