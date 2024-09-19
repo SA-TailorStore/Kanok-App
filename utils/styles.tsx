@@ -22,6 +22,7 @@ export const headerTitleStyle = {
     fontSize: 25,
 };
 
+// tip: ไม่ต้องเขียน css ในนี้เขียนที่ไฟล์ของหน้านั้นๆเลย ง่ายกว่า!!!! 
 export const styles = StyleSheet.create({
     logoUserContainer: {
         display: 'flex',
