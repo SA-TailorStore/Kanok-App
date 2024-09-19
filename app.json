@@ -9,11 +9,12 @@
         "userInterfaceStyle": "automatic",
         "splash": {
             "image": "./assets/images/loading.png",
-            "resizeMode": "fill",
+            "resizeMode": "cover",
             "backgroundColor": "#FF7FA8"
         },
         "ios": {
-            "supportsTablet": true
+            "supportsTablet": true,
+            "bundleIdentifier": "com.test.test"
         },
         "android": {
             "adaptiveIcon": {
