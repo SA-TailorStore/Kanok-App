@@ -37,13 +37,13 @@ export default function HomePage() {
     const router = useRouter();
 
     const choice: ChoiceProps[] = [
+        // {
+        //     title: "แบบของร้าน",
+        //     icon: <StoreFront />,
+        //     to: ()=>router.push('/user-stack/choose-design-user')
+        // },
         {
-            title: "แบบของร้าน",
-            icon: <StoreFront />,
-            to: ()=>router.push('/user-stack/choose-design-user')
-        },
-        {
-            title: "แบบของฉัน",
+            title: "เลือกแบบที่ต้องการ",
             icon: <Knitwork />,
             to: ()=>router.push('/user-stack/choose-design-user')
         },
@@ -59,8 +59,8 @@ export default function HomePage() {
             <View style={{ flex: 1, alignItems: 'center' }}>
                 <View style={[styles.formContainer, { paddingHorizontal: 0 }, styles.shadowCustom3]}>
                     <View style={{ paddingHorizontal: 30 }}>
-                        <SetText size={27} type="bold" style={{ paddingTop: 14 }}>เลือกรูปแบบการสั่งตัด</SetText>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <SetText size={27} type="bold" style={{ paddingTop: 14 }}>สั่งตัดเสื้อผ้า</SetText>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                             {choice.map((item, index) => {
                                 return (
                                     <TouchableOpacity key={index} style={[styles.choiceItem, styles.shadowCustom, {gap: 5}]} onPress={item.to}>

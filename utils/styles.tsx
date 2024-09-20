@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
     choiceItem: {
         backgroundColor: 'white',
         borderRadius: 16,
-        width: '48%',
+        width: '100%',
         height: 100,
         flexDirection: 'column',
         alignItems: 'center',
@@ -83,13 +83,13 @@ export const styles = StyleSheet.create({
         elevation: 5, //android
     },
     imageSliderContainer: {
-        marginTop: 30,
+        marginTop: 25,
         width: '100%',
         flexDirection: 'column',
     },
     imageSliderItem: {
         width: width - 60,
-        height: 150,
+        height: 175,
         alignItems: 'center',
     },
     tapBarContainer: {

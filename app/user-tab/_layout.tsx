@@ -5,8 +5,6 @@ import { Iconify } from 'react-native-iconify';
 import HomeIcon from "@/assets/icons/home";
 import AccountIcon from "@/assets/icons/account";
 import OrderIcon from "@/assets/icons/order";
-import InboxIcon from "@/assets/icons/inbox";
-
 
 export default function TabLayout() {
 
@@ -37,7 +35,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="inbox/index"
         options={{
           title: 'Inbox',
@@ -45,7 +43,7 @@ export default function TabLayout() {
             focused ? <InboxIcon /> : <Iconify icon="tabler:message" size={24} color={colors.grey} />
           ),
         }}
-      />
+      /> */}
       <Tabs.Screen
         name="account/index"
         options={{
