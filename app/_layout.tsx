@@ -7,7 +7,7 @@ import { useEffect } from "react";
 export default function RootLayout() {
   const [loaded] = useFonts({
     notoSansThai: require('@/assets/fonts/Noto_Sans_Thai/NotoSansThai-Regular.ttf'),
-    notoSansThaiBold: require('@/assets/fonts/Noto_Sans_Thai/NotoSansThai_Condensed-Bold.ttf'),
+    notoSansThaiBold: require('@/assets/fonts/Noto_Sans_Thai/NotoSansThai-Bold.ttf'),
   });
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function RootLayout() {
     <ToastProvider>
       <Stack screenOptions={{
         headerShown: false,
-        statusBarColor: colors.mediumpink,
+        // statusBarColor: colors.mediumpink,
       }} />
     </ToastProvider>
   );

@@ -4,6 +4,7 @@ const { width } = Dimensions.get('window');
 
 export const colors = {
     backgroundColor: '#f9f9f9',
+    black: '#000',
     whereblack: '#524A4E',
     wherewhite: '#f6f6f6',
     grey: '#AAAAAA',
@@ -120,7 +121,7 @@ export const styles = StyleSheet.create({
     },
     toasterContainer: {
         borderRadius: 8,
-        width: 343,
+        width: '90%',
         alignSelf: 'center', 
         position: "absolute", 
         top: 20,
@@ -131,7 +132,7 @@ export const styles = StyleSheet.create({
     toastContainer: {
         backgroundColor: colors.white,
         borderRadius: 8,
-        width: 343,
+        width: '100%',
         height: 65, 
         alignSelf: 'center', 
         zIndex: 999,
