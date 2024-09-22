@@ -68,7 +68,7 @@ const stylesForm = StyleSheet.create({
         paddingLeft: 48,
         paddingRight: 64,
         paddingVertical: 8, 
-        height: "auto",
+        height: "100%",
         borderRadius: 999,
         backgroundColor: 'white',
     },

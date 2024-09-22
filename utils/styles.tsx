@@ -64,9 +64,9 @@ export const styles = StyleSheet.create({
     },
     shadowCustom: {
         shadowColor: 'rgba(0, 0, 0, 0.4)',
-        shadowOffset: { width: 0, height: 50 },
+        shadowOffset: { width: 0, height: 2 },
         shadowRadius: 18,
-        shadowOpacity: 1,
+        shadowOpacity: 0.25,
         elevation: 7, // android
     },
     shadowCustom2: {
@@ -78,7 +78,7 @@ export const styles = StyleSheet.create({
     },
     shadowCustom3: {
         shadowColor: 'rgba(0, 0, 0, 0.25)',
-        shadowOffset: { width: 0, height: -2 },
+        shadowOffset: { width: 0, height: -50 },
         shadowOpacity: 0.25,
         shadowRadius: 12.9,
         elevation: 5, //android

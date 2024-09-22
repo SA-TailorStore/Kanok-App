@@ -16,12 +16,12 @@ export default function ProductDetail() {
     }, []);
     return (
         <WrapBackground color={colors.backgroundColor}>
-            <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
-                <View style={{ marginTop: '15%', marginHorizontal: '5%' }}>
+            <Image source={require('@/assets/images/example_girl_bag.png')} style={{width: '100%', height: '60%', marginBottom: '-10%'}} />
+            <ScrollView contentContainerStyle={[{ paddingBottom: 20, height: '100%', borderTopLeftRadius: 51, borderTopRightRadius: 51, backgroundColor: colors.backgroundColor, marginTop: 1 }, styles.shadowCustom3]}>
+                <View style={{ marginTop: '8%', marginHorizontal: '10%' }}>
                     <SetText size={24} type="bold">เลือกแบบที่ต้องการ</SetText>
                     <SetText size={16}>เลือกแบบที่ตุณต้องการ</SetText>
                 </View>
-                
             </ScrollView>
         </WrapBackground>
     );
