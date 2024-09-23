@@ -164,11 +164,11 @@ const TagItem = ({ item, isSelected, setSelectedTag }: { item: IDesignTag, isSel
     );
 }
 
-const CardItem = ({ item } : { item : IDesign}) => {
+const CardItem = ({ item } : { item : IDesign }) => {
     const router = useRouter();
 
     return (
-        <TouchableOpacity onPress={() => router.push('/user-stack/product_detail')} style={{ width: '45%', height: 260, marginBottom: 10 }}>
+        <TouchableOpacity onPress={() => router.push(`/user-stack/add-information/${item.design_id}`)} style={{ width: '45%', height: 260, marginBottom: 10 }}>
             <View style={{ width: '100%', height: 200, borderRadius: 10 }}>
                 <Image source={require('@/assets/images/promote.png')} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
             </View>

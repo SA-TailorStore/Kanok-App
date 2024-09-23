@@ -24,7 +24,9 @@ export default function RootLayout() {
     <ToastProvider>
       <Stack screenOptions={{
         headerShown: false,
-        // statusBarColor: colors.mediumpink,
+        // statusBarStyle: 'dark',
+        // statusBarTranslucent: true,
+        // statusBarColor: 'transparent',
       }} />
     </ToastProvider>
   );

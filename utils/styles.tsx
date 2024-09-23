@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, StatusBar, StyleSheet } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -81,7 +81,7 @@ export const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: -50 },
         shadowOpacity: 0.25,
         shadowRadius: 12.9,
-        elevation: 5, //android
+        elevation: 7, //android
     },
     imageSliderContainer: {
         marginTop: 25,
@@ -113,7 +113,7 @@ export const styles = StyleSheet.create({
     },
     orderCurrentContainer: {
         marginHorizontal: 30,
-        height: 240,
+        height: 200,
         borderRadius: 20,
         backgroundColor: "#fff",
         alignItems: 'center',
@@ -124,7 +124,7 @@ export const styles = StyleSheet.create({
         width: '90%',
         alignSelf: 'center', 
         position: "absolute", 
-        top: 20,
+        top: 10,
         zIndex: 999,
         overflow: 'hidden',
         gap: 8,

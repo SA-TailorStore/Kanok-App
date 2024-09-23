@@ -27,7 +27,7 @@ export const ToastProvider = ({ children }: any) => {
     <ToastContext.Provider value={{ showToast, hideToast }}>
       {children}
       <View style={styles.toasterContainer}>
-        {toasts.map((toast) => (
+        {toasts.slice().reverse().map((toast) => (
           <Toast key={toast.id} title={toast.title} message={toast.message} dura={toast.duration} />
         ))}
       </View>
