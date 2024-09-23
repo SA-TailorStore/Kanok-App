@@ -28,8 +28,8 @@ export default function Toast({ title, message, dura }: { title: string, message
     if (isEnd) return null;
 
     return (
-        <View style={[styles.toastContainer, styles.shadowCustom2]}>
-            <View style={styles.toastTop}>
+        <View style={[styles.toastContainer, styles.shadowCustom]}> 
+            <View style={[styles.toastTop]}>
                 <View style={styles.toastIcon}>
                     <Iconify icon="material-symbols:check-circle" size={22} color={colors.success} />
                 </View>

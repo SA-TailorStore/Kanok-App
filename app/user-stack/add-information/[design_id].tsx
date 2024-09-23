@@ -217,11 +217,11 @@ export default function ProductDetail() {
             }}>
                 <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
                     <TouchableOpacity disabled={quantity === 1} style={quantity === 1 ? { opacity: 0.3 } : undefined} onPress={decreaseQuantity} onLongPress={decreaseQuantity10}>
-                        <Iconify icon="simple-line-icons:minus" size={30} color={colors.whereblack} />
+                        <Iconify icon="simple-line-icons:minus" size={24} color={colors.whereblack} />
                     </TouchableOpacity>
                     <SetText size={16} type="bold" style={{}}>{quantity}</SetText>
                     <TouchableOpacity onPress={increaseQuantity} onLongPress={increaseQuantity10}>
-                        <Iconify icon="simple-line-icons:plus" size={30} color={colors.whereblack} />
+                        <Iconify icon="simple-line-icons:plus" size={24} color={colors.whereblack} />
                     </TouchableOpacity>
                 </View>
                 <TouchableOpacity onPress={onButtonSubmit} style={[{ backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12 }, styles.shadowCustom]}>

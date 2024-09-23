@@ -67,7 +67,7 @@ export const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 18,
         shadowOpacity: 0.25,
-        elevation: 7, // android
+        elevation: 5, // android
     },
     shadowCustom2: {
         shadowColor: 'rgba(0, 0, 0, 0.6)',
@@ -126,7 +126,6 @@ export const styles = StyleSheet.create({
         position: "absolute", 
         top: 10,
         zIndex: 999,
-        overflow: 'hidden',
         gap: 8,
     },
     toastContainer: {
