@@ -5,6 +5,8 @@ import WrapBackground from "@/components/WrapBackground";
 import { SetText } from "@/components/SetText";
 import { Iconify } from "react-native-iconify";
 import SettingMenuItem from "@/components/SettingMenuItem";
+import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export type SettingMenuProps = {
     icon: JSX.Element;
@@ -16,6 +18,16 @@ export type SettingMenuProps = {
 
 export default function AccountPage() {
     const router = useRouter();
+    const [user, setUser] = useState<any>(null);
+
+    useEffect(() => {
+        const getUser = async () => {
+            // code here : get user data from @access_user
+            const getStoredData = await AsyncStorage.getItem('@access_user');
+            setUser(JSON.parse(getStoredData!).data);
+        }
+        getUser();
+    }, [])
 
     const settingMenu: SettingMenuProps[] = [
         {
@@ -51,6 +63,8 @@ export default function AccountPage() {
         }
     ]
 
+    if (!user) return null;
+
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={[{ width: '100%', height: '25%', borderBottomRightRadius: 51, borderBottomLeftRadius: 51, backgroundColor: colors.mediumpink }, styles.shadowCustom2]}>
@@ -62,7 +76,7 @@ export default function AccountPage() {
                         {/* <Image source={} style={{ width: '100%', height: '100%', objectFit: 'fill', borderRadius: 999 }} /> */}
                     </View>
                     <View>
-                        <SetText type='bold' size={20}>ภูมิระพี ไอหมูตอน</SetText>
+                        <SetText type='bold' size={20}>{user.display_name}</SetText>
                         <TouchableOpacity style={[{ flexDirection: 'row', alignItems: 'center', height: 30, gap: 6, }, { marginTop: -4 }]} onPress={() => router.push('/user-stack/change-profile')}>
                             <SetText size={16} color={colors.grey}>แก้ไขข้อมูลส่วนตัว</SetText>
                             <Iconify icon="weui:back-filled" size={14} color={colors.grey} style={{ transform: [{ rotate: '180deg' }, { scaleX: 1.5 }] }} />
@@ -81,8 +95,6 @@ export default function AccountPage() {
                     } />
                 </View>
             </View>
-
-
 
             <View style={{ width: '100%', height: '100%', marginTop: '25%', paddingHorizontal: '5%', gap: 8 }}>
                 <SetText size={30} type='bold'>Settings</SetText>

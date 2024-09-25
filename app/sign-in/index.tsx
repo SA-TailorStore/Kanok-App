@@ -1,18 +1,47 @@
 import WrapBackground from "@/components/WrapBackground";
-import { View, Image, StyleSheet, SafeAreaView } from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 import { Iconify } from 'react-native-iconify';
 import { FormInput } from "@/components/FormInput";
 import { Link, useRouter } from "expo-router";
 import { SetText } from "@/components/SetText";
 import { ScrollView } from "react-native";
 import { colors } from "@/utils/styles";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState } from "react";
+
+const exampleUserData = {
+    "status": "ok",
+    "message": "Login success",
+    "data": {
+        "user_id": 1,
+        "username": "admin",
+        "display_name": "ภูมิระพี เสริญวณิชกุล",
+        "password": "12345678",
+        "phone_number": "0810000000",
+        "user_profile_url": "https://www.w3schools.com/w3images/avatar2.png",
+        "role": "user",
+        "address": "123 ถ.สุขุมวิท แขวงคลองตัน เขตคลองเตย กรุงเทพมหานคร 10110",
+        "created_at": 1631155200,
+    }
+}
 
 export default function SignIn() {
     const router = useRouter();
+    const [username, setUsername] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [user, setUser] = useState<any>({});
 
-    const signButtonClicked = () => {
-        router.replace("/user-tab/home");
+    const signButtonClicked = async() => {
+        // code here : post usernamea and password to server api then store to @access_user
+        await AsyncStorage.setItem('@access_user', JSON.stringify(exampleUserData));
+        const getStoredData = await AsyncStorage.getItem('@access_user');
+        setUser(JSON.parse(getStoredData!));
+
+        if (user.status === 'ok') {
+            router.replace("/user-tab/home");
+        }
     }
+
     return (
         <WrapBackground>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -25,12 +54,16 @@ export default function SignIn() {
                                 key="username"
                                 iconHeader={<Iconify icon="ic:round-account-circle" size={25} color="#C8C8C8" />}
                                 textContentType="username"
+                                value={username}
+                                onChange={(e) => setUsername(e.nativeEvent.text)}
                                 placeholder="ชื่อผู้ใช้งาน"
                             />
                             <FormInput
                                 key="password"
                                 iconHeader={<Iconify icon="mdi:password" size={25} color="#C8C8C8" />}
                                 textContentType="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.nativeEvent.text)}
                                 placeholder="รหัสผ่าน"
                                 eye
                             />
