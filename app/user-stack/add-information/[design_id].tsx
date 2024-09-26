@@ -1,6 +1,7 @@
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
+import { IFabric } from "@/types/IFabric";
 import { colors, styles } from "@/utils/styles";
 import { ParamListBase, RouteProp, useRoute } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
@@ -8,13 +9,7 @@ import { useEffect, useState } from "react";
 import { View, Image, ScrollView, ImageSourcePropType, TouchableOpacity, FlatList, Dimensions, TextInput, NativeSyntheticEvent, NativeScrollEvent, Animated, PanResponder } from "react-native";
 import { Iconify } from "react-native-iconify";
 
-export type IFabric = {
-    fabric_id: number,
-    image: ImageSourcePropType,
-    quantity: number,
-}
-
-const fabricList: IFabric[] = [
+export const fabricList: IFabric[] = [
     {
         fabric_id: 0,
         image: require('@/assets/images/fabric/0.jpg'),
@@ -78,7 +73,7 @@ const fabricList: IFabric[] = [
 
 ]
 
-const sizeList = ['S', 'M', 'L', 'XL', 'XXL'];
+export const sizeList = ['S', 'M', 'L', 'XL', 'XXL'];
 
 export default function ProductDetail() {
     const [fabric, setFabric] = useState<number | null>(null);
@@ -129,6 +124,7 @@ export default function ProductDetail() {
         showToast('บันทึกแบบเรียบร้อยแล้ว', 'แบบที่คุณแก้ไขได้ถูกบันทึกเรียบร้อยแล้ว', 4000);
         router.push('/user-stack/manage-design');
     }
+
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '60%', marginBottom: '-15%' }}>

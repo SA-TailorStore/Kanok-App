@@ -1,15 +1,26 @@
 import { colors, styles } from "@/utils/styles";
-import { Dimensions, TouchableOpacity, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { SetText } from "./SetText";
 import { IProduct } from "@/types/IProduct";
 import { Iconify } from "react-native-iconify";
 import { useState } from "react";
 
-export default function ManageOrderCard({ item }: { item: IProduct }) {
+export default function ManageOrderCard({ item, setSelectedProduct }: { item: IProduct, setSelectedProduct: React.Dispatch<React.SetStateAction<string|null>> }) {
     const [quantity, setQuantity] = useState<number>(1);
-    const { width } = Dimensions.get('window');
     const [isHidden, setIsHidden] = useState<boolean>(false);
+
+    const createTwoButtonAlert = () =>
+        Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบแบบที่คุณเลือก', [
+            {
+                text: 'ยกเลิก',
+                onPress: () => console.log('ยกเลิก'),
+                style: 'cancel',
+            },
+            {
+                text: 'ลบ', onPress: () => console.log('ลบ')
+            },
+        ]);
 
     const increaseQuantity = () => {
         setQuantity((q) => q + 1);
@@ -40,12 +51,12 @@ export default function ManageOrderCard({ item }: { item: IProduct }) {
                 renderRightActions={() => {
                     return (
                         <>
-                            <View style={{ backgroundColor: colors.red, alignItems: 'center', justifyContent: 'center', width: 50 }}>
+                            <TouchableOpacity onPress={createTwoButtonAlert} style={{ backgroundColor: colors.red, alignItems: 'center', justifyContent: 'center', width: 50 }}>
                                 <SetText color={colors.white} size={10}>ลบ</SetText>
-                            </View>
-                            <View style={{ backgroundColor: colors.whereblack, alignItems: 'center', justifyContent: 'center', width: 50 }}>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ backgroundColor: colors.whereblack, alignItems: 'center', justifyContent: 'center', width: 50 }}>
                                 <SetText color={colors.white} size={10}>ทำสำเนา</SetText>
-                            </View>
+                            </TouchableOpacity>
                         </>
                     )
                 }}
@@ -67,10 +78,11 @@ export default function ManageOrderCard({ item }: { item: IProduct }) {
                                     <Iconify style={{ transform: [{ rotate: '-90deg' }] }} icon='weui:back-filled' size={15} color={colors.whereblack} />
                                 </TouchableOpacity>
                                 <SetText>ประเภท : {item.design_id}</SetText>
-                                <SetText>คำอธิบาย : {item.detail.length > 20? item.detail.substring(0,20)+'...' : item.detail}</SetText>
+                                <SetText>คำอธิบาย : {item.detail.length > 20 ? item.detail.substring(0, 20) + '...' : item.detail}</SetText>
                             </View>
                             <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                                <SetText type='bold' color={colors.mediumpink} size={16}>แก้ไข</SetText>
+                                {/* <TouchableOpacity onPress={() => setSelectedProduct(item.product_id)}><SetText type='bold' color={colors.mediumpink} size={16}>แก้ไข</SetText></TouchableOpacity> */}
+                                <SetText type='bold' color={colors.mediumpink} size={16}></SetText>
                                 <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
                                     <TouchableOpacity disabled={quantity === 1} style={quantity === 1 ? { opacity: 0.3 } : undefined} onPress={decreaseQuantity} onLongPress={decreaseQuantity10}>
                                         <Iconify icon="simple-line-icons:minus" size={24} color={colors.whereblack} />

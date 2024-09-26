@@ -1,16 +1,17 @@
 import { SetText } from "@/components/SetText";
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 import WrapManageDesign from "@/components/WrapManageDesign";
 import { colors, styles } from "@/utils/styles";
-import { router, useNavigation, useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View, Image } from "react-native";
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { IProduct } from "@/types/IProduct";
-import { Iconify } from "react-native-iconify";
 import ManageOrderCard from "@/components/ManageOrderCard";
-import { IFabric } from "@/types/IFabric";
-import EditBottomSheet from "@/components/EditButtomSheet";
+import SettingMenuItem from "@/components/SettingMenuItem";
+import { Iconify } from "react-native-iconify";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { IUser } from "@/types/IUser";
+import ConfirmOrderCard from "@/components/ComfirmOrderCard";
 
 const exampleData: IProduct[] = [
     {
@@ -106,31 +107,47 @@ const exampleData: IProduct[] = [
 ];
 
 
-export default function ManageDesign() {
+export default function ConfirmOrder() {
     const navigation = useNavigation();
     const router = useRouter();
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+    const [user, setUser] = useState<IUser | null>(null);
 
     useEffect(() => {
         navigation.setOptions({
             headerTitle: "รายการสั่งตัด",
         });
+
+        const fetchUser = async () => {
+            const getStoredData = await AsyncStorage.getItem('@access_user');
+            setUser(JSON.parse(getStoredData!).data);
+            // console.log(getStoredData);
+        }
+
+        fetchUser();
     }, []);
 
-
+    if (!user) return null;
     return (
         <>
-            <WrapManageDesign page='add design'>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
-                    <SetText type="bold" size={24}>แบบของฉัน</SetText>
-                    <TouchableOpacity onPress={()=>router.replace('/user-stack/choose-design-user')}><SetText type="bold" color={colors.mediumpink} size={16}>เพิ่มแบบ</SetText></TouchableOpacity>
+            <WrapManageDesign page='order'>
+                <View style={{ flexDirection: 'column', marginBottom: 15, gap: 10 }}>
+                    <SetText type="bold" size={24}>ที่อยู่ในการจัดส่ง</SetText>
+                    <SettingMenuItem item={
+                        {
+                            icon: <Iconify icon="bx:bx-map" size={30} color={colors.whereblack} />,
+                            title: user.address.length > 35 ? user.address.substring(0, 35) + '...' : user.address,
+                            detail: user.display_name + ' ' + user.phone_number,
+                            to: () => router.push('/')
+                        }
+                    } />
                 </View>
                 <View style={{ height: '100%' }}>
                     <GestureHandlerRootView style={{ flex: 1 }}>
-                        <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 330 }} showsVerticalScrollIndicator={false}>
+                        <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 450 }} showsVerticalScrollIndicator={false}>
                             {
                                 exampleData.map((item, index) => (
-                                    <ManageOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />
+                                    <ConfirmOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />
                                 ))
                             }
                         </ScrollView>
@@ -138,8 +155,12 @@ export default function ManageDesign() {
                 </View>
             </WrapManageDesign>
             <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', paddingHorizontal: '5%', zIndex: 90 }}>
-                <TouchableOpacity onPress={() => router.push('/user-stack/confirm-order')} style={[{ backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.white}>สั่งตัดเสื้อผ้า</SetText>
+                <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+                    <SetText type="bold" size={16}>จำนวน</SetText>
+                    <SetText type="bold" size={16}>{exampleData.length} รายการ</SetText>
+                </View>
+                <TouchableOpacity onPress={() => router.replace('/user-stack/order-success')} style={[{ backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }, styles.shadowCustom]}>
+                    <SetText size={16} type="bold" color={colors.white}>สั่งสินค้า</SetText>
                 </TouchableOpacity>
             </View>
         </>

@@ -1,5 +1,5 @@
 export type IProduct = {
-    product_id: number,
+    product_id: string,
     detail: string,
     quantity: number,
     size: 'S' | 'M' | 'L' | 'XL' | 'XXL',

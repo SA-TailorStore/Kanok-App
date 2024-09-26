@@ -9,7 +9,7 @@ export default function SettingMenuItem({ item }: { item: SettingMenuProps }) {
         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }} onPress={item.to}>
             {item.icon}
             <View style={{ flexDirection: 'column' }}>
-                <SetText color={item.color} size={16} type="bold" style={{ marginBottom: -3 }}>{item.title}</SetText>
+                <SetText color={item.color} size={16} type="bold" style={{ marginBottom: 0 }}>{item.title}</SetText>
                 <SetText color={colors.grey} type="small">{item.detail}</SetText>
             </View>
             <View style={{ position: 'absolute', right: 0 }}>
