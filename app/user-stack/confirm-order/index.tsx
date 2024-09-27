@@ -127,6 +127,11 @@ export default function ConfirmOrder() {
         fetchUser();
     }, []);
 
+    const onConfirmOrderButton = () => {
+        router.dismissAll();
+        router.replace('/user-stack/order-success');
+    }
+
     if (!user) return null;
     return (
         <>
@@ -159,7 +164,7 @@ export default function ConfirmOrder() {
                     <SetText type="bold" size={16}>จำนวน</SetText>
                     <SetText type="bold" size={16}>{exampleData.length} รายการ</SetText>
                 </View>
-                <TouchableOpacity onPress={() => router.replace('/user-stack/order-success')} style={[{ backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }, styles.shadowCustom]}>
+                <TouchableOpacity onPress={onConfirmOrderButton} style={[{ backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white}>สั่งสินค้า</SetText>
                 </TouchableOpacity>
             </View>

@@ -35,6 +35,16 @@ export default function OrderSuccess() {
         fetchUser();
     }, []);
 
+    const onBacktoMainButton = () => {
+        router.dismissAll();
+        router.replace('/user-tab/home');
+    }
+
+    const onGotoOrderButton = () => {
+        router.dismissAll();
+        router.replace('/user-tab/order');
+    }
+
     if (!user) return null;
     return (
         <>
@@ -46,10 +56,10 @@ export default function OrderSuccess() {
                 </View>
             </WrapManageDesign>
             <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 150, justifyContent: 'center', paddingVertical: '10%', paddingHorizontal: '5%', zIndex: 90, gap: 10 }}>
-                <TouchableOpacity onPress={() => router.push('/user-stack/confirm-order')} style={[{ backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }, styles.shadowCustom]}>
+                <TouchableOpacity onPress={onGotoOrderButton} style={[{ backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white}>ดูคำสั่งซื้อ</SetText>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => router.push('/user-stack/confirm-order')} style={[{ paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }]}>
+                <TouchableOpacity onPress={onBacktoMainButton} style={[{ paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }]}>
                     <SetText size={16} type="bold" color={colors.whereblack}>กลับสู่หน้าหลัก</SetText>
                 </TouchableOpacity>
             </View>
