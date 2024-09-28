@@ -14,6 +14,7 @@ export const colors = {
     success: '#00DF80',
     primary: '#F875AA',
     mediumpink: '#F47E9A',
+    lesspink: '#FBEAEE',
     line: '#CCCCCC'
 };
 

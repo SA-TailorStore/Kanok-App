@@ -14,7 +14,7 @@ export default function WrapBackground({ color, children }: { color?: string, ch
     } else return (
         <ImageBackground source={require('@/assets/images/background.png')} style={{ width: '100%', height: '100%' }}>
             <SafeAreaView style={{ flex: 1 }}>
-                <KeyboardAvoidingView style={{ flex: 1 }} keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+                <KeyboardAvoidingView style={{ flex: 1, width: '100%' }} keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} behavior={Platform.OS === "ios" ? "padding" : undefined}>
                     {children}
                 </KeyboardAvoidingView>
             </SafeAreaView>
