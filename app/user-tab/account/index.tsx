@@ -7,6 +7,7 @@ import { Iconify } from "react-native-iconify";
 import SettingMenuItem from "@/components/SettingMenuItem";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSession } from "@/contexts/SessionContext";
 
 export type SettingMenuProps = {
     icon: JSX.Element;
@@ -17,6 +18,7 @@ export type SettingMenuProps = {
 }
 
 export default function AccountPage() {
+    const { removeToken } = useSession();
     const router = useRouter();
     const [user, setUser] = useState<any>(null);
 
@@ -59,7 +61,7 @@ export default function AccountPage() {
             icon: <Iconify icon="majesticons:logout" size={30} color={colors.whereblack} />,
             title: 'ออกจากระบบ',
             detail: 'ออกจากระบบการใช้งาน',
-            to: () => router.replace('/sign-in')
+            to: () => removeToken()
         }
     ]
 

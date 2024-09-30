@@ -1,5 +1,5 @@
+import SessionProvider from "@/contexts/SessionContext";
 import { ToastProvider } from "@/contexts/ToastContext";
-import { colors } from "@/utils/styles";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
@@ -22,12 +22,14 @@ export default function RootLayout() {
 
   return (
     <ToastProvider>
-      <Stack screenOptions={{
-        headerShown: false,
-        statusBarStyle: 'auto',
-        // statusBarTranslucent: true,
-        // statusBarColor: 'transparent',
-      }} />
+      <SessionProvider>
+        <Stack screenOptions={{
+          headerShown: false,
+          statusBarStyle: 'auto',
+          // statusBarTranslucent: true,
+          // statusBarColor: 'transparent',
+        }} />
+      </SessionProvider>
     </ToastProvider>
   );
 }

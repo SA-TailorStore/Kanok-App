@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext } from "react";
 import Toast from "@/components/Toast";  // import your custom Toast component
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { styles } from "@/utils/styles";
 
 const ToastContext = createContext<any>(null);

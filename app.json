@@ -17,6 +17,7 @@
             "bundleIdentifier": "com.test.test"
         },
         "android": {
+            "permissions": ["INTERNET"],
             "adaptiveIcon": {
                 "foregroundImage": "./assets/images/logo-black.png",
                 "backgroundColor": "#ffffff"

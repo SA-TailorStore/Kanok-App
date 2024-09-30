@@ -1,5 +1,5 @@
 import WrapBackground from "@/components/WrapBackground";
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Iconify } from 'react-native-iconify';
 import { FormInput } from "@/components/FormInput";
 import { Link, useRouter } from "expo-router";
@@ -7,7 +7,9 @@ import { SetText } from "@/components/SetText";
 import { ScrollView } from "react-native";
 import { colors } from "@/utils/styles";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useSession } from "@/contexts/SessionContext";
 
 const exampleUserData = {
     "status": "ok",
@@ -27,20 +29,39 @@ const exampleUserData = {
 
 export default function SignIn() {
     const router = useRouter();
+    const { setToken, getToken } = useSession();
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [user, setUser] = useState<any>({});
 
     const signButtonClicked = async() => {
-        // code here : post usernamea and password to server api then store to @access_user
-        await AsyncStorage.setItem('@access_user', JSON.stringify(exampleUserData));
-        const getStoredData = await AsyncStorage.getItem('@access_user');
-        setUser(JSON.parse(getStoredData!));
-
-        if (user.status === 'ok') {
-            router.replace("/user-tab/home");
-        }
+        router.replace("/user-tab/home");
+        // await axios.post(process.env.EXPO_PUBLIC_API_URL + '/login', {
+        //     username: username,
+        //     password: password,
+        // }).then(async(res) => {
+        //     console.log(res.data.data.token);
+        //     // await AsyncStorage.setItem('@access_token', res.data.data.token);
+        //     setToken(res.data.data.token);
+        //     router.replace("/user-tab/home");
+        // }).catch((err) => {
+        //     console.log(err)
+        // });
     }
+
+    useEffect(() => {
+        // get token from async storage
+        // if token is not null, navigate to home
+        // else, do nothing
+        // const getToken = async () => {
+        //     const token = await AsyncStorage.getItem('@access_token')
+        //     console.log(token)
+        //     if (token != null) {
+        //         router.replace("/user-tab/home");
+        //     }
+        // }
+        // getToken();
+    }, [])
 
     return (
         <WrapBackground>
@@ -70,9 +91,9 @@ export default function SignIn() {
                             <SetText style={styles.errorText} color={colors.red}>The password isn't correct.</SetText>
                         </View>
 
-                        <View style={styles.signInButton} onTouchEnd={() => signButtonClicked()}>
+                        <TouchableOpacity style={styles.signInButton} onPress={signButtonClicked}>
                             <SetText type="bold" color={colors.wherewhite} style={styles.signInButtonText}>เข้าสู่ระบบ</SetText>
-                        </View>
+                        </TouchableOpacity>
 
                         <View style={styles.signUpLinkContainer}>
                             <SetText>ยังไม่มีบัญชี?</SetText>
