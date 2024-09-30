@@ -44,12 +44,12 @@ export default function OrderTab({ output }: { output: (status: string) => void 
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ flexDirection: 'row'}}
-                style={{ borderBottomWidth: 0.5, }}
+                style={{ borderBottomWidth: 1, borderColor: colors.line }}
             >
                 {filterTab.map((item: IFilterTab, index: number) => {
                     return (
                         <TouchableOpacity key={index} onPress={() => setSelected(item.status)}>
-                            <SetText color={selected===item.status? colors.black : colors.grey} style={[{ paddingHorizontal: 18, borderColor: colors.mediumpink }, selected === item.status? { borderBottomWidth: 1 } : undefined]} size={14}>{item.title}</SetText>
+                            <SetText type={selected===item.status? 'bold': 'default'} color={selected===item.status? colors.black : colors.grey} style={[{ paddingHorizontal: 18, borderColor: colors.mediumpink }, selected === item.status? { borderBottomWidth: 1 } : undefined]} size={14}>{item.title}</SetText>
                         </TouchableOpacity>
                     )
                 })}

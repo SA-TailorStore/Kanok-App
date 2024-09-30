@@ -7,14 +7,14 @@ import { PendingButton } from "./order-button/PendingButton";
 import { PaymentButton } from "./order-button/PaymentButton";
 import { ReceicedButton } from "./order-button/ReceicedButton";
 
-export const status = {
-    pending: <PendingButton />,
-    payment: <PaymentButton />,
-    receiced: <ReceicedButton />,
-    success: undefined,
-    cancel: undefined
-}
 export default function OrderCard({ order }: { order: IOrder }) {
+    const status = {
+        pending: <PendingButton order_id={order.order_id} />,
+        payment: <PaymentButton order_id={order.order_id} />,
+        receiced: <ReceicedButton order_id={order.order_id} />,
+        success: undefined,
+        cancel: undefined
+    }
     return (
         <View style={{ flexDirection: 'row', height: 90, width: '100%', borderBottomWidth: 0.5, borderColor: colors.grey, paddingBottom: 15, paddingHorizontal: 15, marginTop: 10 }}>
             <View style={{ flex: 1, flexDirection: 'row' }}>
