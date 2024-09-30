@@ -1,16 +1,12 @@
 import { SetText } from "@/components/SetText";
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 import WrapManageDesign from "@/components/WrapManageDesign";
 import { colors, styles } from "@/utils/styles";
-import { router, useNavigation, useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, View, Image } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import { IProduct } from "@/types/IProduct";
-import { Iconify } from "react-native-iconify";
 import ManageOrderCard from "@/components/ManageOrderCard";
-import { IFabric } from "@/types/IFabric";
-import EditBottomSheet from "@/components/EditButtomSheet";
 
 const exampleData: IProduct[] = [
     {

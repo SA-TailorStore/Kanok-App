@@ -4,14 +4,8 @@ import { colors, styles } from "@/utils/styles";
 import { useNavigation, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View, Image, BackHandler } from "react-native";
-import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
-import { IProduct } from "@/types/IProduct";
-import ManageOrderCard from "@/components/ManageOrderCard";
-import SettingMenuItem from "@/components/SettingMenuItem";
-import { Iconify } from "react-native-iconify";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IUser } from "@/types/IUser";
-import ConfirmOrderCard from "@/components/ComfirmOrderCard";
 
 export default function OrderSuccess() {
     const navigation = useNavigation();
