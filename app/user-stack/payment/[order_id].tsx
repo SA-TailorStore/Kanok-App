@@ -26,18 +26,6 @@ const createFormData = (photo: any, body: any = {}) => {
     return data;
 };
 
-const handleUploadConfirm = () =>
-    Alert.alert('ยืนยันการชำระเงิน', 'กรุณาตรวจสอบการอัพโหลดหลักฐาน ก่อนการยืนยันการชำระเงิน', [
-        {
-            text: 'ยกเลิก',
-            onPress: () => console.log('ยกเลิก'),
-            style: 'cancel',
-        },
-        {
-            text: 'ยืนยันการชำระเงิน', onPress: () => console.log('ยืนยันการชำระเงิน')
-        },
-    ]);
-
 export default function Payment() {
     const [photo, setPhoto] = useState<any>(null);
 
@@ -71,7 +59,17 @@ export default function Payment() {
         });
     }
 
-
+    const handleUploadConfirm = () =>
+        Alert.alert('ยืนยันการชำระเงิน', 'กรุณาตรวจสอบการอัพโหลดหลักฐาน ก่อนการยืนยันการชำระเงิน', [
+            {
+                text: 'ยกเลิก',
+                onPress: () => console.log('ยกเลิก'),
+                style: 'cancel',
+            },
+            {
+                text: 'ยืนยันการชำระเงิน', onPress: () => router.replace(`/user-stack/order-detail/${order_id}`)
+            },
+        ]);
 
     // const handleUploadPhoto = () => {
     //     fetch(`${SERVER_URL}/api/upload`, {
@@ -113,16 +111,16 @@ export default function Payment() {
                 </View>
                 <View style={{ marginHorizontal: '8%', marginTop: 20 }}>
                     <SetText size={16} type="bold">อัพโหลดหลักฐานการชำระเงิน</SetText>
-                    <TouchableOpacity onPress={handleChoosePhoto}  style={{ width: 116, height: 168, marginTop: 10, borderRadius: 10, backgroundColor: colors.white, ...styles.shadowCustom, alignItems: 'center', justifyContent: 'center' }}>
-                        {photo && <TouchableOpacity onPress={() => setPhoto(null)} style={{ position: 'absolute', top: -10, right: -10, zIndex: 99 }}><Iconify icon="mdi:cross-circle" size={24} color={colors.black}/></TouchableOpacity>}
-                        {photo? <Image source={{ uri: photo.assets[0].uri }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
-                        :<Iconify icon="fluent-emoji-high-contrast:plus" size={40} color={colors.line} />
+                    <TouchableOpacity onPress={handleChoosePhoto} style={{ width: 116, height: 168, marginTop: 10, borderRadius: 10, backgroundColor: colors.white, ...styles.shadowCustom, alignItems: 'center', justifyContent: 'center' }}>
+                        {photo && <TouchableOpacity onPress={() => setPhoto(null)} style={{ position: 'absolute', top: -10, right: -10, zIndex: 99 }}><Iconify icon="mdi:cross-circle" size={24} color={colors.black} /></TouchableOpacity>}
+                        {photo ? <Image source={{ uri: photo.assets[0].uri }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
+                            : <Iconify icon="fluent-emoji-high-contrast:plus" size={40} color={colors.line} />
                         }
                     </TouchableOpacity>
                 </View>
             </ScrollView>
             <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', paddingHorizontal: '5%', zIndex: 90 }}>
-                <TouchableOpacity disabled={photo? false: true} onPress={handleUploadConfirm} style={[{ backgroundColor: photo? colors.mediumpink: colors.grey, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }, styles.shadowCustom]}>
+                <TouchableOpacity disabled={photo ? false : true} onPress={handleUploadConfirm} style={[{ backgroundColor: photo ? colors.mediumpink : colors.grey, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white}>ชำระเงิน</SetText>
                 </TouchableOpacity>
             </View>
