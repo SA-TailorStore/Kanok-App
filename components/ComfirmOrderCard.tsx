@@ -1,19 +1,18 @@
-import { colors } from "@/utils/styles";
+import { colors, styles } from "@/utils/styles";
 import { TouchableOpacity, View } from "react-native";
 import { SetText } from "./SetText";
 import { IProduct } from "@/types/IProduct";
 import { Iconify } from "react-native-iconify";
 import { useState } from "react";
 
-export default function ConfirmOrderCard({ item, setSelectedProduct }: { item: IProduct, setSelectedProduct: React.Dispatch<React.SetStateAction<string | null>> }) {
+export default function ConfirmOrderCard({ item, setSelectedProduct, shadow }: { item: IProduct, setSelectedProduct: React.Dispatch<React.SetStateAction<string | null>>, shadow?: boolean }) {
     const [quantity, setQuantity] = useState<number>(1);
     const [isHidden, setIsHidden] = useState<boolean>(false);
     const [isEdit, setIsEdit] = useState<boolean>(false);
 
-
     return (
         <>
-            <View style={{ backgroundColor: colors.white, height: 160, borderRadius: 16, padding: 16 }}>
+            <View style={[{ backgroundColor: colors.white, height: 160, borderRadius: 16, padding: 16 }, shadow ? styles.shadowCustom : undefined]}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <SetText type="bold" size={16}>รหัสสินค้า : {item.product_id}</SetText>
                 </View>

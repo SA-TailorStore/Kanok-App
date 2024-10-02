@@ -67,9 +67,15 @@ export default function Payment() {
                 style: 'cancel',
             },
             {
-                text: 'ยืนยันการชำระเงิน', onPress: () => router.replace(`/user-stack/order-detail/${order_id}`)
+                text: 'ยืนยันการชำระเงิน', onPress: () => handleUploadPhoto()
             },
         ]);
+
+    
+    const handleUploadPhoto = () => {
+        showToast('ชำระเงินสำเร็จ', 'การชำระเงินสำเร็จ รอตรวจสอบการชำระเงิน');
+        router.replace(`/user-stack/order-detail/${order_id}`);
+    }
 
     // const handleUploadPhoto = () => {
     //     fetch(`${SERVER_URL}/api/upload`, {

@@ -14,6 +14,17 @@ import { Iconify } from "react-native-iconify";
 const exampleOrder: IOrder[] = [
     {
         order_id: 'ord20241201-0001',
+        status: 'processing',
+        user_phone: '0812345678',
+        store_phone: '0812345678',
+        user_address: '123 หมู่ 1 ต.อ่างทอง อ.เมือง จ.เชียงใหม่ 50000',
+        store_address: '123 หมู่ 1 ต.อ่างทอง อ.เมือง จ.เชียงใหม่ 50000',
+        tracking_number: '1234567890',
+        created_at: new Date(),
+        created_by: "me"
+    },
+    {
+        order_id: 'ord20241201-0001',
         status: 'pending',
         user_phone: '0812345678',
         store_phone: '0812345678',

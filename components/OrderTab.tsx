@@ -3,19 +3,23 @@ import { ScrollView, TouchableOpacity, View } from "react-native";
 import { SetText } from "./SetText";
 import { useEffect, useState } from "react";
 
-type IFilterTab = {
+export type IFilterTab = {
     title: string,
     status: string
 }
 
-const filterTab: IFilterTab[] = [
+export const filterTab: IFilterTab[] = [
     {
-        title: 'กำลังดำเนินการ',
+        title: 'รอการดำเนินการ',
         status: 'pending'
     },
     {
         title: 'ที่ต้องชำระ',
         status: 'payment'
+    },
+    {
+        title: 'กำลังดำเนินการ',
+        status: 'processing'
     },
     {
         title: 'ที่ต้องได้รับ',

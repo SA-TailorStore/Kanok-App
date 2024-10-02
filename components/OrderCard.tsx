@@ -11,6 +11,7 @@ export default function OrderCard({ order }: { order: IOrder }) {
     const status = {
         pending: <PendingButton order_id={order.order_id} />,
         payment: <PaymentButton order_id={order.order_id} />,
+        processing: <PendingButton order_id={order.order_id} />,
         receiced: <ReceicedButton order_id={order.order_id} />,
         success: undefined,
         cancel: undefined

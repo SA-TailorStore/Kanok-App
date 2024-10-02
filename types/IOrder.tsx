@@ -2,7 +2,7 @@ import { IUser } from "./IUser";
 
 export type IOrder = {
     order_id: string;
-    status: 'pending' | 'payment' | 'receiced' | 'success' | 'cancel';
+    status: 'pending' | 'payment' | 'processing' | 'receiced' | 'success' | 'cancel';
     user_phone: string;
     store_phone: string;
     user_address: string;
