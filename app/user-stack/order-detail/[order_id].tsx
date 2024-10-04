@@ -137,7 +137,7 @@ export default function OrderDetail() {
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '7%', backgroundColor: colors.wherewhite }} />
-            <ScrollView style={{ flex: 1, paddingBottom: '3%' }}>
+            <ScrollView style={{ flex: 1, height: '100%' }} contentContainerStyle={{ paddingBottom: 120}}>
                 <View style={{ marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
                     <View style={{ backgroundColor: colors.mediumpink, padding: 10 }}>
                         <SetText type="bold" size={16} color={colors.white}>หมายเลขคำสั่งซื้อ #1234567890</SetText>
@@ -164,7 +164,7 @@ export default function OrderDetail() {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
+                {/* <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
                     <TouchableOpacity style={{ padding: 10, gap: 10, overflow: 'hidden', flexDirection: 'row' }} onPress={() => setIsShow((s) => !s)}>
                         <View style={{ width: 12, height: 12, borderRadius: 999, backgroundColor: colors.mediumpink, marginTop: 5 }} />
                         <View>
@@ -183,7 +183,7 @@ export default function OrderDetail() {
                             )
                         })}
                     </View>}
-                </View>
+                </View> */}
                 <View style={{ marginTop: '3%', marginHorizontal: '5%', backgroundColor: colors.white, borderRadius: 10, ...styles.shadowCustom }}>
                     {isShow2 ?
                         <>
@@ -201,7 +201,7 @@ export default function OrderDetail() {
                         </View>
                     </TouchableOpacity>
                 </View>
-                <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom, marginBottom: '3%' }}>
+                {/* <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom, marginBottom: '3%' }}>
                     <View style={{ padding: 10, gap: 10, overflow: 'hidden', flexDirection: 'row' }}>
                         <Iconify icon="streamline:credit-card-1-solid" size={20} color={colors.black} />
                         <View>
@@ -212,8 +212,21 @@ export default function OrderDetail() {
                             <Iconify icon="lets-icons:check-fill" size={20} color={colors.success} />
                         </View>
                     </View>
-                </View>
+                </View> */}
             </ScrollView>
+            <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
+                <TouchableOpacity onPress={()=>console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                    <Iconify icon="f7:phone-circle-fill" size={30} color={colors.mediumpink} />
+                    <SetText size={16} type="bold" color={colors.mediumpink} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 20}}>ติดต่อร้าน</SetText>
+                </TouchableOpacity>
+                {/* <TouchableOpacity onPress={()=>console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                    <Iconify icon="pepicons-pop:credit-card-circle-filled" size={30} color={colors.white} />
+                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 20}}>ชำระเงิน</SetText>
+                </TouchableOpacity> */}
+                <TouchableOpacity onPress={()=>console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ฉันได้รับสินค้าแล้ว</SetText>
+                </TouchableOpacity>
+            </View>
         </WrapBackground>
     );
 }
@@ -229,4 +242,6 @@ const StatusCard = ({ item, color }: { item: IFilterTab, color: string }) => {
         </View>
     )
 }
+
+
 
