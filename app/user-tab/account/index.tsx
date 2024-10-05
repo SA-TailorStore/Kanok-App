@@ -92,7 +92,7 @@ export default function AccountPage() {
                             icon: <Iconify icon="bx:bx-map" size={30} color={colors.whereblack} />,
                             title: 'ที่อยู่ของฉัน',
                             detail: 'เปลี่ยนที่อยู่ในการจัดส่ง',
-                            to: () => router.push('/')
+                            to: () => router.push('/user-stack/my-address')
                         }
                     } />
                 </View>
