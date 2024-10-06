@@ -20,15 +20,15 @@ export type SettingMenuProps = {
 export default function AccountPage() {
     const { removeToken } = useSession();
     const router = useRouter();
-    const [user, setUser] = useState<any>(null);
+    // const [user, setUser] = useState<any>(null);
 
     useEffect(() => {
-        const getUser = async () => {
-            // code here : get user data from @access_user
-            const getStoredData = await AsyncStorage.getItem('@access_user');
-            setUser(JSON.parse(getStoredData!).data);
-        }
-        getUser();
+        // const getUser = async () => {
+        //     // code here : get user data from @access_user
+        //     const getStoredData = await AsyncStorage.getItem('@access_user');
+        //     setUser(JSON.parse(getStoredData!).data);
+        // }
+        // getUser();
     }, [])
 
     const settingMenu: SettingMenuProps[] = [
@@ -65,7 +65,7 @@ export default function AccountPage() {
         }
     ]
 
-    if (!user) return null;
+    // if (!user) return null;
 
     return (
         <WrapBackground color={colors.backgroundColor}>
@@ -78,7 +78,8 @@ export default function AccountPage() {
                         {/* <Image source={} style={{ width: '100%', height: '100%', objectFit: 'fill', borderRadius: 999 }} /> */}
                     </View>
                     <View>
-                        <SetText type='bold' size={20}>{user.display_name}</SetText>
+                        {/* <SetText type='bold' size={20}>{user.display_name}</SetText> */}
+                        <SetText type='bold' size={20}>Hello</SetText>
                         <TouchableOpacity style={[{ flexDirection: 'row', alignItems: 'center', height: 30, gap: 6, }, { marginTop: -4 }]} onPress={() => router.push('/user-stack/change-profile')}>
                             <SetText size={16} color={colors.grey}>แก้ไขข้อมูลส่วนตัว</SetText>
                             <Iconify icon="weui:back-filled" size={14} color={colors.grey} style={{ transform: [{ rotate: '180deg' }, { scaleX: 1.5 }] }} />

@@ -111,20 +111,12 @@ export default function ConfirmOrder() {
     const navigation = useNavigation();
     const router = useRouter();
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-    const [user, setUser] = useState<IUser | null>(null);
+    // const [user, setUser] = useState<IUser | null>(null);
 
     useEffect(() => {
         navigation.setOptions({
             headerTitle: "รายการสั่งตัด",
         });
-
-        const fetchUser = async () => {
-            const getStoredData = await AsyncStorage.getItem('@access_user');
-            setUser(JSON.parse(getStoredData!).data);
-            // console.log(getStoredData);
-        }
-
-        fetchUser();
     }, []);
 
     const onConfirmOrderButton = () => {
@@ -132,20 +124,20 @@ export default function ConfirmOrder() {
         router.replace('/user-stack/order-success');
     }
 
-    if (!user) return null;
+    // if (!user) return null;
     return (
         <>
             <WrapManageDesign page='order'>
                 <View style={{ flexDirection: 'column', marginBottom: 15, gap: 10 }}>
                     <SetText type="bold" size={24}>ที่อยู่ในการจัดส่ง</SetText>
-                    <SettingMenuItem item={
+                    {/* <SettingMenuItem item={
                         {
                             icon: <Iconify icon="bx:bx-map" size={30} color={colors.whereblack} />,
                             title: user.address.length > 35 ? user.address.substring(0, 35) + '...' : user.address,
                             detail: user.display_name + ' ' + user.phone_number,
                             to: () => router.push('/')
                         }
-                    } />
+                    } /> */}
                 </View>
                 <View style={{ height: '100%' }}>
                     <GestureHandlerRootView style={{ flex: 1 }}>
