@@ -1,5 +1,6 @@
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
+import { useSession } from "@/contexts/SessionContext";
 import { useToast } from "@/contexts/ToastContext";
 import { IFabric } from "@/types/IFabric";
 import { colors, styles } from "@/utils/styles";
@@ -78,8 +79,10 @@ export const sizeList = ['S', 'M', 'L', 'XL', 'XXL'];
 export default function ProductDetail() {
     const [fabric, setFabric] = useState<number | null>(null);
     const [size, setSize] = useState<string | null>(null);
-    const [detail, setDetail] = useState<string | null>(null);
+    const [detail, setDetail] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
+
+    const [isReady, setIsReady] = useState<boolean>(false);
 
     const route = useRoute() as { params: { design_id: string } };
     const router = useRouter();
@@ -87,6 +90,7 @@ export default function ProductDetail() {
     const { design_id } = route.params;
 
     const { showToast } = useToast();
+    const { updateProduct } = useSession();
 
     useEffect(() => {
         console.log(design_id)
@@ -94,6 +98,12 @@ export default function ProductDetail() {
             headerTitle: "",
         });
     }, [])
+
+    useEffect(() => {
+        if (fabric !== null && size !== null) {
+            setIsReady(true);
+        }
+    })
 
     const { width } = Dimensions.get('window');
 
@@ -121,8 +131,16 @@ export default function ProductDetail() {
 
     const onButtonSubmit = () => {
         console.log(fabric, size, detail, quantity);
-        showToast('บันทึกแบบเรียบร้อยแล้ว', 'แบบที่คุณแก้ไขได้ถูกบันทึกเรียบร้อยแล้ว', 4000);
-        router.push('/user-stack/manage-design');
+
+        updateProduct({
+            design_id: design_id, 
+            fabric_id: fabric?.toString(), 
+            size: size, 
+            detail: detail, 
+            total_quantity: quantity});
+        showToast('บันทึกแบบเรียบร้อยแล้ว', 'แบบที่คุณแก้ไขได้ถูกบันทึกเรียบร้อยแล้ว', 'success');
+        router.dismissAll();
+        router.replace('/user-stack/manage-design');
     }
 
     return (
@@ -220,7 +238,7 @@ export default function ProductDetail() {
                         <Iconify icon="simple-line-icons:plus" size={24} color={colors.whereblack} />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={onButtonSubmit} style={[{ backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12 }, styles.shadowCustom]}>
+                <TouchableOpacity disabled={!isReady} onPress={onButtonSubmit} style={[{ backgroundColor: isReady? colors.mediumpink : colors.grey, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12 }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white}>เพิ่มลงตะกร้า</SetText>
                 </TouchableOpacity>
             </View>

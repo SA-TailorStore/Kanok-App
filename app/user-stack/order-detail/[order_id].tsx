@@ -4,107 +4,16 @@ import { filterTab, IFilterTab } from "@/components/OrderTab";
 import { SetText } from "@/components/SetText";
 import SettingMenuItem from "@/components/SettingMenuItem";
 import WrapBackground from "@/components/WrapBackground";
+import { useSession } from "@/contexts/SessionContext";
 import { useToast } from "@/contexts/ToastContext";
 import { IProduct } from "@/types/IProduct";
+import { ProductRequest } from "@/types/ProductRequest";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { TouchableOpacity, View, ScrollView } from "react-native";
 import { Iconify } from "react-native-iconify";
-
-const exampleData: IProduct[] = [
-    {
-        product_id: '0',
-        design_id: 0,
-        detail: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nihil suscipit accusantium placeat voluptatum, non a sunt sed incidunt itaque? Omnis nisi, in facere nam voluptas aliquid ducimus quidem voluptatum amet.',
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '1',
-        design_id: 0,
-        detail: "รายละเอียด2",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '2',
-        design_id: 0,
-        detail: "รายละเอียด3",
-        size: 'XXL',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '0',
-        design_id: 0,
-        detail: "รายละเอียด",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '1',
-        design_id: 0,
-        detail: "รายละเอียด2",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '2',
-        design_id: 0,
-        detail: "รายละเอียด3",
-        size: 'XXL',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '0',
-        design_id: 0,
-        detail: "รายละเอียด",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '1',
-        design_id: 0,
-        detail: "รายละเอียด2",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '2',
-        design_id: 0,
-        detail: "รายละเอียด3",
-        size: 'XXL',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    }
-];
 
 export default function OrderDetail() {
     const [isShow, setIsShow] = useState<boolean>(false);
@@ -118,6 +27,7 @@ export default function OrderDetail() {
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
 
     const { showToast } = useToast();
+    const { productContext } = useSession();
 
     const status = 'processing';
 
@@ -187,10 +97,10 @@ export default function OrderDetail() {
                 <View style={{ marginTop: '3%', marginHorizontal: '5%', backgroundColor: colors.white, borderRadius: 10, ...styles.shadowCustom }}>
                     {isShow2 ?
                         <>
-                            {exampleData.map((item, index) => (
+                            {productContext.map((item: ProductRequest, index: number) => (
                                 <ConfirmOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />
                             ))}
-                        </> : <ConfirmOrderCard item={exampleData[0]} setSelectedProduct={setSelectedProduct} />
+                        </> : <ConfirmOrderCard item={productContext[0]} setSelectedProduct={setSelectedProduct} />
 
                     }
                     <TouchableOpacity onPress={() => setIsShow2((s) => !s)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: '5%', borderTopWidth: 1, borderColor: colors.line, paddingVertical: '3%' }}>

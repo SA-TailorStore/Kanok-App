@@ -45,7 +45,7 @@ export default function HomePage() {
         {
             title: "เลือกแบบที่ต้องการ",
             icon: <Knitwork />,
-            to: ()=>router.push('/user-stack/choose-design-user')
+            to: ()=>router.push('/user-stack/manage-design')
         },
     ]
 

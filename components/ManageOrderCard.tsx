@@ -4,10 +4,11 @@ import { Swipeable } from "react-native-gesture-handler";
 import { SetText } from "./SetText";
 import { IProduct } from "@/types/IProduct";
 import { Iconify } from "react-native-iconify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ProductRequest } from "@/types/ProductRequest";
 
-export default function ManageOrderCard({ item, setSelectedProduct }: { item: IProduct, setSelectedProduct: React.Dispatch<React.SetStateAction<string|null>> }) {
-    const [quantity, setQuantity] = useState<number>(1);
+export default function ManageOrderCard({ item, setSelectedProduct }: { item: ProductRequest, setSelectedProduct: React.Dispatch<React.SetStateAction<string|null>> }) {
+    const [quantity, setQuantity] = useState<number>(item.total_quantity);
     const [isHidden, setIsHidden] = useState<boolean>(false);
 
     const createTwoButtonAlert = () =>
@@ -44,6 +45,10 @@ export default function ManageOrderCard({ item, setSelectedProduct }: { item: IP
         });
     }
 
+    useEffect(() => {
+        console.log(item)
+    },[])
+
     return (
         <>
             {!isHidden && <Swipeable
@@ -63,7 +68,7 @@ export default function ManageOrderCard({ item, setSelectedProduct }: { item: IP
             >
                 <View style={{ backgroundColor: colors.white, height: 160, borderRadius: 16, padding: 16 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <SetText type="bold" size={16}>รหัสสินค้า : {item.product_id}</SetText>
+                        <SetText type="bold" size={16}>รหัสสินค้า : {item.design_id}</SetText>
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: 5, gap: 10 }}>
                         <View style={{ width: 100, height: 100, borderWidth: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 8 }}>

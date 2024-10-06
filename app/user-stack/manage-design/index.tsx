@@ -5,114 +5,24 @@ import { useNavigation, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
-import { IProduct } from "@/types/IProduct";
 import ManageOrderCard from "@/components/ManageOrderCard";
-
-const exampleData: IProduct[] = [
-    {
-        product_id: '0',
-        design_id: 0,
-        detail: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nihil suscipit accusantium placeat voluptatum, non a sunt sed incidunt itaque? Omnis nisi, in facere nam voluptas aliquid ducimus quidem voluptatum amet.',
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '1',
-        design_id: 0,
-        detail: "รายละเอียด2",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '2',
-        design_id: 0,
-        detail: "รายละเอียด3",
-        size: 'XXL',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '0',
-        design_id: 0,
-        detail: "รายละเอียด",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '1',
-        design_id: 0,
-        detail: "รายละเอียด2",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '2',
-        design_id: 0,
-        detail: "รายละเอียด3",
-        size: 'XXL',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '0',
-        design_id: 0,
-        detail: "รายละเอียด",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '1',
-        design_id: 0,
-        detail: "รายละเอียด2",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '2',
-        design_id: 0,
-        detail: "รายละเอียด3",
-        size: 'XXL',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    }
-];
-
+import { useSession } from "@/contexts/SessionContext";
+import { ProductRequest } from "@/types/ProductRequest";
 
 export default function ManageDesign() {
     const navigation = useNavigation();
     const router = useRouter();
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+    const { productContext, updateProductContext } = useSession();
 
     useEffect(() => {
         navigation.setOptions({
             headerTitle: "รายการสั่งตัด",
         });
+        if (productContext.length === 0) {
+            router.replace('/user-stack/choose-design-user');
+        }
     }, []);
-
 
     return (
         <>
@@ -125,7 +35,7 @@ export default function ManageDesign() {
                     <GestureHandlerRootView style={{ flex: 1 }}>
                         <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 330 }} showsVerticalScrollIndicator={false}>
                             {
-                                exampleData.map((item, index) => (
+                                productContext.map((item: ProductRequest, index: number) => (
                                     <ManageOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />
                                 ))
                             }

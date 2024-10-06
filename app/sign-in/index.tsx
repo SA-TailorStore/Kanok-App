@@ -6,7 +6,6 @@ import { Link, useRouter } from "expo-router";
 import { SetText } from "@/components/SetText";
 import { ScrollView } from "react-native";
 import { colors } from "@/utils/styles";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSession } from "@/contexts/SessionContext";
@@ -29,24 +28,21 @@ const exampleUserData = {
 
 export default function SignIn() {
     const router = useRouter();
-    const { setToken, getToken } = useSession();
+    const { setToken, getToken, checkRole } = useSession();
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [user, setUser] = useState<any>({});
 
     const signButtonClicked = async() => {
-        router.replace("/user-tab/home");
-        // await axios.post(process.env.EXPO_PUBLIC_API_URL + '/login', {
-        //     username: username,
-        //     password: password,
-        // }).then(async(res) => {
-        //     console.log(res.data.data.token);
-        //     // await AsyncStorage.setItem('@access_token', res.data.data.token);
-        //     setToken(res.data.data.token);
-        //     router.replace("/user-tab/home");
-        // }).catch((err) => {
-        //     console.log(err)
-        // });
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/login', {
+            username: username,
+            password: password,
+        }).then(async(res) => {
+            console.log("Access Token: " + res.data.token);      
+            setToken(res.data.token);
+            // checkRole();
+        }).catch((err) => {
+            console.log('sign-in : ' + err)
+        });
     }
 
     useEffect(() => {

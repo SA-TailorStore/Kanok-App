@@ -12,6 +12,9 @@ import { Iconify } from "react-native-iconify";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IUser } from "@/types/IUser";
 import ConfirmOrderCard from "@/components/ComfirmOrderCard";
+import { useSession } from "@/contexts/SessionContext";
+import { ProductRequest } from "@/types/ProductRequest";
+import axios from "axios";
 
 const exampleData: IProduct[] = [
     {
@@ -112,6 +115,7 @@ export default function ConfirmOrder() {
     const router = useRouter();
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
     // const [user, setUser] = useState<IUser | null>(null);
+    const { userContext, productContext } = useSession();
 
     useEffect(() => {
         navigation.setOptions({
@@ -119,31 +123,32 @@ export default function ConfirmOrder() {
         });
     }, []);
 
-    const onConfirmOrderButton = () => {
+    const onConfirmOrderButton = async() => {
+        console.log(productContext);
         router.dismissAll();
         router.replace('/user-stack/order-success');
     }
 
-    // if (!user) return null;
+    if (!userContext) return null;
     return (
         <>
             <WrapManageDesign page='order'>
                 <View style={{ flexDirection: 'column', marginBottom: 15, gap: 10 }}>
                     <SetText type="bold" size={24}>ที่อยู่ในการจัดส่ง</SetText>
-                    {/* <SettingMenuItem item={
+                    <SettingMenuItem item={
                         {
                             icon: <Iconify icon="bx:bx-map" size={30} color={colors.whereblack} />,
-                            title: user.address.length > 35 ? user.address.substring(0, 35) + '...' : user.address,
-                            detail: user.display_name + ' ' + user.phone_number,
-                            to: () => router.push('/')
+                            title: userContext.address.length > 35 ? userContext.address.substring(0, 35) + '...' : userContext.address,
+                            detail: userContext.display_name + ' ' + userContext.phone_number,
+                            to: () => router.push('/user-stack/my-address')
                         }
-                    } /> */}
+                    } />
                 </View>
                 <View style={{ height: '100%' }}>
                     <GestureHandlerRootView style={{ flex: 1 }}>
                         <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 450 }} showsVerticalScrollIndicator={false}>
                             {
-                                exampleData.map((item, index) => (
+                                productContext.map((item: ProductRequest, index: number) => (
                                     <ConfirmOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />
                                 ))
                             }
@@ -154,7 +159,7 @@ export default function ConfirmOrder() {
             <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', paddingHorizontal: '5%', zIndex: 90 }}>
                 <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
                     <SetText type="bold" size={16}>จำนวน</SetText>
-                    <SetText type="bold" size={16}>{exampleData.length} รายการ</SetText>
+                    <SetText type="bold" size={16}>{productContext.length} รายการ</SetText>
                 </View>
                 <TouchableOpacity onPress={onConfirmOrderButton} style={[{ backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white}>สั่งสินค้า</SetText>

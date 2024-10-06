@@ -11,7 +11,7 @@ export default function OrderSuccess() {
     const navigation = useNavigation();
     const router = useRouter();
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-    const [user, setUser] = useState<IUser | null>(null);
+    // const [user, setUser] = useState<IUser | null>(null);
 
     useEffect(() => {
         navigation.setOptions({
@@ -19,14 +19,6 @@ export default function OrderSuccess() {
             // hide back buttom
 
         });
-
-        const fetchUser = async () => {
-            const getStoredData = await AsyncStorage.getItem('@access_user');
-            setUser(JSON.parse(getStoredData!).data);
-            // console.log(getStoredData);
-        }
-
-        fetchUser();
     }, []);
 
     const onBacktoMainButton = () => {
@@ -39,7 +31,7 @@ export default function OrderSuccess() {
         router.replace('/user-tab/order');
     }
 
-    if (!user) return null;
+    // if (!user) return null;
     return (
         <>
             <WrapManageDesign page='order success'>

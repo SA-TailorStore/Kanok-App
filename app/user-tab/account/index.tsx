@@ -6,8 +6,10 @@ import { SetText } from "@/components/SetText";
 import { Iconify } from "react-native-iconify";
 import SettingMenuItem from "@/components/SettingMenuItem";
 import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession } from "@/contexts/SessionContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { UserResponse } from "@/types/IUser";
 
 export type SettingMenuProps = {
     icon: JSX.Element;
@@ -18,15 +20,22 @@ export type SettingMenuProps = {
 }
 
 export default function AccountPage() {
-    const { removeToken } = useSession();
+    const { removeToken, userContext } = useSession();
     const router = useRouter();
-    // const [user, setUser] = useState<any>(null);
+    // const [user, setUser] = useState<UserResponse | null>(null);
 
     useEffect(() => {
         // const getUser = async () => {
         //     // code here : get user data from @access_user
-        //     const getStoredData = await AsyncStorage.getItem('@access_user');
-        //     setUser(JSON.parse(getStoredData!).data);
+        //     const token = await AsyncStorage.getItem('@access_token');
+        //     await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/token', {
+        //         token: token,
+        //     }).then(async (res) => {
+        //         console.log(res.data.data);
+        //         setUser(res.data.data);
+        //     }).catch((err) => {
+        //         console.log('getUser : ' + err)
+        //     })
         // }
         // getUser();
     }, [])
@@ -65,7 +74,7 @@ export default function AccountPage() {
         }
     ]
 
-    // if (!user) return null;
+    if (!userContext) return null;
 
     return (
         <WrapBackground color={colors.backgroundColor}>
@@ -78,8 +87,7 @@ export default function AccountPage() {
                         {/* <Image source={} style={{ width: '100%', height: '100%', objectFit: 'fill', borderRadius: 999 }} /> */}
                     </View>
                     <View>
-                        {/* <SetText type='bold' size={20}>{user.display_name}</SetText> */}
-                        <SetText type='bold' size={20}>Hello</SetText>
+                        <SetText type='bold' size={20}>{userContext.display_name}</SetText>
                         <TouchableOpacity style={[{ flexDirection: 'row', alignItems: 'center', height: 30, gap: 6, }, { marginTop: -4 }]} onPress={() => router.push('/user-stack/change-profile')}>
                             <SetText size={16} color={colors.grey}>แก้ไขข้อมูลส่วนตัว</SetText>
                             <Iconify icon="weui:back-filled" size={14} color={colors.grey} style={{ transform: [{ rotate: '180deg' }, { scaleX: 1.5 }] }} />

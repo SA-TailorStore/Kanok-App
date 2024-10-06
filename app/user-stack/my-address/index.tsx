@@ -1,16 +1,24 @@
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
+import { useSession } from "@/contexts/SessionContext";
+import { useToast } from "@/contexts/ToastContext";
+import { UserResponse } from "@/types/IUser";
 import { colors, styles } from "@/utils/styles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function MyAddress() {
     const router = useRouter();
-    const [displayName, setDisplayName] = useState<string>('ไอแมน ไอหมูตอน');
-    const [phoneNumber, setPhoneNumber] = useState<string>('081-000-0000');
-    const [address1, setAddress1] = useState<string>('123/456 หมู่ 7 ซอย 8 ตำบล แขวง');
-    const [address2, setAddress2] = useState<string>('Rayong Thailand 21000');
+    const { userContext, tokenContext } = useSession();
+    const { showToast } = useToast();
+    const [displayName, setDisplayName] = useState<string>(userContext.display_name);
+    const [phoneNumber, setPhoneNumber] = useState<string>(userContext.phone_number);
+    const address = userContext.address.split('|');
+    const [address1, setAddress1] = useState<string>(userContext.address[0]);
+    const [address2, setAddress2] = useState<string>(userContext.address[1]);
 
     const navigation = useNavigation();
     useEffect(() => {
@@ -18,6 +26,19 @@ export default function MyAddress() {
             headerTitle: "ที่อยู่ของฉัน",
         });
     }, [])
+
+    const onConfirmChangeButton = async () => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/update/my-address', {
+            token: tokenContext,
+            display_name: displayName, 
+            phone_name: phoneNumber,
+            address: address1 + '|' + address2,
+        }).then(async(res) => {}).catch((err) => {
+            showToast('เกิดข้อผิดพลาด', 'error', 'error');
+        })
+    }
+
+    if (!userContext) return null;
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '7%', backgroundColor: colors.wherewhite }} />
@@ -41,7 +62,7 @@ export default function MyAddress() {
                 </View>
             </ScrollView>
             <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: colors.line, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
-                <TouchableOpacity onPress={()=>console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%', height: 45 }, styles.shadowCustom]}>
+                <TouchableOpacity onPress={()=>onConfirmChangeButton()} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%', height: 45 }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 20}}>ยืนยัน</SetText>
                 </TouchableOpacity>
             </View>
