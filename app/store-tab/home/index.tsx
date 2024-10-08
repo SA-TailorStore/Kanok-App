@@ -29,7 +29,7 @@ export default function HomePage() {
                         <SetText size={27} type="bold" style={{ paddingTop: 14 }}>เลือกหมวดหมู่ที่ต้องการ</SetText>
                         <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }}>
                             <ItemChoice title="ออเดอร์" icon={<Iconify icon="lets-icons:order-fill" size={60} color={colors.mediumpink} />} />
-                            <ItemChoice title="แบบดีไซน์" icon={<Iconify icon="mdi:clothes-hanger" size={60} color={colors.mediumpink} />} />
+                            <ItemChoice title="แบบดีไซน์" icon={<Iconify icon="mdi:clothes-hanger" size={60} color={colors.mediumpink} />} to={()=>router.push('/store-stack/design')} />
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10, }}>
                             <ItemChoice title="วัสดุ" icon={<Knitwork/>} to={()=>router.push('/store-stack/material')}/>

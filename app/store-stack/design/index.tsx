@@ -1,9 +1,10 @@
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
-import { colors } from "@/utils/styles";
+import { colors, styles } from "@/utils/styles";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { TouchableOpacity, View, Image, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import { TouchableOpacity, View, Image, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Alert } from "react-native";
+import { Iconify } from "react-native-iconify";
 
 type IDesign = {
     design_id: number,
@@ -144,6 +145,19 @@ const exampleTagDataSource: IDesign[] = [
     }
 ];
 
+
+const createTwoButtonAlert = () =>
+    Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบแบบที่คุณเลือก', [
+        {
+            text: 'ยกเลิก',
+            onPress: () => console.log('ยกเลิก'),
+            style: 'cancel',
+        },
+        {
+            text: 'ลบ', onPress: () => console.log('ลบ')
+        },
+    ]);
+
 const TagItem = ({ item, isSelected, setSelectedTag }: { item: IDesignTag, isSelected?: boolean, setSelectedTag?: React.Dispatch<React.SetStateAction<number>>; }) => {
     type ICondition = {
         borderColor: string,
@@ -164,19 +178,23 @@ const TagItem = ({ item, isSelected, setSelectedTag }: { item: IDesignTag, isSel
     );
 }
 
-const CardItem = ({ item } : { item : IDesign }) => {
+const CardItem = ({ item }: { item: IDesign }) => {
     const router = useRouter();
 
     return (
-        <TouchableOpacity onPress={() => router.push(`/user-stack/add-information/${item.design_id}`)} style={{ width: '45%', height: 260, marginBottom: 10 }}>
-            <View style={{ width: '100%', height: 200, borderRadius: 10 }}>
+        <View style={{ width: '45%', height: 260, marginBottom: 10 }}>
+            <TouchableOpacity onPress={() => router.push(`/user-stack/add-information/${item.design_id}`)} style={{ width: '100%', height: 200, borderRadius: 10 }}>
                 <Image source={require('@/assets/images/promote.png')} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
+            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View style={{ width: '100%', paddingHorizontal: '5%', paddingTop: '2%' }}>
+                    <SetText type='bold'>no.{item.design_id}</SetText>
+                    <SetText type='small' color={colors.grey}>ประเภท: {item.type}</SetText>
+                </View>
+                <Iconify onTouchEnd={() => createTwoButtonAlert()} icon="solar:trash-bin-trash-line-duotone" size={20} color={colors.mediumpink} style={{ position: 'absolute', right: 10, top: 10 }} />
             </View>
-            <View style={{ width: '100%', paddingHorizontal: '5%', paddingTop: '2%' }}>
-                <SetText type='bold'>no.{item.design_id}</SetText>
-                <SetText type='small' color={colors.grey}>ประเภท: {item.type}</SetText>
-            </View>
-        </TouchableOpacity>
+
+        </View>
     );
 }
 
@@ -184,11 +202,12 @@ export default function Design() {
     const navigation = useNavigation();
     const [scrollY, setScrollY] = useState<number>(0);
     const [selectedTag, setSelectedTag] = useState<number>(0);
+    const [isPopup, setIsPopup] = useState<boolean>(false);
 
     useEffect(() => {
         let title = ''
         if (scrollY > 80) {
-            title = 'เลือกแบบที่ต้องการ'
+            title = 'จัดการดีไซน์ของคุณ'
         } else {
             title = ''
         }
@@ -211,7 +230,7 @@ export default function Design() {
 
     return (
         <WrapBackground color={colors.backgroundColor}>
-            {scrollY > 80 && <View style={{ borderBottomWidth: 0.5, width: '100%', flexDirection: 'row', justifyContent: 'space-between', borderColor: colors.grey, position: 'absolute', paddingTop: '15%', backgroundColor: colors.white, zIndex: 100}}>
+            {scrollY > 80 && <View style={{ borderBottomWidth: 0.5, width: '100%', flexDirection: 'row', justifyContent: 'space-between', borderColor: colors.grey, position: 'absolute', paddingTop: '15%', backgroundColor: colors.white, zIndex: 100 }}>
                 {tag.map((item: IDesignTag, index: number) => {
                     return (
                         <TagItem key={index} item={item} isSelected={selectedTag === item.design_tag_id ? true : false} setSelectedTag={setSelectedTag} />
@@ -219,9 +238,9 @@ export default function Design() {
                 })}
             </View>}
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }} onScroll={(e: NativeSyntheticEvent<NativeScrollEvent>) => setScrollY(e.nativeEvent.contentOffset.y)}>
-                <View style={{ marginTop: '15%', marginHorizontal: '5%', opacity: scrollY > 80? 0 : (100-scrollY)/100 }}>
-                    <SetText size={24} type="bold">เลือกแบบที่ต้องการ</SetText>
-                    <SetText size={16}>เลือกแบบที่คุณต้องการ</SetText>
+                <View style={{ marginTop: '15%', marginHorizontal: '5%', opacity: scrollY > 80 ? 0 : (100 - scrollY) / 100 }}>
+                    <SetText size={24} type="bold">จัดการดีไซน์ของคุณ</SetText>
+                    <SetText size={16}>เพิ่มแบบที่คุณต้องการ</SetText>
                 </View>
                 <View style={{ borderBottomWidth: 0.5, width: '100%', flexDirection: 'row', justifyContent: 'space-between', borderColor: colors.grey, paddingTop: 22 }}>
                     {tag.map((item: IDesignTag, index: number) => {
@@ -238,6 +257,64 @@ export default function Design() {
                     })}
                 </View>
             </ScrollView>
+            <TouchableOpacity style={{ position: 'absolute', width: 70, height: 70, bottom: 0, right: 0, margin: 15, borderRadius: 999, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center', ...styles.shadowCustom }}>
+                <Iconify icon='fluent-emoji-high-contrast:plus' size={40} color={colors.mediumpink} />
+            </TouchableOpacity>
+            {!isPopup && <Popup action="add" setIsShow={()=>setIsPopup}/> }
         </WrapBackground>
     );
+}
+
+const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', material_id?: string, setIsShow: (value: boolean) => void }) => {
+    const [quantity, setQuantity] = useState<number>(0);
+    const [name, setName] = useState<string>('');
+
+    const increaseQuantity = () => {
+        setQuantity((q) => q + 1);
+    }
+
+    const increaseQuantity10 = () => {
+        setQuantity((q) => q + 10);
+    }
+
+    const decreaseQuantity = () => {
+        setQuantity((q) => {
+            if (q - 1 < 0) return 0;
+            return q - 1;
+        });
+    }
+
+    const decreaseQuantity10 = () => {
+        setQuantity((q) => {
+            if (q - 10 < 0) return 0;
+            return q - 10;
+        });
+    }
+    return (
+        <View style={{ position: 'absolute', height: '100%', width: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+            <View style={{ backgroundColor: colors.backgroundColor, width: '100%', height: '70%', position: 'absolute', bottom: 0, alignSelf: 'center', borderRadius: 16, padding: 20 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <SetText type="bold" size={20}>{action === 'add' ? 'เพิ่มแบบ' : 'แก้ไขแบบ'}</SetText>
+                    <TouchableOpacity onPress={() => setIsShow(false)}><Iconify icon="bx:bx-x" size={24} color={colors.grey} /></TouchableOpacity>
+                </View>
+                <View style={{ borderBottomWidth: 0.5, borderColor: colors.line, marginBottom: 20, paddingBottom: 20, gap: 10 }}>
+                    <SetText style={{ marginTop: 8 }} type="bold">อัปโหลดแบบที่ต้องการ</SetText>
+                    <TouchableOpacity style={{ width: 160, height: 224, borderRadius: 8, ...styles.shadowCustom, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center' }}>
+                        <Iconify icon="bx:bx-image-add" size={40} color={colors.grey} />
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'column' }}>
+                    <SetText type='bold' color={colors.whereblack} size={16}>ประเภท</SetText>
+                    <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center', borderWidth: 1, width: '50%', height: 35 }}>
+                        
+                    </View>
+                </View>
+            </View>
+            <TouchableOpacity disabled={!(name.length > 0)} style={{ borderTopWidth: 0.5, marginTop: 10, position: 'absolute', bottom: 0, height: 80, width: '100%', borderTopStartRadius: 8, borderTopEndRadius: 8, justifyContent: 'center', paddingHorizontal: 20, borderColor: colors.line }}>
+                <View style={{ padding: 10, alignItems: 'center', borderRadius: 999, backgroundColor: name.length > 0 ? colors.mediumpink : colors.lesspink }}>
+                    <SetText type='bold' color={colors.white}>บันทึก</SetText>
+                </View>
+            </TouchableOpacity>
+        </View>
+    )
 }
