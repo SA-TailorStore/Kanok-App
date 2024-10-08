@@ -37,12 +37,13 @@ export default function SessionProvider({ children }: any) {
         router.replace("/sign-in");
         setUserContext(null);
         setTokenContext(null);
+        setProductContext([]);
     }
 
     const continueSession = async (token: string) => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/login/token', {
             token: token,
-        }).then(async(res) => {
+        }).then(async (res) => {
             if (res.data.status != "201") return removeToken();
             console.log(`New Access Token: ${res.data.token}`);
             setToken(res.data.token);
@@ -63,6 +64,18 @@ export default function SessionProvider({ children }: any) {
                 router.replace("/sign-in");
                 break;
         }
+    }
+
+    const refreshSession = async () => {
+        const token = await AsyncStorage.getItem('@access_token');
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/token', {
+            token: token,
+        }).then(async (res) => {
+            console.log(res.data.data);
+            await setUserContext(res.data.data);
+        }).catch((err) => {
+            console.log('getUser : ' + err)
+        })
     }
 
     const getUser = async () => {
@@ -95,7 +108,7 @@ export default function SessionProvider({ children }: any) {
     //     return response.data.data;
     // } 
     return (
-        <SessionContext.Provider value={{ setToken, removeToken, userContext, tokenContext, productContext, updateProduct }}>
+        <SessionContext.Provider value={{ setToken, removeToken, userContext, tokenContext, productContext, updateProduct, checkRole }}>
             {children}
         </SessionContext.Provider>
     )
