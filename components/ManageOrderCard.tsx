@@ -2,7 +2,6 @@ import { colors, styles } from "@/utils/styles";
 import { Alert, TouchableOpacity, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { SetText } from "./SetText";
-import { IProduct } from "@/types/IProduct";
 import { Iconify } from "react-native-iconify";
 import { useEffect, useState } from "react";
 import { ProductRequest } from "@/types/ProductRequest";
@@ -51,7 +50,7 @@ export default function ManageOrderCard({ item, setSelectedProduct }: { item: Pr
 
     return (
         <>
-            {!isHidden && <Swipeable
+            <Swipeable
                 containerStyle={{ ...styles.shadowCustom, backgroundColor: colors.white, borderRadius: 16 }}
                 renderRightActions={() => {
                     return (
@@ -101,7 +100,7 @@ export default function ManageOrderCard({ item, setSelectedProduct }: { item: Pr
                         </View>
                     </View>
                 </View>
-            </Swipeable>}
+            </Swipeable>
         </>
     )
 }

@@ -56,6 +56,9 @@ export default function SessionProvider({ children }: any) {
             case 'user':
                 router.replace("/user-tab/home");
                 break;
+            case 'store':
+                router.replace("/store-tab/home");
+                break;
             default:
                 router.replace("/sign-in");
                 break;
