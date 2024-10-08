@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Image, ScrollView, useWindowDimensions, View } from "react-native";
 import { Iconify } from "react-native-iconify";
 import AddPhoto from "@/assets/icons/add_photo";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSession } from "@/contexts/SessionContext";
 
 const SaveButton = () => {
     return (
@@ -16,17 +16,10 @@ const SaveButton = () => {
 }
 
 export default function ChangeProfile() {
-    const [user, setUser] = useState<any>({});
+    const { userContext } = useSession();
     const { width } = useWindowDimensions();
-
-    useEffect(()=> {
-        const getUser = async () => {
-            // code here : get user data from @access_user
-            const getStoredData = await AsyncStorage.getItem('@access_user');
-            setUser(JSON.parse(getStoredData!).data);
-        }
-        getUser();
-    });
+    const [displayName, setDisplayName] = useState<string>('');
+    const [phoneNumber, setPhoneNumber] = useState<string>('');
 
     const navigation = useNavigation();
     useEffect(() => {
@@ -34,9 +27,10 @@ export default function ChangeProfile() {
             headerTitle: 'โปรไฟล์ของฉัน',
             headerRight: () => <SaveButton />,
         });
+        console.log(userContext);
     }, []);
 
-    if (!user) return null;
+    if (!userContext) return null;
 
     return (
         <WrapBackground color={colors.backgroundColor}>
@@ -54,13 +48,17 @@ export default function ChangeProfile() {
                             key="username"
                             iconHeader={<Iconify icon="ic:round-account-circle" size={25} color="#C8C8C8" />}
                             textContentType="username"
-                            placeholder={user.display_name}
+                            value={displayName}
+                            onChangeText={setDisplayName}
+                            placeholder={userContext.display_name}
                         />
                         <FormInput
                             key="phone"
                             iconHeader={<Iconify icon="mingcute:phone-fill" size={25} color="#C8C8C8" />}
                             textContentType="telephoneNumber"
-                            placeholder={user.phone_number}
+                            value={phoneNumber}
+                            onChangeText={setPhoneNumber}
+                            placeholder={userContext.phone_number}
                         />
                     </View>
                 </View>
