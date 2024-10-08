@@ -2,9 +2,11 @@ import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { colors, styles } from "@/utils/styles";
 import { useNavigation, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View, Image, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Alert } from "react-native";
 import { Iconify } from "react-native-iconify";
+import RNPickerSelect from 'react-native-picker-select';
+import { Dropdown } from 'react-native-element-dropdown';
 
 type IDesign = {
     design_id: number,
@@ -257,58 +259,85 @@ export default function Design() {
                     })}
                 </View>
             </ScrollView>
-            <TouchableOpacity style={{ position: 'absolute', width: 70, height: 70, bottom: 0, right: 0, margin: 15, borderRadius: 999, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center', ...styles.shadowCustom }}>
+            <TouchableOpacity onPress={() => setIsPopup(true)} style={{ position: 'absolute', width: 70, height: 70, bottom: 0, right: 0, margin: 15, borderRadius: 999, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center', ...styles.shadowCustom }}>
                 <Iconify icon='fluent-emoji-high-contrast:plus' size={40} color={colors.mediumpink} />
             </TouchableOpacity>
-            {!isPopup && <Popup action="add" setIsShow={()=>setIsPopup}/> }
+            {isPopup && <Popup action="add" setIsShow={setIsPopup} />}
         </WrapBackground>
     );
 }
 
-const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', material_id?: string, setIsShow: (value: boolean) => void }) => {
-    const [quantity, setQuantity] = useState<number>(0);
+const Popup = ({ action, design_id, setIsShow }: { action: 'add' | 'edit', design_id?: string, setIsShow: (value: boolean) => void }) => {
     const [name, setName] = useState<string>('');
+    const [value, setValue] = useState<any>(null);
+    const [isFocus, setIsFocus] = useState(false);
 
-    const increaseQuantity = () => {
-        setQuantity((q) => q + 1);
-    }
-
-    const increaseQuantity10 = () => {
-        setQuantity((q) => q + 10);
-    }
-
-    const decreaseQuantity = () => {
-        setQuantity((q) => {
-            if (q - 1 < 0) return 0;
-            return q - 1;
-        });
-    }
-
-    const decreaseQuantity10 = () => {
-        setQuantity((q) => {
-            if (q - 10 < 0) return 0;
-            return q - 10;
-        });
-    }
     return (
         <View style={{ position: 'absolute', height: '100%', width: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-            <View style={{ backgroundColor: colors.backgroundColor, width: '100%', height: '70%', position: 'absolute', bottom: 0, alignSelf: 'center', borderRadius: 16, padding: 20 }}>
+            <View style={{ backgroundColor: colors.backgroundColor, width: '100%', height: '60%', position: 'absolute', bottom: 0, alignSelf: 'center', borderRadius: 16, padding: 20 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <SetText type="bold" size={20}>{action === 'add' ? 'เพิ่มแบบ' : 'แก้ไขแบบ'}</SetText>
                     <TouchableOpacity onPress={() => setIsShow(false)}><Iconify icon="bx:bx-x" size={24} color={colors.grey} /></TouchableOpacity>
                 </View>
-                <View style={{ borderBottomWidth: 0.5, borderColor: colors.line, marginBottom: 20, paddingBottom: 20, gap: 10 }}>
+                <View style={{ flexDirection: 'column', gap: 5, marginTop: 20 }}>
+                    <SetText type='bold' color={colors.whereblack} size={16}>ประเภท</SetText>
+                    <Dropdown
+                        style={[{
+                            margin: 0,
+                            height: 40,
+                            borderBottomColor: 'gray',
+                            borderBottomWidth: 0.5,
+                        }, isFocus && { borderColor: 'blue' }]}
+                        placeholderStyle={{ fontSize: 16, fontFamily: 'notoSansThai', color: colors.grey }}
+                        selectedTextStyle={{ fontSize: 16, fontFamily: 'notoSansThai' }}
+                        itemTextStyle={{ fontSize: 16, fontFamily: 'notoSansThai' }}
+                        data={tag.slice(1).map((item: IDesignTag) => { return { label: item.type, value: item.design_tag_id } })}
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={!isFocus ? 'กรุณาเลือกประเภท' : 'กำลังเลือก...'}
+                        value={value}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
+                        onChange={item => {
+                            setValue(item.value);
+                            setIsFocus(false);
+                        }}
+                    />
+                </View>
+                <View style={{ marginTop: 20, borderColor: colors.line, paddingBottom: 20, gap: 10 }}>
                     <SetText style={{ marginTop: 8 }} type="bold">อัปโหลดแบบที่ต้องการ</SetText>
                     <TouchableOpacity style={{ width: 160, height: 224, borderRadius: 8, ...styles.shadowCustom, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center' }}>
                         <Iconify icon="bx:bx-image-add" size={40} color={colors.grey} />
                     </TouchableOpacity>
                 </View>
-                <View style={{ flexDirection: 'column' }}>
+                {/* <View style={{ flexDirection: 'column', gap: 5 }}>
                     <SetText type='bold' color={colors.whereblack} size={16}>ประเภท</SetText>
-                    <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center', borderWidth: 1, width: '50%', height: 35 }}>
+                    <Dropdown
                         
-                    </View>
-                </View>
+                        style={[{
+                            margin: 0,
+                            height: 40,
+                            borderBottomColor: 'gray',
+                            borderBottomWidth: 0.5,
+                        }, isFocus && { borderColor: 'blue' }]}
+                        placeholderStyle={{ fontSize: 16, fontFamily: 'notoSansThai', color: colors.grey }}
+                        selectedTextStyle={{ fontSize: 16, fontFamily: 'notoSansThai' }}
+                        itemTextStyle={{ fontSize: 16, fontFamily: 'notoSansThai' }}
+                        data={tag.slice(1).map((item: IDesignTag) => { return { label: item.type, value: item.design_tag_id } })}
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={!isFocus ? 'กรุณาเลือกประเภท' : 'กำลังเลือก...'}
+                        value={value}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
+                        onChange={item => {
+                            setValue(item.value);
+                            setIsFocus(false);
+                        }}
+                    />
+                </View> */}
             </View>
             <TouchableOpacity disabled={!(name.length > 0)} style={{ borderTopWidth: 0.5, marginTop: 10, position: 'absolute', bottom: 0, height: 80, width: '100%', borderTopStartRadius: 8, borderTopEndRadius: 8, justifyContent: 'center', paddingHorizontal: 20, borderColor: colors.line }}>
                 <View style={{ padding: 10, alignItems: 'center', borderRadius: 999, backgroundColor: name.length > 0 ? colors.mediumpink : colors.lesspink }}>
@@ -318,3 +347,34 @@ const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', mat
         </View>
     )
 }
+
+const DropdownComponent = () => {
+    const [value, setValue] = useState<any>(null);
+    const [isFocus, setIsFocus] = useState(false);
+
+    return (
+        <Dropdown
+            style={[{
+                margin: 0,
+                height: 40,
+                borderBottomColor: 'gray',
+                borderBottomWidth: 0.5,
+            }, isFocus && { borderColor: 'blue' }]}
+            placeholderStyle={{ fontSize: 16, fontFamily: 'notoSansThai', color: colors.grey }}
+            selectedTextStyle={{ fontSize: 16, fontFamily: 'notoSansThai' }}
+            itemTextStyle={{ fontSize: 16, fontFamily: 'notoSansThai' }}
+            data={tag.slice(1).map((item: IDesignTag) => { return { label: item.type, value: item.design_tag_id } })}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!isFocus ? 'กรุณาเลือกประเภท' : 'กำลังเลือก...'}
+            value={value}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
+            onChange={item => {
+                setValue(item.value);
+                setIsFocus(false);
+            }}
+        />
+    );
+};

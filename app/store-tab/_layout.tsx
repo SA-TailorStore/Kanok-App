@@ -4,7 +4,6 @@ import React from 'react';
 import { Iconify } from 'react-native-iconify';
 import HomeIcon from "@/assets/icons/home";
 import AccountIcon from "@/assets/icons/account";
-import OrderIcon from "@/assets/icons/order";
 
 export default function TabLayout() {
 
