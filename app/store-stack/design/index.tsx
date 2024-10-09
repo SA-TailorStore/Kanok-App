@@ -6,12 +6,13 @@ import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View, Image, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Alert } from "react-native";
 import { Iconify } from "react-native-iconify";
 import { Dropdown } from 'react-native-element-dropdown';
-import { ImageLibraryOptions, launchImageLibrary } from "react-native-image-picker";
+import axios from "axios";
+import * as ImagePicker from 'expo-image-picker';
 
 type IDesign = {
     design_id: number,
     type: "เสื้อ" | "กางเกง" | "กระโปรง" | "เดรส",
-    image_url: string,
+    design_url: string,
     created_by?: number, // อาจไม่ต้องมีแล้วเพราะร้านค้าเป็นคน update เสื้อ
     created_at?: Date
 }
@@ -43,110 +44,6 @@ const tag: IDesignTag[] = [
         type: "เดรส",
     }
 ];
-
-const exampleTagDataSource: IDesign[] = [
-    {
-        design_id: 0,
-        type: "เสื้อ",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 1,
-        type: "กางเกง",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 2,
-        type: "เดรส",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 3,
-        type: "เสื้อ",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 4,
-        type: "กางเกง",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 5,
-        type: "เสื้อ",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 6,
-        type: "กางเกง",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 7,
-        type: "เดรส",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 8,
-        type: "เสื้อ",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 9,
-        type: "กางเกง",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 10,
-        type: "กระโปรง",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 11,
-        type: "กางเกง",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 12,
-        type: "เดรส",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 13,
-        type: "เสื้อ",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 14,
-        type: "กางเกง",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 15,
-        type: "เสื้อ",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 16,
-        type: "กางเกง",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 17,
-        type: "เดรส",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 18,
-        type: "เสื้อ",
-        image_url: "@/assets/images/promote.png",
-    },
-    {
-        design_id: 19,
-        type: "กางเกง",
-        image_url: "@/assets/images/promote.png",
-    }
-];
-
 
 const createTwoButtonAlert = () =>
     Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบแบบที่คุณเลือก', [
@@ -188,8 +85,10 @@ const CardItem = ({ item, setDesignId, setPopup }: { item: IDesign, setDesignId:
             <TouchableOpacity onPress={() => {
                 setDesignId(item.design_id);
                 setPopup(true);
-                }} style={{ width: '100%', height: 200, borderRadius: 10 }}>
-                <Image source={require('@/assets/images/promote.png')} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
+            }} style={{ width: '100%', height: 200, borderRadius: 10 }}>
+                <Image
+                    source={{ uri: item.design_url }}
+                    style={{ width: '100%', height: '100%', borderRadius: 10 }} />
             </TouchableOpacity>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <View style={{ width: '100%', paddingHorizontal: '5%', paddingTop: '2%' }}>
@@ -210,6 +109,7 @@ export default function Design() {
     const [isPopupAdd, setIsPopupAdd] = useState<boolean>(false);
     const [isPopupEdit, setIsPopupEdit] = useState<boolean>(false);
     const [designId, setDesignId] = useState<number>(0);
+    const [designData, setDesignData] = useState<IDesign[]>([]);
 
     useEffect(() => {
         let title = ''
@@ -225,8 +125,17 @@ export default function Design() {
 
     }, [scrollY]);
 
+    useEffect(() => {
+        const getDesign = async () => {
+            await axios.get(process.env.EXPO_PUBLIC_API_URL + '/api/designs').then((res) => {
+                if (res.data.data) setDesignData(res.data.data);
+            }).catch((err) => { console.log(err) })
+        }
+        getDesign();
+    }, [])
+
     const filteredData = () => {
-        return exampleTagDataSource.filter((item: IDesign) => {
+        return designData.filter((item: IDesign) => {
             if (selectedTag === 0) {
                 return true;
             } else {
@@ -257,11 +166,11 @@ export default function Design() {
                     })}
                 </View>
                 <View style={{ marginTop: '5%', marginHorizontal: '5%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                    {filteredData().map((item: any, index: number) => {
+                    {designData.length > 0 ? filteredData().map((item: any, index: number) => {
                         return (
-                            <CardItem key={index} item={item} setDesignId={setDesignId} setPopup={setIsPopupEdit}  />
+                            <CardItem key={index} item={item} setDesignId={setDesignId} setPopup={setIsPopupEdit} />
                         )
-                    })}
+                    }) : <SetText style={{ width: '100%', textAlign: 'center' }} size={16} color={colors.grey}>No Data</SetText>}
                 </View>
             </ScrollView>
             <TouchableOpacity onPress={() => setIsPopupAdd(true)} style={{ position: 'absolute', width: 70, height: 70, bottom: 0, right: 0, margin: 15, borderRadius: 999, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center', ...styles.shadowCustom }}>
@@ -278,19 +187,53 @@ const Popup = ({ action, design_id, setIsShow }: { action: 'add' | 'edit', desig
     const [isFocus, setIsFocus] = useState(false);
     const [photo, setPhoto] = useState<any>(null);
 
-    const handleChoosePhoto = () => {
-        const options: ImageLibraryOptions = {
-            mediaType: 'photo',
-            quality: 1,
-        };
-        launchImageLibrary(options, (response) => {
-            console.log('Response = ', response);
+    const fetchImageFromUri = async (uri: string) => {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        return blob;
+    };
 
-            if (!response.didCancel) {
-                setPhoto(response);
-            }
+    const handleChoosePhoto = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 0.5
         });
+
+        console.log(result);
+
+        if (!result.canceled) {
+            setPhoto(result.assets[0]);
+        }
     }
+
+    const handleSaveButton = async () => {
+        const formData = await new FormData();
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (permissionResult.granted === false) {
+            Alert.alert('Permission to access camera roll is required!');
+            return;
+        }
+        console.log(photo)
+
+        formData.append('type', 'เสื้อ');
+        formData.append('file.image', await fetchImageFromUri(photo.uri), photo.filename);
+
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/design/add', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then((res) => {
+            console.log(res.data);
+        }).catch((err) => {
+            console.log(err.response);
+        })
+    }
+
+
+
+
 
     return (
         <View style={{ position: 'absolute', height: '100%', width: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
@@ -332,75 +275,17 @@ const Popup = ({ action, design_id, setIsShow }: { action: 'add' | 'edit', desig
                     </TouchableOpacity> */}
                     <TouchableOpacity onPress={handleChoosePhoto} style={{ width: 160, height: 224, marginTop: 10, borderRadius: 10, backgroundColor: colors.white, ...styles.shadowCustom, alignItems: 'center', justifyContent: 'center' }}>
                         {photo && <TouchableOpacity onPress={() => setPhoto(null)} style={{ position: 'absolute', top: -10, right: -10, zIndex: 99 }}><Iconify icon="mdi:cross-circle" size={24} color={colors.black} /></TouchableOpacity>}
-                        {photo ? <Image source={{ uri: photo.assets[0].uri }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
+                        {photo ? <Image source={{ uri: photo.uri }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
                             : <Iconify icon="fluent-emoji-high-contrast:plus" size={40} color={colors.line} />
                         }
                     </TouchableOpacity>
                 </View>
-                {/* <View style={{ flexDirection: 'column', gap: 5 }}>
-                    <SetText type='bold' color={colors.whereblack} size={16}>ประเภท</SetText>
-                    <Dropdown
-                        
-                        style={[{
-                            margin: 0,
-                            height: 40,
-                            borderBottomColor: 'gray',
-                            borderBottomWidth: 0.5,
-                        }, isFocus && { borderColor: 'blue' }]}
-                        placeholderStyle={{ fontSize: 16, fontFamily: 'notoSansThai', color: colors.grey }}
-                        selectedTextStyle={{ fontSize: 16, fontFamily: 'notoSansThai' }}
-                        itemTextStyle={{ fontSize: 16, fontFamily: 'notoSansThai' }}
-                        data={tag.slice(1).map((item: IDesignTag) => { return { label: item.type, value: item.design_tag_id } })}
-                        maxHeight={300}
-                        labelField="label"
-                        valueField="value"
-                        placeholder={!isFocus ? 'กรุณาเลือกประเภท' : 'กำลังเลือก...'}
-                        value={value}
-                        onFocus={() => setIsFocus(true)}
-                        onBlur={() => setIsFocus(false)}
-                        onChange={item => {
-                            setValue(item.value);
-                            setIsFocus(false);
-                        }}
-                    />
-                </View> */}
             </View>
-            <TouchableOpacity disabled={!(value > 0)} style={{ borderTopWidth: 0.5, marginTop: 10, position: 'absolute', bottom: 0, height: 80, width: '100%', borderTopStartRadius: 8, borderTopEndRadius: 8, justifyContent: 'center', paddingHorizontal: 20, borderColor: colors.line }}>
-                <View style={{ padding: 10, alignItems: 'center', borderRadius: 999, backgroundColor: value > 0 ? colors.mediumpink : colors.lesspink }}>
+            <TouchableOpacity disabled={!(value > 0 && photo)} onPress={handleSaveButton} style={{ borderTopWidth: 0.5, marginTop: 10, position: 'absolute', bottom: 0, height: 80, width: '100%', borderTopStartRadius: 8, borderTopEndRadius: 8, justifyContent: 'center', paddingHorizontal: 20, borderColor: colors.line }}>
+                <View style={{ padding: 10, alignItems: 'center', borderRadius: 999, backgroundColor: value > 0 && photo ? colors.mediumpink : colors.lesspink }}>
                     <SetText type='bold' color={colors.white}>บันทึก</SetText>
                 </View>
             </TouchableOpacity>
         </View>
     )
 }
-
-const DropdownComponent = () => {
-    const [value, setValue] = useState<any>(null);
-    const [isFocus, setIsFocus] = useState(false);
-
-    return (
-        <Dropdown
-            style={[{
-                margin: 0,
-                height: 40,
-                borderBottomColor: 'gray',
-                borderBottomWidth: 0.5,
-            }, isFocus && { borderColor: 'blue' }]}
-            placeholderStyle={{ fontSize: 16, fontFamily: 'notoSansThai', color: colors.grey }}
-            selectedTextStyle={{ fontSize: 16, fontFamily: 'notoSansThai' }}
-            itemTextStyle={{ fontSize: 16, fontFamily: 'notoSansThai' }}
-            data={tag.slice(1).map((item: IDesignTag) => { return { label: item.type, value: item.design_tag_id } })}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={!isFocus ? 'กรุณาเลือกประเภท' : 'กำลังเลือก...'}
-            value={value}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            onChange={item => {
-                setValue(item.value);
-                setIsFocus(false);
-            }}
-        />
-    );
-};
