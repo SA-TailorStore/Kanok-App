@@ -31,7 +31,7 @@ export default function Material() {
                     await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/material/delete', { material_id: material_id }).then((res) => {
                         if (res.status === 200) {
                             getMaterials();
-                            showToast('ลบวัสดุสำเร็จ', `คุณลบวัสดุ id: ${id} สำเร็จ`, 'success');   
+                            showToast('ลบวัสดุสำเร็จ', `คุณลบวัสดุ id: ${id} สำเร็จ`, 'success');
                         }
                     }
                     ).catch((err) => {
@@ -93,7 +93,7 @@ export default function Material() {
                                             setMaterialId(item.material_id);
                                             setIsPopupEdit(true);
                                         }} key={index} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20, borderBottomWidth: 1, borderBottomColor: colors.line, paddingHorizontal: 20, height: 60, backgroundColor: colors.wherewhite }}>
-                                            <SetText style={{ width: '15%'}}>{item.material_name}</SetText>
+                                            <SetText style={{ width: '15%' }}>{item.material_name}</SetText>
                                             <SetText>{item.amount}</SetText>
                                             <Iconify icon="weui:back-filled" size={16} color={colors.grey} style={[{ transform: [{ rotate: '180deg' }] }]} />
                                         </View>
@@ -193,38 +193,47 @@ const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', mat
     return (
         <View style={{ position: 'absolute', height: '100%', width: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
             <View style={{ backgroundColor: colors.backgroundColor, width: '100%', height: '45%', position: 'absolute', bottom: 0, alignSelf: 'center', borderRadius: 16, padding: 20 }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <SetText type="bold" size={20}>{action === 'add' ? 'เพิ่มวัสดุ' : 'แก้ไขวัสดุ'}</SetText>
-                    <TouchableOpacity onPress={() => setIsShow(false)}><Iconify icon="bx:bx-x" size={24} color={colors.grey} /></TouchableOpacity>
-                </View>
-                <View style={{ borderBottomWidth: 0.5, borderColor: colors.line, marginBottom: 20, paddingBottom: 20 }}>
-                    <SetText style={{ marginTop: 8 }}>กรอกชื่อและจำนวนของวัสดุ</SetText>
-                    <TextInput
-                        multiline
-                        placeholder="ชื่อวัสดุ"
-                        onChange={(e) => setName(e.nativeEvent.text)}
-                        value={name}
-                        style={{ marginTop: 10, borderWidth: 0.5, borderColor: colors.line, borderRadius: 10, height: 60, fontFamily: 'notoSansThai', textAlignVertical: 'top', padding: 8 }}
-                    />
-                </View>
-                <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                    <SetText type='bold' color={colors.whereblack} size={16}>จำนวน</SetText>
-                    <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-                        <TouchableOpacity disabled={quantity === 0} style={quantity === 0 ? { opacity: 0.3 } : undefined} onPress={decreaseQuantity} onLongPress={decreaseQuantity10}>
-                            <Iconify icon="simple-line-icons:minus" size={24} color={colors.whereblack} />
-                        </TouchableOpacity>
-                        <SetText size={16} type="bold" style={{}}>{quantity}</SetText>
-                        <TouchableOpacity onPress={increaseQuantity} onLongPress={increaseQuantity10}>
-                            <Iconify icon="simple-line-icons:plus" size={24} color={colors.whereblack} />
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <GestureHandlerRootView>
+                    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 100}}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText type="bold" size={20}>{action === 'add' ? 'เพิ่มวัสดุ' : 'แก้ไขวัสดุ'}</SetText>
+                            <TouchableOpacity onPress={() => setIsShow(false)}><Iconify icon="bx:bx-x" size={24} color={colors.grey} /></TouchableOpacity>
+                        </View>
+                        <View style={{ borderBottomWidth: 0.5, borderColor: colors.line, marginBottom: 20, paddingBottom: 20 }}>
+                            <SetText style={{ marginTop: 8 }}>กรอกชื่อและจำนวนของวัสดุ</SetText>
+                            <TextInput
+                                multiline
+                                placeholder="ชื่อวัสดุ"
+                                onChange={(e) => setName(e.nativeEvent.text)}
+                                value={name}
+                                style={{ marginTop: 10, borderWidth: 0.5, borderColor: colors.line, borderRadius: 10, height: 60, fontFamily: 'notoSansThai', textAlignVertical: 'top', padding: 8 }}
+                            />
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                            <SetText type='bold' color={colors.whereblack} size={16}>จำนวน</SetText>
+                            <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                                <TouchableOpacity disabled={quantity === 0} style={quantity === 0 ? { opacity: 0.3 } : undefined} onPress={decreaseQuantity} onLongPress={decreaseQuantity10}>
+                                    <Iconify icon="simple-line-icons:minus" size={24} color={colors.whereblack} />
+                                </TouchableOpacity>
+                                <TextInput
+                                    keyboardType="number-pad"
+                                    value={quantity.toString()}
+                                    onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? setQuantity(parseInt(e.nativeEvent.text)) : setQuantity(0)}
+                                    style={{ borderWidth: 0.5, borderColor: colors.line, borderRadius: 10, height: 40, width: 100, textAlign: 'center', fontFamily: 'notoSansThai', padding: 8 }}
+                                />
+                                <TouchableOpacity onPress={increaseQuantity} onLongPress={increaseQuantity10}>
+                                    <Iconify icon="simple-line-icons:plus" size={24} color={colors.whereblack} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </ScrollView>
+                </GestureHandlerRootView>
             </View>
-            <TouchableOpacity onPress={handleSaveButton} disabled={!(name.length > 0) || buttonDelay} style={{ borderTopWidth: 0.5, marginTop: 10, position: 'absolute', bottom: 0, height: 80, width: '100%', borderTopStartRadius: 8, borderTopEndRadius: 8, justifyContent: 'center', paddingHorizontal: 20, borderColor: colors.line }}>
-                <View style={{ padding: 10, alignItems: 'center', borderRadius: 999, backgroundColor: !(name.length > 0) || buttonDelay ? colors.lesspink : colors.mediumpink }}>
+            <View style={{ borderTopWidth: 0.5, marginTop: 10, position: 'absolute', bottom: 0, height: 80, width: '100%', borderTopStartRadius: 8, borderTopEndRadius: 8, justifyContent: 'center', paddingHorizontal: 20, borderColor: colors.line, backgroundColor: colors.backgroundColor }}>
+                <TouchableOpacity onPress={handleSaveButton} disabled={!(name.length > 0) || buttonDelay} style={{ padding: 10, alignItems: 'center', borderRadius: 999, backgroundColor: !(name.length > 0) || buttonDelay ? colors.lesspink : colors.mediumpink }}>
                     <SetText type='bold' color={colors.white}>บันทึก</SetText>
-                </View>
-            </TouchableOpacity>
-        </View>
+                </TouchableOpacity>
+            </View>
+        </View >
     )
 }
