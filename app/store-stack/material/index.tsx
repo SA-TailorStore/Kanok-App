@@ -28,7 +28,7 @@ export default function Material() {
             },
             {
                 text: 'ลบ', onPress: async () => {
-                    await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/material/delete', { material_id: material_id }).then((res) => {
+                    await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/material/delete', { material_id: id }).then((res) => {
                         if (res.status === 200) {
                             getMaterials();
                             showToast('ลบวัสดุสำเร็จ', `คุณลบวัสดุ id: ${id} สำเร็จ`, 'success');
@@ -44,7 +44,11 @@ export default function Material() {
     const getMaterials = async () => {
         await axios.get(process.env.EXPO_PUBLIC_API_URL + '/api/materials').then((res) => {
             if (res.status === 200) {
-                if (res.data.data) setMaterials(res.data.data);
+                if (res.data.data) {
+                    setMaterials(res.data.data)
+                } else {
+                    setMaterials([]);
+                };
             }
         }).catch((err) => {
             console.log(err);
@@ -75,7 +79,7 @@ export default function Material() {
                     </View>
                     <GestureHandlerRootView style={{ flex: 1 }}>
                         <ScrollView>
-                            {
+                            {   materials.length > 0 ?
                                 materials.map((item: IMaterial, index: number) => (
                                     <Swipeable
                                         key={index}
@@ -98,7 +102,7 @@ export default function Material() {
                                             <Iconify icon="weui:back-filled" size={16} color={colors.grey} style={[{ transform: [{ rotate: '180deg' }] }]} />
                                         </View>
                                     </Swipeable>
-                                ))
+                                )) : <SetText style={{ width: '100%', textAlign: 'center', marginTop: '5%' }} size={16} color={colors.grey}>No Data</SetText>
                             }
                         </ScrollView>
                     </GestureHandlerRootView>

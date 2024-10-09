@@ -135,7 +135,11 @@ export default function Design() {
 
     const getDesign = async () => {
         await axios.get(process.env.EXPO_PUBLIC_API_URL + '/api/designs').then((res) => {
-            if (res.data.data) setDesignData(res.data.data);
+            if (res.data.data) {
+                setDesignData(res.data.data)
+            } else {
+                setDesignData([]);
+            };
         }).catch((err) => { console.log(err) })
     }
 
