@@ -1,14 +1,15 @@
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { colors, styles } from "@/utils/styles";
-import { useNavigation, useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
-import { TouchableOpacity, View, Image, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Alert, Animated } from "react-native";
+import { useNavigation } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { TouchableOpacity, View, Image, ScrollView, Alert,  } from "react-native";
 import { Iconify } from "react-native-iconify";
 import { Dropdown } from 'react-native-element-dropdown';
 import axios from "axios";
 import * as ImagePicker from 'expo-image-picker';
 import { useToast } from "@/contexts/ToastContext";
+import Loading from "@/components/Loading";
 
 type IDesign = {
     design_id: number,
@@ -77,7 +78,7 @@ export default function Design() {
     const [isPopupEdit, setIsPopupEdit] = useState<boolean>(false);
     const [designId, setDesignId] = useState<number>(0);
     const [designData, setDesignData] = useState<IDesign[]>([]);
-    
+
     const { showToast } = useToast();
 
     const CardItem = ({ item, setDesignId, setPopup }: { item: IDesign, setDesignId: (value: number) => void, setPopup: (value: boolean) => void }) => {
@@ -152,32 +153,19 @@ export default function Design() {
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ opacity: 1 }}>
-                    <View style={{ marginTop: '15%', marginHorizontal: '5%' }}>
-                        <SetText size={24} type="bold">จัดการดีไซน์ของคุณ</SetText>
-                        <SetText size={16}>เพิ่มแบบที่คุณต้องการ</SetText>
-                    </View>
-                    <View style={{ borderBottomWidth: 0.5, width: '100%', flexDirection: 'row', justifyContent: 'space-between', borderColor: colors.grey, paddingTop: 22 }}>
-                        {tag.map((item: IDesignTag, index: number) => {
-                            return (
-                                <TagItem key={index} item={item} isSelected={selectedTag === item.design_tag_id ? true : false} setSelectedTag={setSelectedTag} />
-                            )
-                        })}
-                    </View>
+                <View style={{ marginTop: '15%', marginHorizontal: '5%' }}>
+                    <SetText size={24} type="bold">จัดการดีไซน์ของคุณ</SetText>
+                    <SetText size={16}>เพิ่มแบบที่คุณต้องการ</SetText>
                 </View>
+                <View style={{ borderBottomWidth: 0.5, width: '100%', flexDirection: 'row', justifyContent: 'space-between', borderColor: colors.grey, paddingTop: 22 }}>
+                    {tag.map((item: IDesignTag, index: number) => {
+                        return (
+                            <TagItem key={index} item={item} isSelected={selectedTag === item.design_tag_id ? true : false} setSelectedTag={setSelectedTag} />
+                        )
+                    })}
+                </View>
+            </View>
             <ScrollView contentContainerStyle={{ paddingBottom: 100 }} >
-                {/* <View style={{ opacity: 1 }}>
-                    <View style={{ marginTop: '15%', marginHorizontal: '5%' }}>
-                        <SetText size={24} type="bold">จัดการดีไซน์ของคุณ</SetText>
-                        <SetText size={16}>เพิ่มแบบที่คุณต้องการ</SetText>
-                    </View>
-                    <View style={{ borderBottomWidth: 0.5, width: '100%', flexDirection: 'row', justifyContent: 'space-between', borderColor: colors.grey, paddingTop: 22 }}>
-                        {tag.map((item: IDesignTag, index: number) => {
-                            return (
-                                <TagItem key={index} item={item} isSelected={selectedTag === item.design_tag_id ? true : false} setSelectedTag={setSelectedTag} />
-                            )
-                        })}
-                    </View>
-                </View> */}
                 <View style={{ marginTop: '5%', marginHorizontal: '5%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
                     {designData.length > 0 ? filteredData().map((item: any, index: number) => {
                         return (
@@ -201,8 +189,7 @@ const Popup = ({ action, design_id, setIsShow }: { action: 'add' | 'edit', desig
     const [photo, setPhoto] = useState<string | null>(null);
     const { showToast } = useToast();
     const [buttonDelay, setButtonDelay] = useState<boolean>(false);
-
-    let formDataUpdate = new FormData() as any;
+    const [isEditImage, setIsEditImage] = useState<boolean>(false);
 
     const getDesign = async () => {
         console.log(process.env.EXPO_PUBLIC_API_URL + '/api/design/get');
@@ -228,20 +215,9 @@ const Popup = ({ action, design_id, setIsShow }: { action: 'add' | 'edit', desig
             quality: 0.5
         });
 
-        console.log(result);
-
         if (!result.canceled) {
-            if (action === 'edit') {
-                formDataUpdate.append('image', {
-                    uri: result.assets[0].uri,
-                    name: 'image.jpg',
-                    type: 'image/jpg'
-                });
-                setPhoto(result.assets[0].uri);
-            } else {
-                setPhoto(result.assets[0].uri);
-            }
-
+            setPhoto(result.assets[0].uri);
+            setIsEditImage(true);
         }
     }
 
@@ -249,15 +225,22 @@ const Popup = ({ action, design_id, setIsShow }: { action: 'add' | 'edit', desig
         const PATH = action === "add" ? process.env.EXPO_PUBLIC_API_URL + '/api/design/add' : process.env.EXPO_PUBLIC_API_URL + '/api/design/update';
 
         let formData = new FormData() as any;
-        formData.append('type', 'เสื้อ');
-        formData.append('image', {
-            uri: uri,
-            name: 'image.jpg',
-            type: 'image/jpg'
-        });
+        formData.append('type', value);
+
+        if (isEditImage) {
+            formData.append('image', {
+                uri: uri,
+                name: 'image.jpg',
+                type: 'image/jpg'
+            });
+        }
+
+        if (action === "edit") {
+            formData.append('design_id', design_id);
+        }
 
         try {
-            const response = await axios.post(PATH, action === "add" ? formData : formDataUpdate, {
+            const response = await axios.post(PATH, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -270,8 +253,11 @@ const Popup = ({ action, design_id, setIsShow }: { action: 'add' | 'edit', desig
                 showToast('แก้ไขแบบสำเร็จ', 'คุณได้แก้ไขแบบสำเร็จแล้ว', 'success');
                 setIsShow(false);
             }
+            setButtonDelay(false);
         } catch (error) {
             console.log(error);
+            showToast('แก้ไขแบบไม่สำเร็จ', 'ไม่สามารถแก้ไขแบบได้', 'error');
+            setButtonDelay(false);
         }
     }
 
@@ -296,7 +282,7 @@ const Popup = ({ action, design_id, setIsShow }: { action: 'add' | 'edit', desig
                     <TouchableOpacity onPress={() => setIsShow(false)}><Iconify icon="bx:bx-x" size={24} color={colors.grey} /></TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'column', gap: 5, marginTop: 20 }}>
-                    <SetText type='bold' color={colors.whereblack} size={16}>ประเภท {design_id}</SetText>
+                    <SetText type='bold' color={colors.whereblack} size={16}>ประเภท</SetText>
                     <Dropdown
                         style={[{
                             margin: 0,
@@ -316,8 +302,6 @@ const Popup = ({ action, design_id, setIsShow }: { action: 'add' | 'edit', desig
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
                         onChange={item => {
-                            console.log(item.value);
-                            formDataUpdate.append('type', item.value);
                             setValue(item.value);
                             setIsFocus(false);
                         }}
@@ -338,6 +322,7 @@ const Popup = ({ action, design_id, setIsShow }: { action: 'add' | 'edit', desig
                     <SetText type='bold' color={colors.white}>บันทึก</SetText>
                 </View>
             </TouchableOpacity>
+            <Loading visible={buttonDelay} />
         </View>
     )
 }
