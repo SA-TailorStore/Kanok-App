@@ -13,7 +13,7 @@ export default function SignUp() {
     const router = useRouter();
 
     const signUpButtonClicked = () => {
-        showToast('สมัครสมาชิกสำเร็จ', 'ตอนนี้คุณสามารถลงชื่อเข้าใช้งานได้แล้ว', 4000);
+        showToast('สมัครสมาชิกสำเร็จ', 'ตอนนี้คุณสามารถลงชื่อเข้าใช้งานได้แล้ว', 'success');
         router.replace('/user-tab/home');
     }
 
