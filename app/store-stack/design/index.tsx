@@ -328,9 +328,6 @@ const Popup = ({ action, design_id, setIsShow }: { action: 'add' | 'edit', desig
                 </View>
                 <View style={{ marginTop: 20, borderColor: colors.line, paddingBottom: 20, gap: 10 }}>
                     <SetText style={{ marginTop: 8 }} type="bold">อัปโหลดแบบที่ต้องการ</SetText>
-                    {/* <TouchableOpacity style={{ width: 160, height: 224, borderRadius: 8, ...styles.shadowCustom, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center' }}>
-                        <Iconify icon="bx:bx-image-add" size={40} color={colors.grey} />
-                    </TouchableOpacity> */}
                     <TouchableOpacity onPress={handleChoosePhoto} style={{ width: 160, height: 224, marginTop: 10, borderRadius: 10, backgroundColor: colors.white, ...styles.shadowCustom, alignItems: 'center', justifyContent: 'center' }}>
                         {photo && <TouchableOpacity onPress={() => setPhoto(null)} style={{ position: 'absolute', top: -10, right: -10, zIndex: 99 }}><Iconify icon="mdi:cross-circle" size={24} color={colors.black} /></TouchableOpacity>}
                         {photo ? <Image source={{ uri: photo }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />

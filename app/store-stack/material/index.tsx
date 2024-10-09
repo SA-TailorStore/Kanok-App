@@ -1,164 +1,62 @@
 import { FormInput } from "@/components/FormInput";
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
+import { useToast } from "@/contexts/ToastContext";
+import { IMaterial } from "@/types/IMaterial";
 import { colors } from "@/utils/styles";
+import axios from "axios";
 import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, TextInput, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView, Swipeable, ScrollView } from "react-native-gesture-handler";
 import { Iconify } from "react-native-iconify";
 
-const material = [
-    {
-        id: '0',
-        name: 'ผ้าปูที่นอน',
-        amount: 1,
-    },
-    {
-        id: '1',
-        name: 'ผ้าปูที่นอน2',
-        amount: 10,
-    },
-    {
-        id: '2',
-        name: 'ผ้าปูที่นอน3',
-        amount: 7,
-    },
-    {
-        id: '3',
-        name: 'ผ้าปูที่นอน4',
-        amount: 8,
-    },
-    {
-        id: '0',
-        name: 'ผ้าปูที่นอน',
-        amount: 1,
-    },
-    {
-        id: '1',
-        name: 'ผ้าปูที่นอน2',
-        amount: 10,
-    },
-    {
-        id: '2',
-        name: 'ผ้าปูที่นอน3',
-        amount: 7,
-    },
-    {
-        id: '3',
-        name: 'ผ้าปูที่นอน4',
-        amount: 8,
-    },
-    {
-        id: '0',
-        name: 'ผ้าปูที่นอน',
-        amount: 1,
-    },
-    {
-        id: '1',
-        name: 'ผ้าปูที่นอน2',
-        amount: 10,
-    },
-    {
-        id: '2',
-        name: 'ผ้าปูที่นอน3',
-        amount: 7,
-    },
-    {
-        id: '3',
-        name: 'ผ้าปูที่นอน4',
-        amount: 8,
-    },
-    {
-        id: '0',
-        name: 'ผ้าปูที่นอน',
-        amount: 1,
-    },
-    {
-        id: '1',
-        name: 'ผ้าปูที่นอน2',
-        amount: 10,
-    },
-    {
-        id: '2',
-        name: 'ผ้าปูที่นอน3',
-        amount: 7,
-    },
-    {
-        id: '3',
-        name: 'ผ้าปูที่นอน4',
-        amount: 8,
-    },
-    {
-        id: '0',
-        name: 'ผ้าปูที่นอน',
-        amount: 1,
-    },
-    {
-        id: '1',
-        name: 'ผ้าปูที่นอน2',
-        amount: 10,
-    },
-    {
-        id: '2',
-        name: 'ผ้าปูที่นอน3',
-        amount: 7,
-    },
-    {
-        id: '3',
-        name: 'ผ้าปูที่นอน4',
-        amount: 8,
-    },
-    {
-        id: '0',
-        name: 'ผ้าปูที่นอน',
-        amount: 1,
-    },
-    {
-        id: '1',
-        name: 'ผ้าปูที่นอน2',
-        amount: 10,
-    },
-    {
-        id: '2',
-        name: 'ผ้าปูที่นอน3',
-        amount: 7,
-    },
-    {
-        id: '3',
-        name: 'ผ้าปูที่นอน4',
-        amount: 8,
-    },
-    {
-        id: '8',
-        name: 'ผ้าปูที่นอน9',
-        amount: 8,
-    }
-]
-
-const createTwoButtonAlert = () =>
-    Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบวัสดุที่คุณเลือก', [
-        {
-            text: 'ยกเลิก',
-            onPress: () => console.log('ยกเลิก'),
-            style: 'cancel',
-        },
-        {
-            text: 'ลบ', onPress: () => console.log('ลบ')
-        },
-    ]);
-
 export default function Material() {
     const navigation = useNavigation();
     const [isPopupAdd, setIsPopupAdd] = useState<boolean>(false);
     const [isPopupEdit, setIsPopupEdit] = useState<boolean>(false);
-    const [material_id, setMaterialId] = useState<string | null>(null);
+    const [material_id, setMaterialId] = useState<number>(0);
+    const [materials, setMaterials] = useState<IMaterial[]>([]);
+    const { showToast } = useToast();
+
+    const createTwoButtonAlert = (id: number) =>
+        Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบวัสดุที่คุณเลือก', [
+            {
+                text: 'ยกเลิก',
+                onPress: () => console.log('ยกเลิก'),
+                style: 'cancel',
+            },
+            {
+                text: 'ลบ', onPress: async () => {
+                    await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/material/delete', { material_id: material_id }).then((res) => {
+                        if (res.status === 200) {
+                            getMaterials();
+                            showToast('ลบวัสดุสำเร็จ', `คุณลบวัสดุ id: ${id} สำเร็จ`, 'success');   
+                        }
+                    }
+                    ).catch((err) => {
+                        console.log(err);
+                    });
+                }
+            },
+        ]);
+
+    const getMaterials = async () => {
+        await axios.get(process.env.EXPO_PUBLIC_API_URL + '/api/materials').then((res) => {
+            if (res.status === 200) {
+                if (res.data.data) setMaterials(res.data.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
 
     useEffect(() => {
         navigation.setOptions({
             headerTitle: "",
         });
-    }, [])
+        getMaterials();
+    }, [isPopupAdd, isPopupEdit])
 
     return (
         <WrapBackground color={colors.backgroundColor}>
@@ -178,27 +76,27 @@ export default function Material() {
                     <GestureHandlerRootView style={{ flex: 1 }}>
                         <ScrollView>
                             {
-                                material.map((item, index) => (
+                                materials.map((item: IMaterial, index: number) => (
                                     <Swipeable
                                         key={index}
                                         renderRightActions={() => {
                                             return (
                                                 <>
-                                                    <TouchableOpacity onPress={createTwoButtonAlert} style={{ backgroundColor: colors.red, alignItems: 'center', justifyContent: 'center', width: 100 }}>
+                                                    <TouchableOpacity onPress={() => createTwoButtonAlert(item.material_id)} style={{ backgroundColor: colors.red, alignItems: 'center', justifyContent: 'center', width: 100 }}>
                                                         <SetText color={colors.white} size={10}>ลบ</SetText>
                                                     </TouchableOpacity>
                                                 </>
                                             )
                                         }}
                                     >
-                                        <TouchableOpacity onPress={() => {
-                                            setMaterialId(item.id);
+                                        <View onTouchEnd={() => {
+                                            setMaterialId(item.material_id);
                                             setIsPopupEdit(true);
                                         }} key={index} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20, borderBottomWidth: 1, borderBottomColor: colors.line, paddingHorizontal: 20, height: 60, backgroundColor: colors.wherewhite }}>
-                                            <SetText>{item.name}</SetText>
+                                            <SetText style={{ width: '15%'}}>{item.material_name}</SetText>
                                             <SetText>{item.amount}</SetText>
                                             <Iconify icon="weui:back-filled" size={16} color={colors.grey} style={[{ transform: [{ rotate: '180deg' }] }]} />
-                                        </TouchableOpacity>
+                                        </View>
                                     </Swipeable>
                                 ))
                             }
@@ -207,7 +105,7 @@ export default function Material() {
                 </View>
             </View>
             {isPopupAdd && <Popup action="add" setIsShow={setIsPopupAdd} />}
-            {isPopupEdit && <Popup action="edit" material_id={material_id!} setIsShow={setIsPopupEdit} />}
+            {isPopupEdit && <Popup action="edit" material_id={material_id} setIsShow={setIsPopupEdit} />}
 
         </WrapBackground>
     )
@@ -219,9 +117,15 @@ const SearchItem = () => {
     )
 }
 
-const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', material_id?: string, setIsShow: (value: boolean) => void }) => {
+const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', material_id?: number, setIsShow: (value: boolean) => void }) => {
     const [quantity, setQuantity] = useState<number>(0);
     const [name, setName] = useState<string>('');
+    const [buttonDelay, setButtonDelay] = useState<boolean>(false);
+    const { showToast } = useToast();
+
+    useEffect(() => {
+        if (action === 'edit') getMaterial();
+    }, [])
 
     const increaseQuantity = () => {
         setQuantity((q) => q + 1);
@@ -244,9 +148,51 @@ const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', mat
             return q - 10;
         });
     }
+
+    const getMaterial = async () => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/material/get', { material_id: material_id }).then((res) => {
+            if (res.status === 200) {
+                setName(res.data.data.material_name);
+                setQuantity(res.data.data.amount);
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+    const uploadtoServer = async () => {
+        const PATH = action === 'add' ? process.env.EXPO_PUBLIC_API_URL + '/api/material/add' : process.env.EXPO_PUBLIC_API_URL + '/api/material/update';
+        const PAYLOAD = action === 'add' ? {
+            material_name: name,
+            amount: quantity
+        } : {
+            material_id: material_id,
+            material_name: name,
+            amount: quantity
+        }
+        console.log(PATH, PAYLOAD);
+        await axios.post(PATH, PAYLOAD).then((res) => {
+            if (res.status === 201) {
+                showToast('เพิ่มวัสดุสำเร็จ', 'คุณเพิ่มวัสดุสำเร็จ', 'success');
+            } else if (res.status === 204) {
+                showToast('แก้ไขวัสดุสำเร็จ', 'คุณแก้ไขวัสดุสำเร็จ', 'success');
+            }
+            setIsShow(false);
+        }).catch((err) => {
+            console.log(err);
+            showToast('มีข้อผิดพลาด', 'มีข้อผิดพลาดในการเพิ่มวัสดุ', 'error');
+        });
+    }
+
+    const handleSaveButton = async () => {
+        setButtonDelay(true);
+        uploadtoServer();
+        setIsShow(false);
+    }
+
     return (
         <View style={{ position: 'absolute', height: '100%', width: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-            <View style={{ backgroundColor: colors.backgroundColor, width: '100%', height: '36%', position: 'absolute', bottom: 0, alignSelf: 'center', borderRadius: 16, padding: 20 }}>
+            <View style={{ backgroundColor: colors.backgroundColor, width: '100%', height: '45%', position: 'absolute', bottom: 0, alignSelf: 'center', borderRadius: 16, padding: 20 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <SetText type="bold" size={20}>{action === 'add' ? 'เพิ่มวัสดุ' : 'แก้ไขวัสดุ'}</SetText>
                     <TouchableOpacity onPress={() => setIsShow(false)}><Iconify icon="bx:bx-x" size={24} color={colors.grey} /></TouchableOpacity>
@@ -274,8 +220,8 @@ const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', mat
                     </View>
                 </View>
             </View>
-            <TouchableOpacity disabled={!(name.length > 0)} style={{ borderTopWidth: 0.5, marginTop: 10, position: 'absolute', bottom: 0, height: 80, width: '100%', borderTopStartRadius: 8, borderTopEndRadius: 8, justifyContent: 'center', paddingHorizontal: 20, borderColor: colors.line }}>
-                <View style={{ padding: 10, alignItems: 'center', borderRadius: 999, backgroundColor: name.length > 0 ? colors.mediumpink : colors.lesspink }}>
+            <TouchableOpacity onPress={handleSaveButton} disabled={!(name.length > 0) || buttonDelay} style={{ borderTopWidth: 0.5, marginTop: 10, position: 'absolute', bottom: 0, height: 80, width: '100%', borderTopStartRadius: 8, borderTopEndRadius: 8, justifyContent: 'center', paddingHorizontal: 20, borderColor: colors.line }}>
+                <View style={{ padding: 10, alignItems: 'center', borderRadius: 999, backgroundColor: !(name.length > 0) || buttonDelay ? colors.lesspink : colors.mediumpink }}>
                     <SetText type='bold' color={colors.white}>บันทึก</SetText>
                 </View>
             </TouchableOpacity>
