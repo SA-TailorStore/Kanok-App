@@ -33,8 +33,7 @@ export default function Material() {
                             getMaterials();
                             showToast('ลบวัสดุสำเร็จ', `คุณลบวัสดุ id: ${id} สำเร็จ`, 'success');
                         }
-                    }
-                    ).catch((err) => {
+                    }).catch((err) => {
                         console.log(err);
                     });
                 }
