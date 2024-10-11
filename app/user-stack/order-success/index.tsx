@@ -2,22 +2,16 @@ import { SetText } from "@/components/SetText";
 import WrapManageDesign from "@/components/WrapManageDesign";
 import { colors, styles } from "@/utils/styles";
 import { useNavigation, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { TouchableOpacity, View, Image, BackHandler } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { IUser } from "@/types/IUser";
-
+import React, { useEffect } from "react";
+import { TouchableOpacity, View, Image } from "react-native";
 export default function OrderSuccess() {
     const navigation = useNavigation();
     const router = useRouter();
-    const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-    // const [user, setUser] = useState<IUser | null>(null);
 
     useEffect(() => {
         navigation.setOptions({
             headerTitle: "รายการสั่งตัด",
-            // hide back buttom
-
+            headerLeft: () => <View></View>
         });
     }, []);
 
