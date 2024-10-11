@@ -33,11 +33,11 @@ export default function SessionProvider({ children }: any) {
     }
 
     const removeToken = async () => {
-        await AsyncStorage.removeItem('@access_token');
-        router.replace("/sign-in");
         setUserContext(null);
         setTokenContext(null);
         setProductContext([]);
+        await AsyncStorage.removeItem('@access_token');
+        router.replace("/sign-in");
     }
 
     const continueSession = async (token: string) => {

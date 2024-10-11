@@ -25,7 +25,6 @@ export default function OrderSuccess() {
         router.replace('/user-tab/order');
     }
 
-    // if (!user) return null;
     return (
         <>
             <WrapManageDesign page='order success'>

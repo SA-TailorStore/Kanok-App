@@ -12,7 +12,7 @@ import { useSession } from "@/contexts/SessionContext";
 
 export default function SignIn() {
     const router = useRouter();
-    const { setToken } = useSession();
+    const { setToken, checkRole, userContext } = useSession();
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
@@ -27,6 +27,10 @@ export default function SignIn() {
             console.log('sign-in : ' + err)
         });
     }
+
+    useEffect(() => {
+        if (userContext) checkRole(userContext.role);
+    },[])
 
     return (
         <WrapBackground>

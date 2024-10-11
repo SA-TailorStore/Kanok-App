@@ -5,33 +5,33 @@ import { useEffect, useState } from "react";
 
 export type IFilterTab = {
     title: string,
-    status: string
+    status: string[]
 }
 
 export const filterTab: IFilterTab[] = [
     {
         title: 'รอการดำเนินการ',
-        status: 'pending'
+        status: ['pending']
     },
     {
         title: 'ที่ต้องชำระ',
-        status: 'payment'
+        status: ['payment']
     },
     {
         title: 'กำลังดำเนินการ',
-        status: 'processing'
+        status: ['processing_user', 'receiced_tailor', 'processing_tailor', 'receiced_shop', 'success_tailor']
     },
     {
         title: 'ที่ต้องได้รับ',
-        status: 'receiced'
+        status: ['receiced_user']
     },
     {
         title: 'สำเร็จ',
-        status: 'success'
+        status: ['success_user']
     },
     {
         title: 'ยกเลิก',
-        status: 'cancel'
+        status: ['cancel']
     },
 ]
 
@@ -52,8 +52,8 @@ export default function OrderTab({ output }: { output: (status: string) => void 
             >
                 {filterTab.map((item: IFilterTab, index: number) => {
                     return (
-                        <TouchableOpacity key={index} onPress={() => setSelected(item.status)}>
-                            <SetText type={selected===item.status? 'bold': 'default'} color={selected===item.status? colors.black : colors.grey} style={[{ paddingHorizontal: 18, borderColor: colors.mediumpink }, selected === item.status? { borderBottomWidth: 1 } : undefined]} size={14}>{item.title}</SetText>
+                        <TouchableOpacity key={index} onPress={() => setSelected(item.status[0])}>
+                            <SetText type={ item.status.includes(selected)? 'bold': 'default'} color={item.status?.includes(selected)? colors.black : colors.grey} style={[{ paddingHorizontal: 18, borderColor: colors.mediumpink }, item.status?.includes(selected)? { borderBottomWidth: 1 } : undefined]} size={14}>{item.title}</SetText>
                         </TouchableOpacity>
                     )
                 })}
