@@ -206,6 +206,19 @@ const Popup = ({ action, fabric_id, setIsShow }: { action: 'add' | 'edit', fabri
         }
     }
 
+    const handleShotPhoto = async () => {
+        let result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            aspect: [1, 1],
+            allowsEditing: true,
+            quality: 0.5
+        });
+
+        if (!result.canceled) {
+            setPhoto(result.assets[0].uri);
+        }
+    }
+
     const increaseQuantity = () => {
         setQuantity((q) => q + 1);
     }
@@ -291,6 +304,10 @@ const Popup = ({ action, fabric_id, setIsShow }: { action: 'add' | 'edit', fabri
                                 {photo ? <Image source={{ uri: photo }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
                                     : <Iconify icon="fluent-emoji-high-contrast:plus" size={40} color={colors.line} />
                                 }
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleShotPhoto} style={{ width: 160, marginTop: 10, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
+                                <Iconify icon="fluent-emoji-high-contrast:camera" size={24} color={colors.whereblack} />
+                                <SetText>ถ่ายภาพ</SetText>
                             </TouchableOpacity>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', borderTopWidth: 1, paddingTop: 20, borderColor: colors.line }}>

@@ -15,118 +15,60 @@ import ConfirmOrderCard from "@/components/ComfirmOrderCard";
 import { useSession } from "@/contexts/SessionContext";
 import { ProductRequest } from "@/types/ProductRequest";
 import axios from "axios";
-
-const exampleData: IProduct[] = [
-    {
-        product_id: '0',
-        design_id: 0,
-        detail: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nihil suscipit accusantium placeat voluptatum, non a sunt sed incidunt itaque? Omnis nisi, in facere nam voluptas aliquid ducimus quidem voluptatum amet.',
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '1',
-        design_id: 0,
-        detail: "รายละเอียด2",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '2',
-        design_id: 0,
-        detail: "รายละเอียด3",
-        size: 'XXL',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '0',
-        design_id: 0,
-        detail: "รายละเอียด",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '1',
-        design_id: 0,
-        detail: "รายละเอียด2",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '2',
-        design_id: 0,
-        detail: "รายละเอียด3",
-        size: 'XXL',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '0',
-        design_id: 0,
-        detail: "รายละเอียด",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '1',
-        design_id: 0,
-        detail: "รายละเอียด2",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '2',
-        design_id: 0,
-        detail: "รายละเอียด3",
-        size: 'XXL',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    }
-];
-
+import { useToast } from "@/contexts/ToastContext";
 
 export default function ConfirmOrder() {
     const navigation = useNavigation();
     const router = useRouter();
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
     // const [user, setUser] = useState<IUser | null>(null);
-    const { userContext, productContext } = useSession();
+    const { userContext, productContext, setProductContext } = useSession();
+    const { showToast } = useToast();
+    const [buttonDelay, setButtonDelay] = useState<boolean>(false);
 
     useEffect(() => {
         navigation.setOptions({
             headerTitle: "รายการสั่งตัด",
         });
+        console.log(productContext);
     }, []);
 
-    const onConfirmOrderButton = async() => {
-        console.log(productContext);
-        router.dismissAll();
-        router.replace('/user-stack/order-success');
+    const onConfirmOrderButton = async () => {
+        await uploadtoServer();
+    }
+
+    const uploadtoServer = async () => {
+        setButtonDelay(true);
+        const token = await AsyncStorage.getItem('@access_token');
+
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/create', {
+            token: token,
+        }).then(async (res) => {
+            if (res.status === 201) {
+                console.log('Order created' + res.data.order_id);
+                await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/product/create', {
+                    order_id: res.data.order_id,
+                    products: productContext
+                }).then((res) => {
+                    if (res.status === 201) {
+                        console.log('Products created');
+                        showToast('สั่งสินค้าสำเร็จ', `คุณได้ทำการสั่งสินค้าจำนวน ${productContext.length} รายการสำเร็จ`, 'success');
+                        setProductContext([])
+                        router.dismissAll();
+                        router.replace('/user-stack/order-success');
+                    }
+                }).catch((err) => {
+                    showToast('เกิดข้อผิดพลาด', 'ไม่สามารถสั่งสินค้าได้ (err: product}', 'error');
+                    setButtonDelay(false);
+                })
+            } else {
+                showToast('เกิดข้อผิดพลาด', 'ไม่สามารถสั่งสินค้าได้ (err: status)', 'error');
+                setButtonDelay(false);
+            }
+        }).catch((err) => {
+            showToast('เกิดข้อผิดพลาด', 'ไม่สามารถสั่งสินค้าได้ (err: order)', 'error');
+            setButtonDelay(false);
+        })
     }
 
     if (!userContext) return null;
@@ -161,7 +103,7 @@ export default function ConfirmOrder() {
                     <SetText type="bold" size={16}>จำนวน</SetText>
                     <SetText type="bold" size={16}>{productContext.length} รายการ</SetText>
                 </View>
-                <TouchableOpacity onPress={onConfirmOrderButton} style={[{ backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }, styles.shadowCustom]}>
+                <TouchableOpacity disabled={buttonDelay} onPress={onConfirmOrderButton} style={[{ backgroundColor: buttonDelay? colors.lesspink : colors.mediumpink, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white}>สั่งสินค้า</SetText>
                 </TouchableOpacity>
             </View>

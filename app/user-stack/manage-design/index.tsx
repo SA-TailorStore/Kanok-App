@@ -22,6 +22,7 @@ export default function ManageDesign() {
         if (productContext.length === 0) {
             router.replace('/user-stack/choose-design-user');
         }
+        console.log(productContext);
     }, []);
 
     return (
@@ -29,14 +30,14 @@ export default function ManageDesign() {
             <WrapManageDesign page='add design'>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
                     <SetText type="bold" size={24}>แบบของฉัน</SetText>
-                    <TouchableOpacity onPress={()=>router.replace('/user-stack/choose-design-user')}><SetText type="bold" color={colors.mediumpink} size={16}>เพิ่มแบบ</SetText></TouchableOpacity>
+                    <TouchableOpacity onPress={() => router.replace('/user-stack/choose-design-user')}><SetText type="bold" color={colors.mediumpink} size={16}>เพิ่มแบบ</SetText></TouchableOpacity>
                 </View>
                 <View style={{ height: '100%' }}>
                     <GestureHandlerRootView style={{ flex: 1 }}>
                         <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 330 }} showsVerticalScrollIndicator={false}>
                             {
                                 productContext.map((item: ProductRequest, index: number) => (
-                                    <ManageOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />
+                                    <ManageOrderCard item={item} id={index} setSelectedProduct={setSelectedProduct} key={index} />
                                 ))
                             }
                         </ScrollView>

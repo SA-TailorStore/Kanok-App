@@ -1,14 +1,20 @@
 import { colors, styles } from "@/utils/styles";
-import { Alert, TouchableOpacity, View } from "react-native";
+import { Alert, TouchableOpacity, View, Image, TextInput } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { SetText } from "./SetText";
 import { Iconify } from "react-native-iconify";
 import { useEffect, useState } from "react";
 import { ProductRequest } from "@/types/ProductRequest";
+import { IDesign } from "@/types/IDesign";
+import axios from "axios";
+import { useSession } from "@/contexts/SessionContext";
+import { IProduct } from "@/types/IProduct";
 
-export default function ManageOrderCard({ item, setSelectedProduct }: { item: ProductRequest, setSelectedProduct: React.Dispatch<React.SetStateAction<string|null>> }) {
+export default function ManageOrderCard({ item, setSelectedProduct, id }: { item: ProductRequest, setSelectedProduct: React.Dispatch<React.SetStateAction<string | null>>, id: number }) {
     const [quantity, setQuantity] = useState<number>(item.total_quantity);
     const [isHidden, setIsHidden] = useState<boolean>(false);
+    const [design, setDesign] = useState<IDesign>();
+    const { setProductContext } = useSession();
 
     const createTwoButtonAlert = () =>
         Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบแบบที่คุณเลือก', [
@@ -44,9 +50,37 @@ export default function ManageOrderCard({ item, setSelectedProduct }: { item: Pr
         });
     }
 
+    const fetchDesign = async () => {
+        console.log(typeof item.design_id)
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/design/get', {
+            design_id: item.design_id
+        }).then((res) => {
+            if (res.status === 200) {
+                setDesign(res.data.data);
+                console.log(res.data.data)
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
     useEffect(() => {
+        fetchDesign();
         console.log(item)
-    },[])
+    }, [])
+
+    useEffect(() => {
+       setProductContext((prev: IProduct[]) => {
+            // id == index of product in productContext
+            const newProduct = {
+                ...prev[id],
+                total_quantity: quantity
+            }
+            prev[id] = newProduct;
+            return prev;
+
+       })
+    }, [quantity])
 
     return (
         <>
@@ -65,15 +99,15 @@ export default function ManageOrderCard({ item, setSelectedProduct }: { item: Pr
                     )
                 }}
             >
-                <View style={{ backgroundColor: colors.white, height: 160, borderRadius: 16, padding: 16 }}>
+                <View style={{ backgroundColor: colors.white, height: 180, borderRadius: 16, padding: 16 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <SetText type="bold" size={16}>รหัสสินค้า : {item.design_id}</SetText>
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: 5, gap: 10 }}>
-                        <View style={{ width: 100, height: 100, borderWidth: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 8 }}>
-                            <SetText>รูป</SetText>
+                        <View style={{ width: 100, height: 100, alignItems: 'center', justifyContent: 'center', borderRadius: 8, ...styles.shadowCustom }}>
+                            {design && <Image source={{ uri: design?.design_url }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />}
                         </View>
-                        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
+                        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', height: 130 }}>
                             <View style={{ flex: 1 }}>
                                 <TouchableOpacity style={{ alignSelf: 'flex-start', borderWidth: 0.5, paddingHorizontal: 10, paddingVertical: 2, flexDirection: 'row', gap: 10, alignItems: 'center', backgroundColor: colors.backgroundColor, borderColor: colors.grey, borderRadius: 5 }}>
                                     <SetText color={colors.black}>
@@ -84,14 +118,18 @@ export default function ManageOrderCard({ item, setSelectedProduct }: { item: Pr
                                 <SetText>ประเภท : {item.design_id}</SetText>
                                 <SetText>คำอธิบาย : {item.detail.length > 20 ? item.detail.substring(0, 20) + '...' : item.detail}</SetText>
                             </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                                {/* <TouchableOpacity onPress={() => setSelectedProduct(item.product_id)}><SetText type='bold' color={colors.mediumpink} size={16}>แก้ไข</SetText></TouchableOpacity> */}
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', bottom: 0, right: 0 }}>
                                 <SetText type='bold' color={colors.mediumpink} size={16}></SetText>
                                 <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
                                     <TouchableOpacity disabled={quantity === 1} style={quantity === 1 ? { opacity: 0.3 } : undefined} onPress={decreaseQuantity} onLongPress={decreaseQuantity10}>
                                         <Iconify icon="simple-line-icons:minus" size={24} color={colors.whereblack} />
                                     </TouchableOpacity>
-                                    <SetText size={16} type="bold" style={{}}>{quantity}</SetText>
+                                    <TextInput
+                                        keyboardType="number-pad"
+                                        value={quantity.toString()}
+                                        onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? setQuantity(parseInt(e.nativeEvent.text)) : setQuantity(0)}
+                                        style={{ borderWidth: 0.5, borderColor: colors.line, borderRadius: 10, height: 40, width: 100, textAlign: 'center', fontFamily: 'notoSansThai', padding: 8 }}
+                                    />
                                     <TouchableOpacity onPress={increaseQuantity} onLongPress={increaseQuantity10}>
                                         <Iconify icon="simple-line-icons:plus" size={24} color={colors.whereblack} />
                                     </TouchableOpacity>

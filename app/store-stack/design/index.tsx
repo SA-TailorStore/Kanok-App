@@ -10,19 +10,8 @@ import axios from "axios";
 import * as ImagePicker from 'expo-image-picker';
 import { useToast } from "@/contexts/ToastContext";
 import Loading from "@/components/Loading";
-
-type IDesign = {
-    design_id: number,
-    type: "เสื้อ" | "กางเกง" | "กระโปรง" | "เดรส",
-    design_url: string,
-    created_by?: number, // อาจไม่ต้องมีแล้วเพราะร้านค้าเป็นคน update เสื้อ
-    created_at?: Date
-}
-
-type IDesignTag = {
-    design_tag_id: number,
-    type: string,
-}
+import { IDesign } from "../../../types/IDesign";
+import { IDesignTag } from "../../../types/IDesignTag";
 
 const tag: IDesignTag[] = [
     {

@@ -4,75 +4,12 @@ import { useSession } from "@/contexts/SessionContext";
 import { useToast } from "@/contexts/ToastContext";
 import { IFabric } from "@/types/IFabric";
 import { colors, styles } from "@/utils/styles";
-import { ParamListBase, RouteProp, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
+import axios from "axios";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { View, Image, ScrollView, ImageSourcePropType, TouchableOpacity, FlatList, Dimensions, TextInput, NativeSyntheticEvent, NativeScrollEvent, Animated, PanResponder } from "react-native";
+import { View, Image, ScrollView, TouchableOpacity, FlatList, Dimensions, TextInput, } from "react-native";
 import { Iconify } from "react-native-iconify";
-
-export const fabricList: IFabric[] = [
-    {
-        fabric_id: 0,
-        image: require('@/assets/images/fabric/0.jpg'),
-        quantity: 100,
-    },
-    {
-        fabric_id: 1,
-        image: require('@/assets/images/fabric/1.jpg'),
-        quantity: 100,
-    },
-    {
-        fabric_id: 2,
-        image: require('@/assets/images/fabric/2.jpg'),
-        quantity: 100,
-    },
-    {
-        fabric_id: 3,
-        image: require('@/assets/images/fabric/0.jpg'),
-        quantity: 100,
-    },
-    {
-        fabric_id: 4,
-        image: require('@/assets/images/fabric/1.jpg'),
-        quantity: 100,
-    },
-    {
-        fabric_id: 5,
-        image: require('@/assets/images/fabric/2.jpg'),
-        quantity: 100,
-    },
-    {
-        fabric_id: 6,
-        image: require('@/assets/images/fabric/0.jpg'),
-        quantity: 100,
-    },
-    {
-        fabric_id: 7,
-        image: require('@/assets/images/fabric/1.jpg'),
-        quantity: 100,
-    },
-    {
-        fabric_id: 8,
-        image: require('@/assets/images/fabric/2.jpg'),
-        quantity: 100,
-    },
-    {
-        fabric_id: 9,
-        image: require('@/assets/images/fabric/0.jpg'),
-        quantity: 100,
-    },
-    {
-        fabric_id: 10,
-        image: require('@/assets/images/fabric/1.jpg'),
-        quantity: 100,
-    },
-    {
-        fabric_id: 11,
-        image: require('@/assets/images/fabric/2.jpg'),
-        quantity: 100,
-    },
-
-]
 
 export const sizeList = ['S', 'M', 'L', 'XL', 'XXL'];
 
@@ -81,6 +18,7 @@ export default function ProductDetail() {
     const [size, setSize] = useState<string | null>(null);
     const [detail, setDetail] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
+    const [fabrics, setFabrics] = useState<IFabric[]>([]);
 
     const [isReady, setIsReady] = useState<boolean>(false);
 
@@ -92,18 +30,20 @@ export default function ProductDetail() {
     const { showToast } = useToast();
     const { updateProduct } = useSession();
 
+
     useEffect(() => {
         console.log(design_id)
         navigation.setOptions({
             headerTitle: "",
         });
+        fetchFabrics();
     }, [])
 
     useEffect(() => {
         if (fabric !== null && size !== null) {
             setIsReady(true);
         }
-    })
+    },[fabric, size])
 
     const { width } = Dimensions.get('window');
 
@@ -133,8 +73,8 @@ export default function ProductDetail() {
         console.log(fabric, size, detail, quantity);
 
         updateProduct({
-            design_id: design_id, 
-            fabric_id: fabric?.toString(), 
+            design_id: parseInt(design_id), 
+            fabric_id: fabric, 
             size: size, 
             detail: detail, 
             total_quantity: quantity});
@@ -143,11 +83,22 @@ export default function ProductDetail() {
         router.replace('/user-stack/manage-design');
     }
 
+    const fetchFabrics = async () => {
+        await axios.get(process.env.EXPO_PUBLIC_API_URL + '/api/fabrics').then((res) => {
+            if (res.status === 200) {
+                setFabrics(res.data.data);
+                console.log(res.data.data)
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '60%', marginBottom: '-15%' }}>
-                <FlatList data={fabricList} keyExtractor={(_, index: number) => index.toString()} renderItem={({ item, index }: { item: IFabric, index: number }) => {
-                    return <Image key={index} source={item.image} style={{ width: width, height: '100%' }} />
+                <FlatList data={fabrics} keyExtractor={(_, index: number) => index.toString()} renderItem={({ item, index }: { item: IFabric, index: number }) => {
+                    return <Image key={index} source={{ uri: item.fabric_url}} style={{ width: width, height: '100%' }} />
                 }
                 } horizontal showsHorizontalScrollIndicator={false} pagingEnabled />
             </View>
@@ -176,10 +127,10 @@ export default function ProductDetail() {
                     </View>
                     <View style={{ paddingVertical: 12, borderColor: colors.line }}>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ flexDirection: 'row', gap: 15 }}>
-                            {fabricList.map((item: IFabric, index: number) => {
+                            {fabrics.map((item: IFabric, index: number) => {
                                 return (
                                     <TouchableOpacity onPress={() => setFabric(item.fabric_id)} key={index} style={{ position: 'relative', height: 48, width: 48, alignItems: 'center', justifyContent: 'center', padding: 2, borderWidth: 1, borderRadius: 999, overflow: "hidden" }}>
-                                        <Image source={item.image} style={{ width: 100, height: 100, borderRadius: 999 }} />
+                                        <Image source={{ uri: item.fabric_url }} style={{ width: 100, height: 100, borderRadius: 999 }} />
                                         <Iconify icon="material-symbols:check" color={fabric === item.fabric_id ? colors.black : 'transparent'} size={24} style={{ position: 'absolute', height: "50%", width: "50%" }} />
                                     </TouchableOpacity>
                                 )

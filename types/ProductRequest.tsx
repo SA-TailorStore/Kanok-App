@@ -1,6 +1,6 @@
 export type ProductRequest = {
-    design_id: string;
-    fabric_id: string;
+    design_id: number;
+    fabric_id: number;
     size: string;
     detail: string;
     total_quantity: number;
