@@ -5,6 +5,7 @@ import WrapBackground from "@/components/WrapBackground";
 import { IOrder } from "@/types/IOrder";
 import { IProduct } from "@/types/IProduct";
 import { ProductRequest } from "@/types/ProductRequest";
+import { formatDate } from "@/utils/formatDate";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
@@ -59,18 +60,17 @@ export default function OrderDetail() {
             console.log('error fetching products');
         })
     }
-    ; // แก้หน้าโหลดไม่ขึ้น
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '7%', backgroundColor: colors.wherewhite }} />
             <ScrollView style={{ flex: 1, height: '100%' }} contentContainerStyle={{ paddingBottom: 120 }}>
                 <View style={{ marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
                     <View style={{ backgroundColor: colors.mediumpink, padding: 10 }}>
-                        <SetText type="bold" size={16} color={colors.white}>หมายเลขคำสั่งซื้อ #1234567890</SetText>
+                        <SetText type="bold" size={16} color={colors.white}>หมายเลขคำสั่งซื้อ #{order_id}</SetText>
                     </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: colors.line }}>
                         <SetText size={14} color={colors.grey}>วันที่สั่งซื้อสินค้า</SetText>
-                        <SetText size={14} color={colors.grey}>7 พ.ย. 27, 14:41</SetText>
+                        <SetText size={14} color={colors.grey}>{formatDate(order?.timestamp!)}</SetText>
                     </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
                         <SetText size={14} color={colors.whereblack} type='bold'>ข้อมูลการจัดส่ง</SetText>
@@ -81,8 +81,8 @@ export default function OrderDetail() {
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
                             <Iconify icon="bx:bx-map" size={20} color={colors.whereblack} />
                             <View style={{ flexDirection: 'column' }}>
-                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}>ภูมิระพี เสริญวณิชกุล</SetText>
-                                <SetText color={colors.grey} type="small">ที่อยู่ {order?.user_address}</SetText>
+                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}>{order?.user_address.split('|')[0]}</SetText>
+                                <SetText color={colors.grey} type="small">ที่อยู่ {order?.user_address.split('|')[1]}</SetText>
                             </View>
                         </View>
                     </View>
