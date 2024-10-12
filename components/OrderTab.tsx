@@ -19,11 +19,11 @@ export const filterTab: IFilterTab[] = [
     },
     {
         title: 'กำลังดำเนินการ',
-        status: ['processing_user', 'receiced_tailor', 'processing_tailor', 'receiced_shop', 'success_tailor']
+        status: ['processing_user', 'received_tailor', 'processing_tailor', 'received_shop', 'success_tailor']
     },
     {
         title: 'ที่ต้องได้รับ',
-        status: ['receiced_user']
+        status: ['received_user']
     },
     {
         title: 'สำเร็จ',
