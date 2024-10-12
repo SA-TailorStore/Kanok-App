@@ -1,16 +1,14 @@
-import ConfirmOrderCard from "@/components/ComfirmOrderCard";
-import Loading from "@/components/Loading";
-import { filterTab, IFilterTab } from "@/components/OrderTab";
+import ConfirmOrderCard, { ConfirmOrderCardSkeleton } from "@/components/ComfirmOrderCard";
+import { IFilterTab } from "@/components/OrderTab";
 import { SetText } from "@/components/SetText";
-import SettingMenuItem from "@/components/SettingMenuItem";
 import WrapBackground from "@/components/WrapBackground";
-import { useSession } from "@/contexts/SessionContext";
-import { useToast } from "@/contexts/ToastContext";
+import { IOrder } from "@/types/IOrder";
 import { IProduct } from "@/types/IProduct";
 import { ProductRequest } from "@/types/ProductRequest";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
-import { useNavigation, useRouter } from "expo-router";
+import axios from "axios";
+import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { TouchableOpacity, View, ScrollView } from "react-native";
 import { Iconify } from "react-native-iconify";
@@ -19,17 +17,13 @@ export default function OrderDetail() {
     const [isShow, setIsShow] = useState<boolean>(false);
     const [isShow2, setIsShow2] = useState<boolean>(false);
     const [statusIndex, setStatusIndex] = useState<number>(0);
+    const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
 
-    const router = useRouter();
     const route = useRoute() as { params: { order_id: string } };
     const navigation = useNavigation();
     const { order_id } = route.params;
-    const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-
-    const { showToast } = useToast();
-    const { productContext } = useSession();
-
-    const status = 'processing';
+    const [order, setOrder] = useState<IOrder>();
+    const [products, setProducts] = useState<ProductRequest[]>([]);
 
     useEffect(() => {
         console.log(order_id);
@@ -37,17 +31,39 @@ export default function OrderDetail() {
             headerTitle: "รายละเอียดคำสั่งซื้อ",
         });
 
-        filterTab.map((item: IFilterTab, index: number) => {
-            if (item.status === status) {
-                setStatusIndex(index);
-            }
-        });
+        fetchOrder();
     }, [])
 
+    const fetchOrder = async () => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/get', { order_id: order_id }).then((res) => {
+            if (res.status === 200) {
+                setOrder(res.data.data);
+                fetchProducts();
+                console.log(res.data.data)
+            } else {
+                console.log(res.status);
+            }
+        }).catch((err) => {
+            console.log('error fetching orders');
+        })
+    }
+
+    const fetchProducts = async () => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/product/get/order', { order_id: order_id }).then((res) => {
+            if (res.status === 200) {
+                setProducts(res.data.data);
+            } else {
+                console.log(res.status);
+            }
+        }).catch((err) => {
+            console.log('error fetching products');
+        })
+    }
+    ; // แก้หน้าโหลดไม่ขึ้น
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '7%', backgroundColor: colors.wherewhite }} />
-            <ScrollView style={{ flex: 1, height: '100%' }} contentContainerStyle={{ paddingBottom: 120}}>
+            <ScrollView style={{ flex: 1, height: '100%' }} contentContainerStyle={{ paddingBottom: 120 }}>
                 <View style={{ marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
                     <View style={{ backgroundColor: colors.mediumpink, padding: 10 }}>
                         <SetText type="bold" size={16} color={colors.white}>หมายเลขคำสั่งซื้อ #1234567890</SetText>
@@ -62,78 +78,41 @@ export default function OrderDetail() {
                     </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
                         <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }} onPress={() => console.log('go to my address')}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
                             <Iconify icon="bx:bx-map" size={20} color={colors.whereblack} />
                             <View style={{ flexDirection: 'column' }}>
                                 <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}>ภูมิระพี เสริญวณิชกุล</SetText>
-                                <SetText color={colors.grey} type="small">ที่อยู่ xxxxxx</SetText>
+                                <SetText color={colors.grey} type="small">ที่อยู่ {order?.user_address}</SetText>
                             </View>
-                            <View style={{ position: 'absolute', right: 0 }}>
-                                <Iconify icon="weui:back-filled" size={16} color={colors.whereblack} style={[{ transform: [{ rotate: '180deg' }] }]} />
-                            </View>
-                        </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-                {/* <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
-                    <TouchableOpacity style={{ padding: 10, gap: 10, overflow: 'hidden', flexDirection: 'row' }} onPress={() => setIsShow((s) => !s)}>
-                        <View style={{ width: 12, height: 12, borderRadius: 999, backgroundColor: colors.mediumpink, marginTop: 5 }} />
-                        <View>
-                            <SetText type="bold" size={14} color={colors.whereblack}>คำสั่งซื้อกำลังดำเนินการ</SetText>
-                            <SetText size={14} color={colors.grey}>บลาๆๆๆ</SetText>
-                        </View>
-                        <View style={{ position: 'absolute', right: 12, alignSelf: 'center' }}>
-                            <Iconify icon="weui:back-filled" size={16} color={colors.whereblack} style={[{ transform: [{ rotate: isShow ? '90deg' : '-90deg' }] }]} />
-                        </View>
-                    </TouchableOpacity>
-                    {isShow && <View style={{ borderTopWidth: 0.5, marginHorizontal: 10, borderColor: colors.line }}>
-                        {filterTab.slice(0, filterTab.length - 1).map((item: IFilterTab, index: number) => {
-                            console.log(statusIndex);
-                            return (
-                                <StatusCard key={index} item={item} color={index <= statusIndex ? colors.mediumpink : colors.grey} />
-                            )
-                        })}
-                    </View>}
-                </View> */}
                 <View style={{ marginTop: '3%', marginHorizontal: '5%', backgroundColor: colors.white, borderRadius: 10, ...styles.shadowCustom }}>
-                    {isShow2 ?
+                    {products[0] === undefined ? <ConfirmOrderCardSkeleton /> :isShow2 ?
                         <>
-                            {productContext.map((item: ProductRequest, index: number) => (
-                                <ConfirmOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />
-                            ))}
-                        </> : <ConfirmOrderCard item={productContext[0]} setSelectedProduct={setSelectedProduct} />
+                            {products.map((item: IProduct | any, index: number) => <ConfirmOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />)}
+                        </> : <ConfirmOrderCard item={products[0]} setSelectedProduct={setSelectedProduct} />
 
                     }
                     <TouchableOpacity onPress={() => setIsShow2((s) => !s)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: '5%', borderTopWidth: 1, borderColor: colors.line, paddingVertical: '3%' }}>
                         <SetText type='bold' size={14}>รวมจำนวนสินค้าทั้งหมด</SetText>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                            <SetText type='bold' size={14}>100 รายการ</SetText>
+                            <SetText type='bold' size={14}>{products.length} รายการ</SetText>
                             <Iconify icon="weui:back-filled" size={16} color={colors.whereblack} style={[{ transform: [{ rotate: isShow2 ? '90deg' : '-90deg' }] }]} />
                         </View>
                     </TouchableOpacity>
                 </View>
-                {/* <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom, marginBottom: '3%' }}>
-                    <View style={{ padding: 10, gap: 10, overflow: 'hidden', flexDirection: 'row' }}>
-                        <Iconify icon="streamline:credit-card-1-solid" size={20} color={colors.black} />
-                        <View>
-                            <SetText type="bold" size={14} color={colors.whereblack}>ข้อมูลการชำระเงิน</SetText>
-                            <SetText size={14} color={colors.grey}>ชำระเงินสำเร็จ</SetText>
-                        </View>
-                        <View style={{ position: 'absolute', right: 12, alignSelf: 'center' }}>
-                            <Iconify icon="lets-icons:check-fill" size={20} color={colors.success} />
-                        </View>
-                    </View>
-                </View> */}
             </ScrollView>
             <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
-                <TouchableOpacity onPress={()=>console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                <TouchableOpacity onPress={() => console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <Iconify icon="f7:phone-circle-fill" size={30} color={colors.mediumpink} />
-                    <SetText size={16} type="bold" color={colors.mediumpink} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 20}}>ติดต่อร้าน</SetText>
+                    <SetText size={16} type="bold" color={colors.mediumpink} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 20 }}>ติดต่อร้าน</SetText>
                 </TouchableOpacity>
                 {/* <TouchableOpacity onPress={()=>console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <Iconify icon="pepicons-pop:credit-card-circle-filled" size={30} color={colors.white} />
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 20}}>ชำระเงิน</SetText>
                 </TouchableOpacity> */}
-                <TouchableOpacity onPress={()=>console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                <TouchableOpacity onPress={() => console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ฉันได้รับสินค้าแล้ว</SetText>
                 </TouchableOpacity>
             </View>

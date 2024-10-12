@@ -2,7 +2,7 @@ export type IProduct = {
     product_id: string,
     detail: string,
     quantity: number,
-    size: 'S' | 'M' | 'L' | 'XL' | 'XXL',
+    size: 'string',
     design_id: number,
     fabric_id: number,
     created_at: number

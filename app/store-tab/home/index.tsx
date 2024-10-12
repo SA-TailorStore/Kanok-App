@@ -1,9 +1,8 @@
 import { SetText } from "@/components/SetText";
-import { Image, TouchableOpacity, View, type ImageSourcePropType } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import { colors, styles } from "@/utils/styles";
 import { useRouter } from "expo-router";
 import Knitwork from "@/assets/icons/knitwork";
-import StoreFront from "@/assets/icons/storefront-plus";
 import WrapBackground from "@/components/WrapBackground";
 import { Iconify } from "react-native-iconify";
 
@@ -28,7 +27,7 @@ export default function HomePage() {
                     <View style={{ paddingHorizontal: 30, height: '100%' }}>
                         <SetText size={27} type="bold" style={{ paddingTop: 14 }}>เลือกหมวดหมู่ที่ต้องการ</SetText>
                         <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }}>
-                            <ItemChoice title="ออเดอร์" icon={<Iconify icon="lets-icons:order-fill" size={60} color={colors.mediumpink} />} />
+                            <ItemChoice title="ออเดอร์" icon={<Iconify icon="lets-icons:order-fill" size={60} color={colors.mediumpink} />} to={() => router.push('/store-stack/order')} />
                             <ItemChoice title="แบบดีไซน์" icon={<Iconify icon="mdi:clothes-hanger" size={60} color={colors.mediumpink} />} to={()=>router.push('/store-stack/design')} />
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10, }}>

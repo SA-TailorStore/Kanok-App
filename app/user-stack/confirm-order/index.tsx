@@ -21,7 +21,6 @@ export default function ConfirmOrder() {
     const navigation = useNavigation();
     const router = useRouter();
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-    // const [user, setUser] = useState<IUser | null>(null);
     const { userContext, productContext, setProductContext } = useSession();
     const { showToast } = useToast();
     const [buttonDelay, setButtonDelay] = useState<boolean>(false);
