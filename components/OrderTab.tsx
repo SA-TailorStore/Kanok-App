@@ -39,7 +39,7 @@ export const filterTab: IFilterTab[] = [
 ]
 
 export default function OrderTab({ output }: { output: (status: string) => void }) {
-    const [selected, setSelected] = useState<string>('pending');
+    const [selected, setSelected] = useState<string>('all');
     const [tab, setTab] = useState<IFilterTab[]>(filterTab);
     const { userContext } = useSession();
 
