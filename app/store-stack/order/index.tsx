@@ -1,4 +1,5 @@
 import OrderCard from "@/components/OrderCard";
+import OrderCardShop from "@/components/OrderCardShop";
 import OrderTab from "@/components/OrderTab";
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
@@ -48,7 +49,7 @@ export default function Order() {
                 <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
                     {orders.map((order: IOrder, index: number) => {
                         if (order.status === selected) return (
-                            <OrderCard key={index} order={order} />
+                            <OrderCardShop key={index} order={order} />
                         )
                     })}
                 </ScrollView>

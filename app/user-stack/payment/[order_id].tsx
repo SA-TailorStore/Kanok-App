@@ -4,6 +4,7 @@ import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
 import { IOrder } from "@/types/IOrder";
 import { IProduct } from "@/types/IProduct";
+import { orderState } from "@/utils/orderState";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
@@ -104,10 +105,25 @@ export default function Payment() {
             },
         ]);
 
-    
+    const updateOrderStatus = () => {
+        axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', {
+            order_id: order_id,
+            status: orderState.waiting_assign,
+        }).then((res) => {
+            if (res.status === 204) {
+                console.log('เปลี่ยน state จ้า');
+                showToast('ชำระเงินสำเร็จ', 'การชำระเงินสำเร็จ รอตรวจสอบการชำระเงิน', 'success');
+                router.replace(`/user-stack/order-detail/${order_id}`);
+            } else {
+                console.log(res.status);
+            }
+        }).catch((err) => {
+            console.log('error updating order status');
+        });
+    }
+
     const handleUploadPhoto = () => {
-        showToast('ชำระเงินสำเร็จ', 'การชำระเงินสำเร็จ รอตรวจสอบการชำระเงิน');
-        router.replace(`/user-stack/order-detail/${order_id}`);
+        updateOrderStatus()
     }
 
     return (

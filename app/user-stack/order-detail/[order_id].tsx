@@ -6,15 +6,17 @@ import { IOrder } from "@/types/IOrder";
 import { IProduct } from "@/types/IProduct";
 import { ProductRequest } from "@/types/ProductRequest";
 import { formatDate } from "@/utils/formatDate";
+import { userOrderState } from "@/utils/orderState";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { TouchableOpacity, View, ScrollView } from "react-native";
+import { TouchableOpacity, View, ScrollView, Linking } from "react-native";
 import { Iconify } from "react-native-iconify";
 
 export default function OrderDetail() {
+    const router = useRouter();
     const [isShow, setIsShow] = useState<boolean>(false);
     const [isShow2, setIsShow2] = useState<boolean>(false);
     const [statusIndex, setStatusIndex] = useState<number>(0);
@@ -60,6 +62,7 @@ export default function OrderDetail() {
             console.log('error fetching products');
         })
     }
+    if (order === undefined) return null;
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '7%', backgroundColor: colors.wherewhite }} />
@@ -104,17 +107,17 @@ export default function OrderDetail() {
                 </View>
             </ScrollView>
             <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
-                <TouchableOpacity onPress={() => console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.store_phone}`)} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <Iconify icon="f7:phone-circle-fill" size={30} color={colors.mediumpink} />
-                    <SetText size={16} type="bold" color={colors.mediumpink} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 20 }}>ติดต่อร้าน</SetText>
+                    <SetText size={16} type="bold" color={colors.mediumpink} style={{ flex: 1, width: '100%', textAlign: 'center' }}>ติดต่อร้าน</SetText>
                 </TouchableOpacity>
-                {/* <TouchableOpacity onPress={()=>console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                {order?.status === 'payment' && <TouchableOpacity onPress={()=>router.push(`/user-stack/payment/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <Iconify icon="pepicons-pop:credit-card-circle-filled" size={30} color={colors.white} />
-                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 20}}>ชำระเงิน</SetText>
-                </TouchableOpacity> */}
-                <TouchableOpacity onPress={() => console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                    <SetText size={16} type="bold" color={colors.white} style={{ flex: 1, width: '100%', textAlign: 'center' }}>ชำระเงิน</SetText>
+                </TouchableOpacity>}
+                {userOrderState[3].status.includes(order!.status) && <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.store_phone}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ฉันได้รับสินค้าแล้ว</SetText>
-                </TouchableOpacity>
+                </TouchableOpacity>}
             </View>
         </WrapBackground>
     );
