@@ -1,4 +1,5 @@
 import Loading from "@/components/Loading";
+import { ContactButton } from "@/components/order-button/ContactButton";
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
@@ -15,14 +16,12 @@ import { Iconify } from "react-native-iconify";
 import { ImageLibraryOptions, launchImageLibrary } from 'react-native-image-picker';
 
 export default function AssignWork() {
-    const [photo, setPhoto] = useState<any>(null);
-
+    const [selected, setSelected] = useState<string>('');
     const route = useRoute() as { params: { order_id: string } };
     const router = useRouter();
     const navigation = useNavigation();
     const { order_id } = route.params;
     const [order, setOrder] = useState<IOrder>();
-    const [products, setProducts] = useState<IProduct[]>([]);
 
     const { showToast } = useToast();
 
@@ -33,6 +32,10 @@ export default function AssignWork() {
         });
         fetchOrder();
     }, [])
+
+    useEffect(() => {
+        console.log(selected);
+    }, [selected])
 
     const fetchOrder = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/get', { order_id: order_id }).then((res) => {
@@ -79,28 +82,42 @@ export default function AssignWork() {
     return (
         <WrapBackground color={colors.backgroundColor}>
             <Loading visible={false} text='กำลังตรวจสอบข้อมูล...' />
-            <ScrollView style={{ flex: 1, marginBottom: 100 }}>
-                <View style={{ borderBottomWidth: 1, paddingTop: '15%', marginHorizontal: '8%', borderColor: colors.line, paddingBottom: 10 }}>
-                    <SetText size={24} type="bold">ชำระเงิน</SetText>
-                    <SetText size={16}>ชำระเงินผ่าน QR PromptPay และส่งหลักฐานการโอน จากนั้นร้านจะตรวจสอบและดำเนินการผลิตสินค้า</SetText>
-                    <View style={{ width: '100%', alignItems: 'center', marginVertical: 12 }}>
-                        <Image source={require('@/assets/images/qr.png')} />
-                    </View>
-                    <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <SetText size={16} type='bold'>หมายเลขคำสั่งซื้อ</SetText>
-                        <SetText size={16} type='bold'>#{order?.order_id}</SetText>
-                    </View>
-                    <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <SetText size={16}>จำนวน</SetText>
-                        <SetText size={16}>{products.length} รายการ</SetText>
-                    </View>
-                    <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <SetText size={16}>ราคาทั้งสิ้น</SetText>
-                        <SetText size={16}>{order?.price} บาท</SetText>
-                    </View>
+            <View style={{ flex: 1 }}>
+                <View style={{ paddingTop: '15%', marginHorizontal: '8%', paddingBottom: 10 }}>
+                    <SetText size={24} type="bold">มอบหมายงานให้ช่าง</SetText>
+                    <SetText size={16}>เลือกช่างเพื่อมอบหมายงาน</SetText>
+
                 </View>
-            </ScrollView>
+                <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 20, gap: 10, paddingVertical: 6, paddingBottom: 20 }}>
+                    {[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map((_, index) => (
+                        <TailorCard tailor={index} setSelected={setSelected} />
+                    ))}
+                </ScrollView>
+            </View>
         </WrapBackground>
     );
+}
+
+const TailorCard = ({ tailor, setSelected }: { tailor: number, setSelected: React.Dispatch<React.SetStateAction<string>> }) => {
+    const onSelected = () => {
+        setSelected(tailor.toString());
+    }
+    return (
+        <TouchableOpacity onPress={() => onSelected()} style={{ flex: 1, flexDirection: 'row', width: '100%', height: 85, alignItems: 'center', gap: 10, paddingHorizontal: 10, borderRadius: 10, ...styles.shadowCustom, backgroundColor: colors.backgroundColor }}>
+            <View style={{ borderWidth: 1, width: 60, height: 60, borderRadius: 999 }}>
+                {/* รูป */}
+            </View>
+            <View style={{ flexDirection: 'column' }}>
+                <SetText type='bold'>Andrea Jones</SetText>
+                <SetText type='bold'>จำนวนงานปัจจุบัน : 15 / 20</SetText>
+                <View style={{ width: 90 }}>
+                    <ContactButton phone_number='123456' who="ช่าง" />
+                </View>
+            </View>
+            <View style={{ borderWidth: 1, width: 15, height: 15, position: 'absolute', borderRadius: 999, right: 8, top: 8 }}>
+
+            </View>
+        </TouchableOpacity>
+    )
 }
 
