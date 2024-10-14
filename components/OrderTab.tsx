@@ -65,13 +65,16 @@ export default function OrderTab({ output }: { output: (status: string) => void 
             <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ flexDirection: 'row'}}
+                contentContainerStyle={{ flexDirection: 'row' }}
                 style={{ borderBottomWidth: 1, borderColor: colors.line }}
             >
+                <TouchableOpacity onPress={() => setSelected('all')}>
+                    <SetText type={selected === 'all' ? 'bold' : 'default'} color={selected === 'all' ? colors.black : colors.grey} style={[{ paddingHorizontal: 18, borderColor: colors.mediumpink }, selected === 'all' ? { borderBottomWidth: 1 } : undefined]} size={14}>ทั้งหมด</SetText>
+                </TouchableOpacity>
                 {tab.map((item: IFilterTab, index: number) => {
                     return (
                         <TouchableOpacity key={index} onPress={() => setSelected(item.status[0])}>
-                            <SetText type={ item.status.includes(selected)? 'bold': 'default'} color={item.status?.includes(selected)? colors.black : colors.grey} style={[{ paddingHorizontal: 18, borderColor: colors.mediumpink }, item.status?.includes(selected)? { borderBottomWidth: 1 } : undefined]} size={14}>{item.title}</SetText>
+                            <SetText type={item.status.includes(selected) ? 'bold' : 'default'} color={item.status?.includes(selected) ? colors.black : colors.grey} style={[{ paddingHorizontal: 18, borderColor: colors.mediumpink }, item.status?.includes(selected) ? { borderBottomWidth: 1 } : undefined]} size={14}>{item.title}</SetText>
                         </TouchableOpacity>
                     )
                 })}

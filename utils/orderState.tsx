@@ -24,26 +24,32 @@ export const orderState = {
 export const userOrderState: IFilterTab[] = [
     {
         title: 'รอการดำเนินการ',
+        description: 'รอร้านค้าตอบรับคำสั่งซื้อ',
         status: ['pending'],
     },
     {
         title: 'ที่ต้องชำระ',
+        description: 'รอการชำระเงิน',
         status: ['payment']
     },
     {
         title: 'กำลังดำเนินการ',
+        description: 'ร้านค้ากำลังดำเนินการ',
         status: ['waiting_assign', 'processing_user', 'received_tailor', 'processing_tailor', 'success_tailor', 'received_shop', 'checking_shop', 'fix_received_tailor', 'fix_success_tailor', 'fix_received_shop', 'fix_checking_shop',]
     },
     {
         title: 'ที่ต้องได้รับ',
+        description: 'สินค้ากำลังมาหาคุณ',
         status: ['received_user', 'fix_received_user']
     },
     {
         title: 'สำเร็จ',
+        description: 'สินค้าถึงมือคุณแล้ว',
         status: ['success_user', 'fix_success_user']
     },
     {
         title: 'ยกเลิก',
+        description: 'คำสั่งซื้อถูกยกเลิก',
         status: ['cancel']
     },
 ]

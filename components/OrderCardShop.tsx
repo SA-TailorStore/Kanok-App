@@ -8,7 +8,6 @@ import { useRouter } from "expo-router";
 import { ReceivedButton } from "./order-button/ReceivedButton";
 import { orderState, storeOrderState } from "@/utils/orderState";
 import { ContactButton } from "./order-button/ContactButton";
-import { store } from "expo-router/build/global-state/router-store";
 
 export default function OrderCardShop({ order }: { order: IOrder }) {
     const router = useRouter();

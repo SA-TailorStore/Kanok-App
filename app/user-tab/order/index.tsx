@@ -46,7 +46,7 @@ export default function OrderPage() {
                 {/* OrderCardList */}
                 <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
                     {orders.map((order: IOrder, index: number) => {
-                        if (order.status === selected) return (
+                        if (order.status === selected || 'all' === selected) return (
                             <OrderCard key={index} order={order} />
                         )
                     })}
