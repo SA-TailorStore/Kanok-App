@@ -15,6 +15,7 @@ export const colors = {
     primary: '#F875AA',
     mediumpink: '#F47E9A',
     lesspink: '#FBEAEE',
+    nopink: '#F8E9EE',
     line: '#CCCCCC'
 };
 

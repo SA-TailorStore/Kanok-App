@@ -8,12 +8,14 @@ import { useRouter } from "expo-router";
 import { ReceivedButton } from "./order-button/ReceivedButton";
 import { orderState, storeOrderState } from "@/utils/orderState";
 import { ContactButton } from "./order-button/ContactButton";
+import { AssignWorkButton } from "./order-button/AssignWorkButton";
 
 export default function OrderCardShop({ order }: { order: IOrder }) {
     const router = useRouter();
     const status = {
         pending: <ContactButton phone_number={order.user_phone} who="ลูกค้า" />,
         payment: <ContactButton phone_number={order.user_phone} who="ลูกค้า" />,
+        waiting_assign: <AssignWorkButton order_id={order.order_id} />,
         processing: <PendingButton order_id={order.order_id} />,
         received: <ReceivedButton order_id={order.order_id} />,
         success: undefined,
