@@ -4,16 +4,14 @@ import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
 import { IOrder } from "@/types/IOrder";
-import { IProduct } from "@/types/IProduct";
 import { orderState } from "@/utils/orderState";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Dimensions, Image, TouchableOpacity, View, Platform, ScrollView, Alert } from "react-native";
+import { TouchableOpacity, View, ScrollView, Alert } from "react-native";
 import { Iconify } from "react-native-iconify";
-import { ImageLibraryOptions, launchImageLibrary } from 'react-native-image-picker';
 
 export default function AssignWork() {
     const [selected, setSelected] = useState<string>('');
@@ -22,6 +20,7 @@ export default function AssignWork() {
     const navigation = useNavigation();
     const { order_id } = route.params;
     const [order, setOrder] = useState<IOrder>();
+    const [tailors, setTailor] = useState<any>();
 
     const { showToast } = useToast();
 
@@ -31,11 +30,25 @@ export default function AssignWork() {
             headerTitle: "",
         });
         fetchOrder();
+        getTailor();
     }, [])
 
     useEffect(() => {
         console.log(selected);
     }, [selected])
+
+    const getTailor = async () => {
+        await axios.get(process.env.EXPO_PUBLIC_API_URL + '/api/users').then((res) => {
+            if (res.status === 200) {
+                setTailor(res.data.data);
+                console.log(res.data.data)
+            } else {
+                console.log(res.status);
+            }
+        }).catch((err) => {
+            console.log('error fetching tailors');
+        })
+    }
 
     const fetchOrder = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/get', { order_id: order_id }).then((res) => {
@@ -86,19 +99,32 @@ export default function AssignWork() {
                 <View style={{ paddingTop: '15%', marginHorizontal: '8%', paddingBottom: 10 }}>
                     <SetText size={24} type="bold">มอบหมายงานให้ช่าง</SetText>
                     <SetText size={16}>เลือกช่างเพื่อมอบหมายงาน</SetText>
-
                 </View>
                 <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 20, gap: 10, paddingVertical: 6, paddingBottom: 20 }}>
-                    {[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map((_, index) => (
-                        <TailorCard tailor={index} setSelected={setSelected} />
+                    {tailors?.map((_: any, index: number) => (
+                        <TailorCard key={index} tailor={index} selected={selected === index.toString()} setSelected={setSelected} />
                     ))}
                 </ScrollView>
+                <View style={{ alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+                    <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: '100%', paddingVertical: 15, borderRadius: 999, backgroundColor: colors.mediumpink, ...styles.shadowCustom }}>
+                        <SetText type='bold' size={16} style={{ textAlign: 'center' }} color={colors.white}>ยืนยันการเลือก</SetText>
+                    </TouchableOpacity>
+                </View>
             </View>
+            <AssignDate />
         </WrapBackground>
     );
 }
 
-const TailorCard = ({ tailor, setSelected }: { tailor: number, setSelected: React.Dispatch<React.SetStateAction<string>> }) => {
+const AssignDate = () => {
+    return (
+        <View style={{ position: 'absolute', zIndex: 999, backgroundColor: colors.black }}>
+
+        </View>
+    )
+}
+
+const TailorCard = ({ tailor, selected, setSelected }: { tailor: number, selected: boolean, setSelected: React.Dispatch<React.SetStateAction<string>> }) => {
     const onSelected = () => {
         setSelected(tailor.toString());
     }
@@ -114,8 +140,8 @@ const TailorCard = ({ tailor, setSelected }: { tailor: number, setSelected: Reac
                     <ContactButton phone_number='123456' who="ช่าง" />
                 </View>
             </View>
-            <View style={{ borderWidth: 1, width: 15, height: 15, position: 'absolute', borderRadius: 999, right: 8, top: 8 }}>
-
+            <View style={{ borderWidth: 1, borderColor: selected ? colors.mediumpink : colors.line, width: 15, height: 15, position: 'absolute', alignItems: 'center', justifyContent: 'center', borderRadius: 999, right: 8, top: 8 }}>
+                {selected && <Iconify icon="lets-icons:check-fill" size={20} color={colors.mediumpink} />}
             </View>
         </TouchableOpacity>
     )
