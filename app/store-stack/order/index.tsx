@@ -17,7 +17,6 @@ export default function Order() {
     const [orders, setOrders] = useState<IOrder[]>([]);
 
     const fetchOrders = async () => {
-        const token = await AsyncStorage.getItem('@access_token');
         await axios.get(process.env.EXPO_PUBLIC_API_URL + '/api/orders').then((res) => {
             if (res.status === 200) {
                 setOrders(res.data.data);
@@ -48,7 +47,7 @@ export default function Order() {
                 {/* OrderCardList */}
                 <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
                     {orders.map((order: IOrder, index: number) => {
-                        if (order.status === selected || 'all' === selected) return (
+                        if (order.status === selected || ('all' === selected && !['success_user', 'cancel'].includes(order.status))) return (
                             <OrderCardShop key={index} order={order} />
                         )
                     })}
