@@ -189,7 +189,7 @@ export default function OrderDetail() {
                     <SetText size={16} type="bold" color={colors.mediumpink} style={{ flex: 1, width: '100%', textAlign: 'center' }}>ติดต่อลูกค้า</SetText>
                 </TouchableOpacity>}
                 {/* มอบหมายงานให้ช่าง */}
-                {order?.status === orderState.waiting_assign && <TouchableOpacity onPress={() => console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                {order?.status === orderState.waiting_assign && <TouchableOpacity onPress={() => router.push(`/store-stack/assign-work/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>มอบหมายงานให้ช่าง</SetText>
                 </TouchableOpacity>}
                 {/* จัดส่งพัสดุให้ช่าง */}
