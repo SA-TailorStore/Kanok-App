@@ -42,7 +42,7 @@ export default function OrderPage() {
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '100%' }}>
                 <SetText type="bold" size={24} style={{ marginTop: 15, paddingHorizontal: '8%', marginBottom: 4 }}>My Order</SetText>
-                <OrderTab output={setSelected} />
+                <OrderTab output={setSelected} orders={orders} />
                 {/* OrderCardList */}
                 <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
                     {orders.map((order: IOrder, index: number) => {

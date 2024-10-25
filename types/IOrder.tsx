@@ -9,7 +9,7 @@ export type IOrder = {
     user_phone: string,
     user_address: string;
     price: number;
-    due_data: string;
+    due_date: string;
     tracking_number: string;
     tailor_id: string;
     created_by: IUser | any; // แก้กลับเมื่อเชื่อ database ได้แล้ว

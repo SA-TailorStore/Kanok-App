@@ -29,6 +29,7 @@ export default function OrderDetail() {
     const [buttonDelay, setButtonDelay] = useState<boolean>(false);
     const [price, setPrice] = useState<number>(0);
     const [orderOwner, setOrderOwner] = useState<IUser>();
+    const [orderTailor, setOrderTailor] = useState<IUser>();
 
     const route = useRoute() as { params: { order_id: string } };
     const navigation = useNavigation();
@@ -83,6 +84,17 @@ export default function OrderDetail() {
         }
         ).catch((err) => {
             console.log('error fetching user');
+        });
+
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/id', { user_id: order?.tailor_id }).then((res) => {
+            if (res.status === 200) {
+                setOrderTailor(res.data.data);
+            } else {
+                console.log(res.status);
+            }
+        }
+        ).catch((err) => {
+            console.log('error fetching tailor');
         })
     }
 
@@ -151,6 +163,7 @@ export default function OrderDetail() {
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '7%', backgroundColor: colors.wherewhite }} />
             <ScrollView style={{ flex: 1, height: '100%' }} contentContainerStyle={{ paddingBottom: 120 }}>
+
                 {/* -------------------------------- ข้อมูลของลูกค้า -------------------------------- */}
                 <View style={{ marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
                     <View style={{ backgroundColor: colors.mediumpink, padding: 10 }}>
@@ -187,22 +200,23 @@ export default function OrderDetail() {
                         </View>
                     </View>
                 </View>
+
                 {/* -------------------------------- ข้อมูลของช่าง -------------------------------- */}
-                <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
+                {order.created_by !== order.tailor_id && <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
                     <View style={{ backgroundColor: colors.mediumpink, padding: 10 }}>
                         <SetText type="bold" size={16} color={colors.white}>หมายเลขคำสั่งซื้อ #{order_id}</SetText>
                     </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: colors.line }}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText size={14} color={colors.black} type="bold">ข้อมูลลูกค้า</SetText>
+                            <SetText size={14} color={colors.black} type="bold">ข้อมูลช่าง</SetText>
                         </View>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText size={14} color={colors.grey}>สั่งสินค้าโดย</SetText>
-                            <SetText size={14} color={colors.grey}>{orderOwner?.display_name}</SetText>
+                            <SetText size={14} color={colors.grey}>ชื่อช่าง</SetText>
+                            <SetText size={14} color={colors.grey}>{orderTailor?.display_name}</SetText>
                         </View>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText size={14} color={colors.grey}>วันที่สั่งซื้อสินค้า</SetText>
-                            <SetText size={14} color={colors.grey}>{formatDate(order.timestamp)}</SetText>
+                            <SetText size={14} color={colors.grey}>วันที่ต้องส่งมอบ</SetText>
+                            <SetText size={14} color={colors.grey}>{formatDate(order.due_date)}</SetText>
                         </View>
                     </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
@@ -212,7 +226,7 @@ export default function OrderDetail() {
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
-                            <SetText size={14} color={colors.grey}><ContactButton phone_number={order.user_phone} who="ลูกค้า" /></SetText>
+                            <SetText size={14} color={colors.grey}><ContactButton phone_number={orderTailor?.phone_number} who="ช่าง" /></SetText>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
                             <Iconify icon="bx:bx-map" size={20} color={colors.whereblack} />
@@ -222,7 +236,7 @@ export default function OrderDetail() {
                             </View>
                         </View>
                     </View>
-                </View>
+                </View>}
 
                 <View style={{ marginTop: '3%', marginHorizontal: '5%', backgroundColor: colors.white, borderRadius: 10, ...styles.shadowCustom }}>
                     {products[0] === undefined ? <ConfirmOrderCardSkeleton /> : isShow2 ?
@@ -243,7 +257,7 @@ export default function OrderDetail() {
 
             <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
                 {/* ยกเลิกคำสั่งซื้อ */}
-                {(order?.status === 'pending' || order?.status === 'payment') && <TouchableOpacity onPress={onCancleOrder} style={[{ flex: 1, height: 50, backgroundColor: colors.line, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                {[orderState.pending, orderState.payment].includes(order?.status) && <TouchableOpacity onPress={onCancleOrder} style={[{ flex: 1, height: 50, backgroundColor: colors.line, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ width: '100%', textAlign: 'center' }}>ยกเลิกคำสั่งซื้อ</SetText>
                 </TouchableOpacity>}
                 {/* แจ้งราคาสินค้า */}
@@ -252,7 +266,7 @@ export default function OrderDetail() {
                     <SetText size={16} type="bold" color={colors.white} style={{ flex: 1, width: '100%', textAlign: 'center' }}>แจ้งราคาสินค้า</SetText>
                 </TouchableOpacity>}
                 {/* ติดต่อลูกค้า */}
-                {![orderState.pending, orderState.waiting_assign, orderState.received_tailor].includes(order?.status) && <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.user_phone}`)} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                {[orderState.payment, orderState.received_user].includes(order?.status) && <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.user_phone}`)} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <Iconify icon="f7:phone-circle-fill" size={30} color={colors.mediumpink} />
                     <SetText size={16} type="bold" color={colors.mediumpink} style={{ flex: 1, width: '100%', textAlign: 'center' }}>ติดต่อลูกค้า</SetText>
                 </TouchableOpacity>}
