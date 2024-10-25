@@ -31,7 +31,7 @@ export default function HomePage() {
                             <ItemChoice title="แบบดีไซน์" icon={<Iconify icon="mdi:clothes-hanger" size={60} color={colors.mediumpink} />} to={()=>router.push('/store-stack/design')} />
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10, }}>
-                            <ItemChoice title="วัสดุ" icon={<Knitwork/>} to={()=>router.push('/store-stack/material')}/>
+                            <ItemChoice title="พัสดุ" icon={<Knitwork/>} to={()=>router.push('/store-stack/material')}/>
                             <ItemChoice title="ลายผ้า" icon={<Iconify icon="game-icons:rolled-cloth" size={60} color={colors.mediumpink} />} to={()=>router.push('/store-stack/fabric')} />
                         </View>
                     </View>

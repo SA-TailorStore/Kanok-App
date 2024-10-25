@@ -243,7 +243,6 @@ export default function OrderDetail() {
                         <>
                             {products.map((item: IProduct | any, index: number) => <ConfirmOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />)}
                         </> : <ConfirmOrderCard item={products[0]} setSelectedProduct={setSelectedProduct} />
-
                     }
                     <TouchableOpacity onPress={() => setIsShow2((s) => !s)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: '5%', borderTopWidth: 1, borderColor: colors.line, paddingVertical: '3%' }}>
                         <SetText type='bold' size={14}>รวมจำนวนสินค้าทั้งหมด</SetText>
@@ -276,7 +275,7 @@ export default function OrderDetail() {
                 </TouchableOpacity>}
                 {/* จัดส่งพัสดุให้ช่าง */}
                 {order?.status === orderState.processing_user && <TouchableOpacity onPress={() => console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>จัดส่งวัสดุ</SetText>
+                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>จัดส่งพัสดุ</SetText>
                 </TouchableOpacity>}
             </View>
 
