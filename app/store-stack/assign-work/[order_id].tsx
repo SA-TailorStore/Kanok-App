@@ -163,7 +163,7 @@ const AssignDate = ({ setShowAssignDate, order_id, tailor }: { setShowAssignDate
     const handleConfirmButton = async () => {
         console.log(order_id, tailor.user_id, date.toISOString());
 
-        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/tailor', { order_id: order_id, user_id: tailor.user_id, due_date: date.toISOString() }).then(async (res) => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/tailor', { order_id: order_id, tailor_id: tailor.user_id, due_date: date.toISOString() }).then(async (res) => {
             await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', {
                 "order_id": order_id,
                 "status": "processing_user",

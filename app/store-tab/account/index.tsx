@@ -1,4 +1,4 @@
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Image } from "react-native";
 import { colors, styles } from "@/utils/styles";
 import { useRouter, } from "expo-router";
 import WrapBackground from "@/components/WrapBackground";
@@ -83,8 +83,8 @@ export default function AccountPage() {
             </View>
             <View style={[{ width: '90%', height: '22%', borderRadius: 16, backgroundColor: colors.white, position: 'absolute', zIndex: 99, top: '13%', alignSelf: 'center', paddingHorizontal: '3%' }, styles.shadowCustom]}>
                 <View style={{ width: '100%', height: '55%', flexDirection: 'row', borderBottomWidth: 1, borderColor: colors.line, alignItems: "center", gap: 10 }}>
-                    <View style={{ position: 'relative', alignItems: 'center', justifyContent: "center", width: 70, height: 70, borderRadius: 999, borderWidth: 2, backgroundColor: colors.white }}>
-                        {/* <Image source={} style={{ width: '100%', height: '100%', objectFit: 'fill', borderRadius: 999 }} /> */}
+                    <View style={{ position: 'relative', alignItems: 'center', justifyContent: "center", width: 70, height: 70, borderRadius: 999, borderWidth: 2 }}>
+                        {userContext.user_profile_url !== '-' && <Image source={{ uri: userContext.user_profile_url }} style={{ width: '100%', height: '100%', objectFit: 'fill', borderRadius: 999 }} />}
                     </View>
                     <View>
                         <SetText type='bold' size={20}>{userContext.display_name}</SetText>

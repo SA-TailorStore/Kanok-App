@@ -8,6 +8,8 @@ export type IOrder = {
     store_address: string;
     user_phone: string,
     user_address: string;
+    tailor_phone: string;
+    tailor_address: string;
     price: number;
     due_date: string;
     tracking_number: string;

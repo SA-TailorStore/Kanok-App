@@ -1,6 +1,5 @@
 import ConfirmOrderCard, { ConfirmOrderCardSkeleton } from "@/components/ComfirmOrderCard";
 import { ContactButton } from "@/components/order-button/ContactButton";
-import { IFilterTab } from "@/components/OrderTab";
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
@@ -221,13 +220,13 @@ export default function OrderDetail() {
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
-                            <SetText size={14} color={colors.grey}><ContactButton phone_number={orderTailor?.phone_number} who="ช่าง" /></SetText>
+                            <SetText size={14} color={colors.grey}><ContactButton phone_number={order.tailor_phone} who="ช่าง" /></SetText>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
                             <Iconify icon="bx:bx-map" size={20} color={colors.whereblack} />
                             <View style={{ flexDirection: 'column' }}>
-                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}></SetText>
-                                <SetText color={colors.grey} type="small">ที่อยู่ {orderTailor?.address.split('|')[1]}</SetText>
+                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}>{order.tailor_address.split('|')[0]}</SetText>
+                                <SetText color={colors.grey} type="small">ที่อยู่ {order.tailor_address.split('|')[1]}</SetText>
                             </View>
                         </View>
                     </View>

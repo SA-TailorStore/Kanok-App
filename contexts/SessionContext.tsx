@@ -108,7 +108,7 @@ export default function SessionProvider({ children }: any) {
     //     return response.data.data;
     // } 
     return (
-        <SessionContext.Provider value={{ setToken, removeToken, userContext, tokenContext, productContext, setProductContext, updateProduct, checkRole }}>
+        <SessionContext.Provider value={{ setToken, removeToken, userContext, tokenContext, productContext, refreshSession, setProductContext, updateProduct, checkRole }}>
             {children}
         </SessionContext.Provider>
     )
