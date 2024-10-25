@@ -34,9 +34,9 @@ export default function OrderCardShop({ order }: { order: IOrder }) {
                     </View>
                     <SetText color={colors.grey}>7 พ.ย. 27, 14:41</SetText>
                     <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', position: 'absolute', bottom: 0, width: '100%' }}>
-                        <SetText type='bold' color={colors.mediumpink}>{
-                            storeOrderState.find((item) => item.status.includes(order.status))?.description
-                        }</SetText>
+                        <SetText type='bold' color={colors.mediumpink}>
+                            {order.status === orderState.processing_user ? "รอส่งพัสดุให้ช่าง" : storeOrderState.find((item) => item.status.includes(order.status))?.description}
+                        </SetText>
                         <SetText type="bold" color={colors.mediumpink}>{status[order.status]}</SetText>
                     </View>
                 </View>

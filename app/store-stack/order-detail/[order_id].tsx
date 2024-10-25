@@ -9,7 +9,7 @@ import { IProduct } from "@/types/IProduct";
 import { IUser } from "@/types/IUser";
 import { ProductRequest } from "@/types/ProductRequest";
 import { formatDate } from "@/utils/formatDate";
-import { orderState, userOrderState } from "@/utils/orderState";
+import { orderState, storeOrderState, userOrderState } from "@/utils/orderState";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
@@ -43,15 +43,18 @@ export default function OrderDetail() {
             headerTitle: "รายละเอียดคำสั่งซื้อ",
         });
 
-        fetchOrder();
-        fetchProducts();
-    }, [])
+        const unsubscribe = navigation.addListener('focus', () => {
+            fetchOrder();
+            fetchProducts();
+        });
+        return unsubscribe;
+    }, []);
 
     const fetchOrder = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/get', { order_id: order_id }).then((res) => {
             if (res.status === 200) {
                 setOrder(res.data.data);
-                
+
                 fetchOrderOwner(res.data.data);
                 console.log(res.data.data)
             } else {
@@ -182,10 +185,6 @@ export default function OrderDetail() {
                             <SetText size={14} color={colors.grey}>{formatDate(order.timestamp)}</SetText>
                         </View>
                     </View>
-                    <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
-                        <SetText size={14} color={colors.whereblack} type='bold'>ข้อมูลการจัดส่ง</SetText>
-                        <SetText size={14} color={colors.grey}>ยังไม่มีข้อมูลการจัดส่ง</SetText>
-                    </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
@@ -204,7 +203,7 @@ export default function OrderDetail() {
                 {/* -------------------------------- ข้อมูลของช่าง -------------------------------- */}
                 {order.created_by !== order.tailor_id && <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
                     <View style={{ backgroundColor: colors.mediumpink, padding: 10 }}>
-                        <SetText type="bold" size={16} color={colors.white}>หมายเลขคำสั่งซื้อ #{order_id}</SetText>
+                        <SetText type="bold" size={16} color={colors.white}>หมายเลขงานช่าง #{order_id}</SetText>
                     </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: colors.line }}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -219,10 +218,6 @@ export default function OrderDetail() {
                             <SetText size={14} color={colors.grey}>{formatDate(order.due_date)}</SetText>
                         </View>
                     </View>
-                    <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
-                        <SetText size={14} color={colors.whereblack} type='bold'>ข้อมูลการจัดส่ง</SetText>
-                        <SetText size={14} color={colors.grey}>ยังไม่มีข้อมูลการจัดส่ง</SetText>
-                    </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
@@ -231,8 +226,8 @@ export default function OrderDetail() {
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
                             <Iconify icon="bx:bx-map" size={20} color={colors.whereblack} />
                             <View style={{ flexDirection: 'column' }}>
-                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}>{order?.user_address.split('|')[0]}</SetText>
-                                <SetText color={colors.grey} type="small">ที่อยู่ {order?.user_address.split('|')[1]}</SetText>
+                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}></SetText>
+                                <SetText color={colors.grey} type="small">ที่อยู่ {orderTailor?.address.split('|')[1]}</SetText>
                             </View>
                         </View>
                     </View>
@@ -254,7 +249,7 @@ export default function OrderDetail() {
                 </View>
             </ScrollView>
 
-            <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
+            {!storeOrderState[3].status.includes(order.status) && <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
                 {/* ยกเลิกคำสั่งซื้อ */}
                 {[orderState.pending, orderState.payment].includes(order?.status) && <TouchableOpacity onPress={onCancleOrder} style={[{ flex: 1, height: 50, backgroundColor: colors.line, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ width: '100%', textAlign: 'center' }}>ยกเลิกคำสั่งซื้อ</SetText>
@@ -274,10 +269,10 @@ export default function OrderDetail() {
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>มอบหมายงานให้ช่าง</SetText>
                 </TouchableOpacity>}
                 {/* จัดส่งพัสดุให้ช่าง */}
-                {order?.status === orderState.processing_user && <TouchableOpacity onPress={() => console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                {order?.status === orderState.processing_user && <TouchableOpacity onPress={() => router.push(`/store-stack/tracking_number/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>จัดส่งพัสดุ</SetText>
                 </TouchableOpacity>}
-            </View>
+            </View>}
 
             <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 9999, display: isPaymentPopup ? 'flex' : 'none', justifyContent: 'flex-end', alignItems: 'center' }}>
                 <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 'auto', paddingTop: 20, justifyContent: 'flex-end', paddingBottom: 30, paddingHorizontal: '5%', zIndex: 90 }}>
