@@ -4,6 +4,7 @@ import { SetText } from "./SetText";
 import { useEffect, useState } from "react";
 import { storeOrderState, userOrderState } from "@/utils/orderState";
 import { useSession } from "@/contexts/SessionContext";
+import { IOrder } from "@/types/IOrder";
 
 export type IFilterTab = {
     title: string,
@@ -11,36 +12,9 @@ export type IFilterTab = {
     status: string[],
 }
 
-export const filterTab: IFilterTab[] = [
-    {
-        title: 'รอการดำเนินการ',
-        status: ['pending']
-    },
-    {
-        title: 'ที่ต้องชำระ',
-        status: ['payment']
-    },
-    {
-        title: 'กำลังดำเนินการ',
-        status: ['processing_user', 'received_tailor', 'processing_tailor', 'received_shop', 'success_tailor']
-    },
-    {
-        title: 'ที่ต้องได้รับ',
-        status: ['received_user']
-    },
-    {
-        title: 'สำเร็จ',
-        status: ['success_user']
-    },
-    {
-        title: 'ยกเลิก',
-        status: ['cancel']
-    },
-]
-
-export default function OrderTab({ output }: { output: (status: string) => void }) {
+export default function OrderTab({ output, orders }: { output: (status: string) => void, orders: IOrder[] }) {
     const [selected, setSelected] = useState<string>('all');
-    const [tab, setTab] = useState<IFilterTab[]>(filterTab);
+    const [tab, setTab] = useState<IFilterTab[]>([]);
     const { userContext } = useSession();
 
     useEffect(() => {
@@ -74,7 +48,7 @@ export default function OrderTab({ output }: { output: (status: string) => void 
                 {tab.map((item: IFilterTab, index: number) => {
                     return (
                         <TouchableOpacity key={index} onPress={() => setSelected(item.status[0])}>
-                            <SetText type={item.status.includes(selected) ? 'bold' : 'default'} color={item.status?.includes(selected) ? colors.black : colors.grey} style={[{ paddingHorizontal: 18, borderColor: colors.mediumpink }, item.status?.includes(selected) ? { borderBottomWidth: 1 } : undefined]} size={14}>{item.title}</SetText>
+                            <SetText type={item.status.includes(selected) ? 'bold' : 'default'} color={item.status?.includes(selected) ? colors.black : colors.grey} style={[{ paddingHorizontal: 16, borderColor: colors.mediumpink }, item.status?.includes(selected) ? { borderBottomWidth: 1 } : undefined]} size={14}>{item.title}({orders?.filter((o) => item.status.includes(o.status)).length})</SetText>
                         </TouchableOpacity>
                     )
                 })}

@@ -21,6 +21,7 @@ export default function OrderCardShop({ order }: { order: IOrder }) {
         success: undefined,
         cancel: undefined
     } as { [key: string]: JSX.Element | undefined };
+
     return (
         <TouchableOpacity disabled={order?.status === orderState.cancel} onPress={() => router.push(`/store-stack/order-detail/${order.order_id}`)} style={{ flexDirection: 'row', height: 90, width: '100%', borderBottomWidth: 0.5, borderColor: colors.grey, paddingBottom: 15, paddingHorizontal: 15, marginTop: 10, opacity: order?.status === orderState.cancel ? 0.5 : 1 }}>
             <View style={{ flex: 1, flexDirection: 'row' }}>

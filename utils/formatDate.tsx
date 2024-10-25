@@ -8,5 +8,5 @@ export const formatDate = (dateString: string) => {
       minute: '2-digit',
       hour12: false
     };
-    return date.toLocaleString('en-GB', options);
+    return date.toLocaleString('th-TH', options);
   };

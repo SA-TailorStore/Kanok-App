@@ -1,10 +1,12 @@
 import ConfirmOrderCard, { ConfirmOrderCardSkeleton } from "@/components/ComfirmOrderCard";
+import { ContactButton } from "@/components/order-button/ContactButton";
 import { IFilterTab } from "@/components/OrderTab";
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
 import { IOrder } from "@/types/IOrder";
 import { IProduct } from "@/types/IProduct";
+import { IUser } from "@/types/IUser";
 import { ProductRequest } from "@/types/ProductRequest";
 import { formatDate } from "@/utils/formatDate";
 import { orderState, userOrderState } from "@/utils/orderState";
@@ -26,6 +28,7 @@ export default function OrderDetail() {
     const [isPaymentPopup, setIsPaymentPopup] = useState<boolean>(false);
     const [buttonDelay, setButtonDelay] = useState<boolean>(false);
     const [price, setPrice] = useState<number>(0);
+    const [orderOwner, setOrderOwner] = useState<IUser>();
 
     const route = useRoute() as { params: { order_id: string } };
     const navigation = useNavigation();
@@ -40,13 +43,15 @@ export default function OrderDetail() {
         });
 
         fetchOrder();
+        fetchProducts();
     }, [])
 
     const fetchOrder = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/get', { order_id: order_id }).then((res) => {
             if (res.status === 200) {
                 setOrder(res.data.data);
-                fetchProducts();
+                
+                fetchOrderOwner(res.data.data);
                 console.log(res.data.data)
             } else {
                 console.log(res.status);
@@ -65,6 +70,19 @@ export default function OrderDetail() {
             }
         }).catch((err) => {
             console.log('error fetching products');
+        })
+    }
+
+    const fetchOrderOwner = async (order: IOrder) => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/id', { user_id: order?.created_by }).then((res) => {
+            if (res.status === 200) {
+                setOrderOwner(res.data.data);
+            } else {
+                console.log(res.status);
+            }
+        }
+        ).catch((err) => {
+            console.log('error fetching user');
         })
     }
 
@@ -133,20 +151,33 @@ export default function OrderDetail() {
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '7%', backgroundColor: colors.wherewhite }} />
             <ScrollView style={{ flex: 1, height: '100%' }} contentContainerStyle={{ paddingBottom: 120 }}>
+                {/* -------------------------------- ข้อมูลของลูกค้า -------------------------------- */}
                 <View style={{ marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
                     <View style={{ backgroundColor: colors.mediumpink, padding: 10 }}>
                         <SetText type="bold" size={16} color={colors.white}>หมายเลขคำสั่งซื้อ #{order_id}</SetText>
                     </View>
-                    <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: colors.line }}>
-                        <SetText size={14} color={colors.grey}>วันที่สั่งซื้อสินค้า</SetText>
-                        <SetText size={14} color={colors.grey}>{formatDate(order?.timestamp!)}</SetText>
+                    <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: colors.line }}>
+                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText size={14} color={colors.black} type="bold">ข้อมูลลูกค้า</SetText>
+                        </View>
+                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText size={14} color={colors.grey}>สั่งสินค้าโดย</SetText>
+                            <SetText size={14} color={colors.grey}>{orderOwner?.display_name}</SetText>
+                        </View>
+                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText size={14} color={colors.grey}>วันที่สั่งซื้อสินค้า</SetText>
+                            <SetText size={14} color={colors.grey}>{formatDate(order.timestamp)}</SetText>
+                        </View>
                     </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
                         <SetText size={14} color={colors.whereblack} type='bold'>ข้อมูลการจัดส่ง</SetText>
                         <SetText size={14} color={colors.grey}>ยังไม่มีข้อมูลการจัดส่ง</SetText>
                     </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
-                        <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
+                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
+                            <SetText size={14} color={colors.grey}><ContactButton phone_number={order.user_phone} who="ลูกค้า" /></SetText>
+                        </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
                             <Iconify icon="bx:bx-map" size={20} color={colors.whereblack} />
                             <View style={{ flexDirection: 'column' }}>
@@ -156,6 +187,43 @@ export default function OrderDetail() {
                         </View>
                     </View>
                 </View>
+                {/* -------------------------------- ข้อมูลของช่าง -------------------------------- */}
+                <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
+                    <View style={{ backgroundColor: colors.mediumpink, padding: 10 }}>
+                        <SetText type="bold" size={16} color={colors.white}>หมายเลขคำสั่งซื้อ #{order_id}</SetText>
+                    </View>
+                    <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: colors.line }}>
+                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText size={14} color={colors.black} type="bold">ข้อมูลลูกค้า</SetText>
+                        </View>
+                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText size={14} color={colors.grey}>สั่งสินค้าโดย</SetText>
+                            <SetText size={14} color={colors.grey}>{orderOwner?.display_name}</SetText>
+                        </View>
+                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText size={14} color={colors.grey}>วันที่สั่งซื้อสินค้า</SetText>
+                            <SetText size={14} color={colors.grey}>{formatDate(order.timestamp)}</SetText>
+                        </View>
+                    </View>
+                    <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
+                        <SetText size={14} color={colors.whereblack} type='bold'>ข้อมูลการจัดส่ง</SetText>
+                        <SetText size={14} color={colors.grey}>ยังไม่มีข้อมูลการจัดส่ง</SetText>
+                    </View>
+                    <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
+                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
+                            <SetText size={14} color={colors.grey}><ContactButton phone_number={order.user_phone} who="ลูกค้า" /></SetText>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
+                            <Iconify icon="bx:bx-map" size={20} color={colors.whereblack} />
+                            <View style={{ flexDirection: 'column' }}>
+                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}>{order?.user_address.split('|')[0]}</SetText>
+                                <SetText color={colors.grey} type="small">ที่อยู่ {order?.user_address.split('|')[1]}</SetText>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+
                 <View style={{ marginTop: '3%', marginHorizontal: '5%', backgroundColor: colors.white, borderRadius: 10, ...styles.shadowCustom }}>
                     {products[0] === undefined ? <ConfirmOrderCardSkeleton /> : isShow2 ?
                         <>
@@ -210,9 +278,9 @@ export default function OrderDetail() {
                     <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, gap: 10 }}>
                         <SetText type="bold" size={16}>จำนวน</SetText>
                         <TextInput keyboardType="number-pad"
-                            value={price.toString()}
+                            value={price ? price.toString() : ''}
                             onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? setPrice(parseInt(e.nativeEvent.text)) : setPrice(0)}
-                            style={{ flex: 1, width: '100%', height: 50, borderColor: colors.line, borderWidth: 1, borderRadius: 5, textAlignVertical: 'top', padding: 5, paddingHorizontal: 10 }} placeholder="ราคา" />
+                            style={{ flex: 1, width: '100%', height: 50, borderColor: colors.line, borderWidth: 1, borderRadius: 5, textAlignVertical: 'top', padding: 5, paddingHorizontal: 10 }} placeholder="กรอกราคา" />
                         <SetText type="bold" size={16}>บาท</SetText>
                     </View>
                     <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>

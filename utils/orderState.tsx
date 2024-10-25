@@ -72,7 +72,7 @@ export const storeOrderState: IFilterTab[] = [
     },
     {
         title: 'กำลังดำเนินการ',
-        description: 'ช่างกำลังทำงาน',
+        description: 'ช่างกำลังทำงานให้คุณ',
         status: ['processing_user', 'received_tailor', 'processing_tailor', 'success_tailor']
     },
     {
