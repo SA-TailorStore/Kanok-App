@@ -60,6 +60,9 @@ export default function SessionProvider({ children }: any) {
             case 'store':
                 router.replace("/store-tab/home");
                 break;
+            case 'tailor':
+                router.replace("/tailor-tab/home");
+                break;
             default:
                 router.replace("/sign-in");
                 break;

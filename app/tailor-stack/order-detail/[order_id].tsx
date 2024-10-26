@@ -1,14 +1,14 @@
-import ConfirmOrderCard, { ConfirmOrderCardSkeleton } from "@/components/ComfirmOrderCard";
+import { ConfirmOrderCardSkeleton } from "@/components/ComfirmOrderCard";
+import ConfirmOrderCardTailor from "@/components/ComfirmOrderCardTailor";
 import { ContactButton } from "@/components/order-button/ContactButton";
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
 import { IOrder } from "@/types/IOrder";
 import { IProduct } from "@/types/IProduct";
-import { IUser } from "@/types/IUser";
 import { ProductRequest } from "@/types/ProductRequest";
 import { formatDate } from "@/utils/formatDate";
-import { orderState, storeOrderState, userOrderState } from "@/utils/orderState";
+import { orderState } from "@/utils/orderState";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
@@ -20,14 +20,10 @@ import { Iconify } from "react-native-iconify";
 export default function OrderDetail() {
     const router = useRouter();
     const { showToast } = useToast();
-    const [isShow, setIsShow] = useState<boolean>(false);
     const [isShow2, setIsShow2] = useState<boolean>(false);
-    const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
     const [isPaymentPopup, setIsPaymentPopup] = useState<boolean>(false);
     const [buttonDelay, setButtonDelay] = useState<boolean>(false);
     const [price, setPrice] = useState<number>(0);
-    const [orderOwner, setOrderOwner] = useState<IUser>();
-    const [orderTailor, setOrderTailor] = useState<IUser>();
 
     const route = useRoute() as { params: { order_id: string } };
     const navigation = useNavigation();
@@ -44,17 +40,29 @@ export default function OrderDetail() {
         const unsubscribe = navigation.addListener('focus', () => {
             fetchOrder();
             fetchProducts();
+            checkIsReadyToShipping();
         });
         return unsubscribe;
     }, []);
+
+    const checkIsReadyToShipping = async () => {
+        // await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.success_tailor }).then((res) => {
+        //     if (res.status === 204) {
+        //         console.log('success');
+        //         showToast('พร้อมจัดส่งแล้ว', 'พร้อมจัดส่งแล้วคุณสามารถจัดส่งได้ทันที', 'success');
+        //     } else {
+        //         console.log(res.status);
+        //     }
+        // }).catch((err) => {
+        //     console.log(err);
+        // })
+    }
 
     const fetchOrder = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/get', { order_id: order_id }).then((res) => {
             if (res.status === 200) {
                 setOrder(res.data.data);
-
-                fetchOrderOwner(res.data.data);
-                console.log(res.data.data)
+                console.log(1)
             } else {
                 console.log(res.status);
             }
@@ -67,35 +75,12 @@ export default function OrderDetail() {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/product/get/order', { order_id: order_id }).then((res) => {
             if (res.status === 200) {
                 setProducts(res.data.data);
+                console.log(2)
             } else {
                 console.log(res.status);
             }
         }).catch((err) => {
             console.log('error fetching products');
-        })
-    }
-
-    const fetchOrderOwner = async (order: IOrder) => {
-        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/id', { user_id: order?.created_by }).then((res) => {
-            if (res.status === 200) {
-                setOrderOwner(res.data.data);
-            } else {
-                console.log(res.status);
-            }
-        }
-        ).catch((err) => {
-            console.log('error fetching user');
-        });
-
-        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/id', { user_id: order?.tailor_id }).then((res) => {
-            if (res.status === 200) {
-                setOrderTailor(res.data.data);
-            } else {
-                console.log(res.status);
-            }
-        }
-        ).catch((err) => {
-            console.log('error fetching tailor');
         })
     }
 
@@ -122,7 +107,7 @@ export default function OrderDetail() {
         })
     }
 
-    const onCancleOrder = async () => Alert.alert('ยกเลิกคำสั่งซื้อ', 'คุณต้องการยกเลิกคำสั่งซื้อนี้ใช่หรือไม่', [
+    const onReceivedOrder = async () => Alert.alert('ยืนยันการรับพัสดถ', 'คุณต้องการยืนยันว่าได้รับพัสดุแล้วหรือไม่', [
         {
             text: 'ยกเลิก',
             onPress: () => console.log('ยกเลิก'),
@@ -130,10 +115,10 @@ export default function OrderDetail() {
         },
         {
             text: 'ยืนยัน', onPress: async () => {
-                await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.cancel }).then((res) => {
+                await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.processing_tailor }).then((res) => {
                     if (res.status === 204) {
                         console.log('success');
-                        showToast('ยกเลิกคำสั่งซื้อสำเร็จ', 'คุณได้ยกเลิกคำสั่งซื้อสำเร็จ', 'success');
+                        showToast('ยืนยันการรับพัสดุสำเร็จ', 'คุณได้ยืนยันการรับพัสดุสำเร็จ', 'success');
                         router.back();
                     } else {
                         console.log(res.status);
@@ -158,68 +143,12 @@ export default function OrderDetail() {
         },
     ]);
 
-    const onConfirmReceivedButton = () => Alert.alert('ยืนยันการรับพัสดุ', 'ก่อนกดยืนยันการรับสินค้ากรุณา ตรวจสอบสินค้าทุกชิ้นว่าสินค้าที่ได้รับครบถ้วน', [
-        {
-            text: 'ยกเลิก',
-            onPress: () => console.log('ยกเลิก'),
-            style: 'cancel',
-        },
-        {
-            text: 'ยืนยัน', onPress: async () => {
-                await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.checking_shop }).then((res) => {
-                    if (res.status === 204) {
-                        console.log('success');
-                        showToast('รับสินค้าสำเร็จ', 'คุณได้รับสินค้าสำเร็จแล้ว', 'success');
-                        router.back();
-                    } else {
-                        console.log(res.status);
-                    }
-                }).catch((err) => {
-                    console.log('error fetching orders');
-                })
-            }
-        },
-    ]);
-
     if (order === undefined) return null;
     if (order?.status === orderState.cancel) return null;
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '7%', backgroundColor: colors.wherewhite }} />
             <ScrollView style={{ flex: 1, height: '100%' }} contentContainerStyle={{ paddingBottom: 120 }}>
-
-                {/* -------------------------------- ข้อมูลของลูกค้า -------------------------------- */}
-                <View style={{ marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
-                    <View style={{ backgroundColor: colors.mediumpink, padding: 10 }}>
-                        <SetText type="bold" size={16} color={colors.white}>หมายเลขคำสั่งซื้อ #{order_id}</SetText>
-                    </View>
-                    <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: colors.line }}>
-                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText size={14} color={colors.black} type="bold">ข้อมูลลูกค้า</SetText>
-                        </View>
-                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText size={14} color={colors.grey}>สั่งสินค้าโดย</SetText>
-                            <SetText size={14} color={colors.grey}>{orderOwner?.display_name}</SetText>
-                        </View>
-                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText size={14} color={colors.grey}>วันที่สั่งซื้อสินค้า</SetText>
-                            <SetText size={14} color={colors.grey}>{formatDate(order.timestamp)}</SetText>
-                        </View>
-                    </View>
-                    <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
-                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
-                            <SetText size={14} color={colors.grey}><ContactButton phone_number={order.user_phone} who="ลูกค้า" /></SetText>
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
-                            <Iconify icon="bx:bx-map" size={20} color={colors.whereblack} />
-                            <View style={{ flexDirection: 'column' }}>
-                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}>{order?.user_address.split('|')[0]}</SetText>
-                                <SetText color={colors.grey} type="small">ที่อยู่ {order?.user_address.split('|')[1]}</SetText>
-                            </View>
-                        </View>
-                    </View>
-                </View>
 
                 {/* -------------------------------- ข้อมูลของช่าง -------------------------------- */}
                 {order.created_by !== order.tailor_id && <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
@@ -228,37 +157,39 @@ export default function OrderDetail() {
                     </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: colors.line }}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText size={14} color={colors.black} type="bold">ข้อมูลช่าง</SetText>
-                        </View>
-                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText size={14} color={colors.grey}>ชื่อช่าง</SetText>
-                            <SetText size={14} color={colors.grey}>{orderTailor?.display_name}</SetText>
-                        </View>
-                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText size={14} color={colors.grey}>วันที่ต้องส่งมอบ</SetText>
+                            <SetText size={14} color={colors.grey}>วันที่ต้องส่งมอบงาน</SetText>
                             <SetText size={14} color={colors.grey}>{formatDate(order.due_date)}</SetText>
                         </View>
                     </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
-                            <SetText size={14} color={colors.grey}><ContactButton phone_number={order.tailor_phone} who="ช่าง" /></SetText>
+                            <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่งของร้าน</SetText>
+                            <SetText size={14} color={colors.grey}><ContactButton phone_number={order.store_phone} who="ร้าน" /></SetText>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
                             <Iconify icon="bx:bx-map" size={20} color={colors.whereblack} />
                             <View style={{ flexDirection: 'column' }}>
-                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}>{order.tailor_address.split('|')[0]}</SetText>
-                                <SetText color={colors.grey} type="small">ที่อยู่ {order.tailor_address.split('|')[1]}</SetText>
+                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}>{order.store_address.split('|')[0]}</SetText>
+                                <SetText color={colors.grey} type="small">ที่อยู่ {order.store_address.split('|')[1]}</SetText>
                             </View>
                         </View>
                     </View>
                 </View>}
 
                 <View style={{ marginTop: '3%', marginHorizontal: '5%', backgroundColor: colors.white, borderRadius: 10, ...styles.shadowCustom }}>
+                    <View style={{ flexDirection: 'column', marginTop: 10, paddingHorizontal: 15, borderBottomWidth: 1, paddingBottom: 15, borderColor: colors.line }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText size={14} type="bold" style={{}}>ความคืบหน้าทั้งหมด</SetText>
+                            <SetText size={14} type="bold" style={{}}>สำเร็จแล้ว {products.reduce((acc, item) => acc + item.process_quantity, 0)}/{products.reduce((acc, item) => acc + item.total_quantity, 0)} ตัว</SetText>
+                        </View>
+                        <View style={{ height: 6, borderRadius: 999, backgroundColor: colors.line }}>
+                            <View style={{ height: 6, borderRadius: 999, backgroundColor: colors.primary, width: `${products.reduce((acc, item) => acc + item.process_quantity, 0) / products.reduce((acc, item) => acc + item.total_quantity, 0) * 100}%` }}></View>
+                        </View>
+                    </View>
                     {products[0] === undefined ? <ConfirmOrderCardSkeleton /> : isShow2 ?
                         <>
-                            {products.map((item: IProduct | any, index: number) => <ConfirmOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />)}
-                        </> : <ConfirmOrderCard item={products[0]} setSelectedProduct={setSelectedProduct} />
+                            {products.map((item: IProduct | any, index: number) => <ConfirmOrderCardTailor showDailyReport={order.status !== orderState.received_tailor} order_id={order_id} item={item}  key={index} />)}
+                        </> : <ConfirmOrderCardTailor showDailyReport={order.status !== orderState.received_tailor} order_id={order_id} item={products[0]} />
                     }
                     <TouchableOpacity onPress={() => setIsShow2((s) => !s)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: '5%', borderTopWidth: 1, borderColor: colors.line, paddingVertical: '3%' }}>
                         <SetText type='bold' size={14}>รวมจำนวนสินค้าทั้งหมด</SetText>
@@ -270,10 +201,10 @@ export default function OrderDetail() {
                 </View>
             </ScrollView>
 
-            {!storeOrderState[3].status.slice(1).includes(order.status) && <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
-                {/* ยกเลิกคำสั่งซื้อ */}
-                {[orderState.pending, orderState.payment].includes(order?.status) && <TouchableOpacity onPress={onCancleOrder} style={[{ flex: 1, height: 50, backgroundColor: colors.line, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.white} style={{ width: '100%', textAlign: 'center' }}>ยกเลิกคำสั่งซื้อ</SetText>
+            {orderState.processing_tailor !== order.status && <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
+                {/* ยืนยันรับพัสดุ */}
+                {[orderState.received_tailor].includes(order?.status) && <TouchableOpacity onPress={onReceivedOrder} style={[{ flex: 1, height: 50, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                    <SetText size={16} type="bold" color={colors.white} style={{ width: '100%', textAlign: 'center' }}>ยืนยันรับพัสดุ</SetText>
                 </TouchableOpacity>}
                 {/* แจ้งราคาสินค้า */}
                 {order?.status === 'pending' && <TouchableOpacity onPress={() => setIsPaymentPopup(p => !p)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
@@ -289,23 +220,10 @@ export default function OrderDetail() {
                 {order?.status === orderState.waiting_assign && <TouchableOpacity onPress={() => router.push(`/store-stack/assign-work/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>มอบหมายงานให้ช่าง</SetText>
                 </TouchableOpacity>}
-                {/* จัดส่งพัสดุให้ช่าง */}
-                {order?.status === orderState.processing_user && <TouchableOpacity onPress={() => router.push(`/store-stack/tracking_number/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>จัดส่งพัสดุ</SetText>
+                {/* แจ้งจััดส่งพัสดุ */}
+                {order?.status === orderState.success_tailor && <TouchableOpacity onPress={() => router.push(`/tailor-stack/tracking_number/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>แจ้งจัดส่งพัสดุ</SetText>
                 </TouchableOpacity>}
-                {/* รับพัสดุจากช่าง */}
-                {order?.status === orderState.received_shop && <TouchableOpacity onPress={onConfirmReceivedButton} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ฉันได้รับสินค้าแล้ว</SetText>
-                </TouchableOpacity>}
-                {/* ส่งแก้ไขงาน */}
-                {[orderState.checking_shop].includes(order?.status) && <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.user_phone}`)} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.mediumpink} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ส่งแก้ไขงาน</SetText>
-                </TouchableOpacity>}
-                {/* ยืนยันการส่งมอบ */}
-                {[orderState.checking_shop].includes(order?.status) && <TouchableOpacity onPress={onConfirmReceivedButton} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ยืนยันการส่งมอบ</SetText>
-                </TouchableOpacity>}
-
             </View>}
 
             <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 9999, display: isPaymentPopup ? 'flex' : 'none', justifyContent: 'flex-end', alignItems: 'center' }}>

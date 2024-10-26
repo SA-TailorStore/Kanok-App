@@ -3,6 +3,7 @@ import OrderTab from "@/components/OrderTab";
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { IOrder } from "@/types/IOrder";
+import { orderState } from "@/utils/orderState";
 import { colors } from "@/utils/styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -12,7 +13,7 @@ import { ScrollView, View } from "react-native";
 
 export default function OrderPage() {
     const navigation = useNavigation();
-    const [selected, setSelected] = useState<string>('pending');
+    const [selected, setSelected] = useState<string[]>(['pending']);
     const [orders, setOrders] = useState<IOrder[]>([]);
 
     const fetchOrders = async () => {
@@ -46,7 +47,7 @@ export default function OrderPage() {
                 {/* OrderCardList */}
                 <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
                     {orders.map((order: IOrder, index: number) => {
-                        if (order.status === selected || ('all' === selected &&!['success_user', 'fix_success_user', 'cancel'].includes(order.status))) return (
+                        if (selected.includes(order.status) || (selected.includes('all') && ![orderState.cancel, orderState.fix_success_user, orderState.success_user].includes(order.status))) return (
                             <OrderCard key={index} order={order} />
                         )
                     })}

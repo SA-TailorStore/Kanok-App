@@ -81,9 +81,14 @@ export const storeOrderState: IFilterTab[] = [
         status: ['received_shop']
     },
     {
+        title: 'รอตวจสอบ',
+        description: 'รอตวจสอบสินค้า',
+        status: ['checking_shop']
+    },
+    {
         title: 'ที่กำลังจัดส่ง',
         description: 'สินค้ากำลังไปส่งให้ลูกค้า',
-        status: ['recieiced_user',]
+        status: ['received_user',]
     },
     {
         title: 'สำเร็จ',
@@ -97,33 +102,40 @@ export const storeOrderState: IFilterTab[] = [
     },
 ]
 
-// export const tailorOrderState: IFilterTab[] = [
-//     {
-//         title: 'ที่ต้องได้รับ',
-//         status: ['received_tailor']
-//     },
-//     {
-//         title: 'กำลังดำเนินการ',
-//         status: ['processing_tailor',]
-//     },
-//     {
-//         title: 'พร้อมจัดส่ง',
-//         status: ['success_tailor']
-//     },
-//     {
-//         title: 'ที่กำลังจัดส่ง',
-//         status: ['received_shop']
-//     },
-//     {
-//         title: 'รอตวจสอบ',
-//         status: ['received_shop']
-//     },
-//     {
-//         title: 'สำเร็จ',
-//         status: ['received_user', 'success_user']
-//     },
-//     {
-//         title: 'ยกเลิก',
-//         status: ['cancel']
-//     },
-// ]
+export const tailorOrderState: IFilterTab[] = [
+    {
+        title: 'ที่ต้องได้รับ',
+        status: ['received_tailor'],
+        description: 'รอรับพัสดุจากร้าน'
+    },
+    {
+        title: 'กำลังดำเนินการ',
+        status: ['processing_tailor',],
+        description: 'กำลังดำเนินการ'
+    },
+    {
+        title: 'พร้อมจัดส่ง',
+        status: ['success_tailor'],
+        description: 'สินค้าพร้อมส่ง'
+    },
+    {
+        title: 'ที่กำลังจัดส่ง',
+        status: ['received_shop'],
+        description: 'สินค้ากำลังไปส่งให้ร้าน'
+    },
+    {
+        title: 'รอตวจสอบ',
+        status: ['checking_shop'],
+        description: 'รอร้านตวจสอบพัสดุ'
+    },
+    {
+        title: 'สำเร็จ',
+        status: ['received_user', 'success_user'],
+        description: 'สินค้าถึงมือลูกค้าแล้ว'
+    },
+    {
+        title: 'ยกเลิก',
+        status: ['cancel'],
+        description: 'คำสั่งซื้อถูกยกเลิก'
+    },
+]
