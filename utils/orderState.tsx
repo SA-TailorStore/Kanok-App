@@ -29,7 +29,7 @@ export const userOrderState: IFilterTab[] = [
     {
         title: 'กำลังดำเนินการ',
         description: 'ร้านค้ากำลังดำเนินการ',
-        status: [orderState.waiting_assign, orderState.processing_user, orderState.received_tailor, orderState.processing_tailor, orderState.success_tailor, orderState.received_shop,]
+        status: [orderState.waiting_assign, orderState.processing_user, orderState.received_tailor, orderState.processing_tailor, orderState.success_tailor, orderState.received_shop, orderState.success_shop]
     },
     {
         title: 'ที่ต้องได้รับ',

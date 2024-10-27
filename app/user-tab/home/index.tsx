@@ -6,6 +6,8 @@ import Knitwork from "@/assets/icons/knitwork";
 import StoreFront from "@/assets/icons/storefront-plus";
 import Slider from "@/components/Slider";
 import WrapBackground from "@/components/WrapBackground";
+import { useSession } from "@/contexts/SessionContext";
+import { useEffect } from "react";
 
 export type ChoiceProps = {
     title: string;
@@ -35,6 +37,13 @@ const ads: SliderItemProps[] = [
 
 export default function HomePage() {
     const router = useRouter();
+    const { userContext } = useSession();
+
+    useEffect(() => {
+        if (userContext.display_name.length > 5 && userContext.address && userContext.phone_number) {
+            router.push('/user-stack/my-address');
+        }
+    },[]); 
 
     const choice: ChoiceProps[] = [
         // {

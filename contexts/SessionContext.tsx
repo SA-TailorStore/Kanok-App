@@ -103,13 +103,6 @@ export default function SessionProvider({ children }: any) {
         }
     }
 
-    // const getUser = async () => {
-    //     const token = await AsyncStorage.getItem('@access_token');
-    //     const response = await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/token', {
-    //         token: token,
-    //     });
-    //     return response.data.data;
-    // } 
     return (
         <SessionContext.Provider value={{ setToken, removeToken, userContext, tokenContext, productContext, refreshSession, setProductContext, updateProduct, checkRole }}>
             {children}
