@@ -84,7 +84,7 @@ export default function TrackingNumber() {
     }
 
     const createTwoButtonAlert = () => {
-        Alert.alert('ยืินยันการส่งมอบ', 'งานของคุณเสร็จสิ้นแล้ว', [
+        Alert.alert('ยืนยันการส่งมอบ', 'งานของคุณเสร็จสิ้นแล้ว', [
             {
                 text: 'ยกเลิก',
                 onPress: async () => {

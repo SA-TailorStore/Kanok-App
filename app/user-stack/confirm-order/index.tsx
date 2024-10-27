@@ -27,7 +27,7 @@ export default function ConfirmOrder() {
 
     useEffect(() => {
         navigation.setOptions({
-            headerTitle: "รายการสั่งตัด",
+            headerTitle: "คำสั่งซื้อ",
         });
         console.log(productContext);
     }, []);

@@ -1,11 +1,8 @@
 import { FormInput } from "@/components/FormInput";
-import OrderCardShop from "@/components/OrderCardShop";
-import OrderTab from "@/components/OrderTab";
-import { SetText } from "@/components/SetText";
+import OrderCard from "@/components/OrderCard";
 import WrapBackground from "@/components/WrapBackground";
 import { useSession } from "@/contexts/SessionContext";
 import { IOrder } from "@/types/IOrder";
-import { orderState } from "@/utils/orderState";
 import { colors } from "@/utils/styles";
 import axios from "axios";
 import { useNavigation, useRouter } from "expo-router";
@@ -60,7 +57,7 @@ export default function OrderSearch() {
                 <FormInput iconHeader={<Iconify icon="mingcute:search-line" size={24} color={colors.grey} />} value={value} onChange={(e) => setValue(e.nativeEvent.text)} placeholder="ค้นหา" />
                 <ScrollView contentContainerStyle={{ paddingBottom: 200, paddingTop: 20 }}>
                     {searchOrders.map((order: IOrder, index: number) => {
-                        return <OrderCardShop key={index} order={order} />
+                        return <OrderCard key={index} order={order} />
                     })}
                 </ScrollView>
             </View>

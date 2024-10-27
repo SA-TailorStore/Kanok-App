@@ -31,7 +31,7 @@ export default function Order() {
     }
     useEffect(() => {
         navigation.setOptions({
-            headerTitle: 'งานทั้งหมด',
+            headerTitle: 'คำสั่งซื้อ',
             headerRight: () => <TouchableOpacity onPress={()=>router.push('/store-stack/order-search')}><Iconify icon="mingcute:search-line" size={24} color={colors.mediumpink} /></TouchableOpacity>
         });
         const unsubscribe = navigation.addListener('focus', () => {
@@ -52,7 +52,7 @@ export default function Order() {
                 {/* OrderCardList */}
                 <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
                     {orders.map((order: IOrder, index: number) => {
-                        if (selected.includes(order.status) || (selected.includes('all') && ![orderState.cancel, orderState.fix_success_user, orderState.success_user].includes(order.status))) return (
+                        if (selected.includes(order.status) || (selected.includes('all') && ![orderState.cancel, orderState.success_user, orderState.received_user].includes(order.status))) return (
                             <OrderCardShop key={index} order={order} />
                         )
                     })}

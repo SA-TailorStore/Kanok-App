@@ -42,12 +42,12 @@ export default function ProductDetail() {
 
     useEffect(() => {
         setTotal_quantity(fabrics.find((f: IFabric) => f.fabric_id === fabric)?.quantity || 1);
-        if (fabric !== null && size !== null && fabrics.find((f: IFabric) => f.fabric_id === fabric)?.quantity) {
+        if (fabric !== null && size !== null && fabrics.find((f: IFabric) => f.fabric_id === fabric)?.quantity && quantity > 0) {
             setIsReady(true);
         } else {
             setIsReady(false);
         }
-    }, [fabric, size])
+    }, [fabric, size, quantity])
 
     const { width } = Dimensions.get('window');
 
@@ -92,7 +92,8 @@ export default function ProductDetail() {
         await axios.get(process.env.EXPO_PUBLIC_API_URL + '/api/fabrics').then((res) => {
             if (res.status === 200) {
                 setFabrics(res.data.data);
-                console.log(res.data.data)
+                setFabric(1);
+                console.log(res.data.data);
             }
         }).catch((err) => {
             console.log(err);
@@ -109,9 +110,6 @@ export default function ProductDetail() {
             </View>
             <View style={{ width: '100%', height: '60%', borderTopLeftRadius: 51, borderTopRightRadius: 51, backgroundColor: colors.backgroundColor, marginTop: 1, ...styles.shadowCustom3, paddingBottom: 100 }}>
                 <View
-                    onMoveShouldSetResponder={() => true}
-                    onPointerMove={(e) => console.log(e.nativeEvent)}
-                    // onResponderMove={(e) => console.log(e.nativeEvent)}
                     style={{ width: '15%', alignSelf: 'center', height: 5, borderRadius: 999, marginTop: '2%', backgroundColor: colors.grey, marginBottom: '2%' }}
                 />
                 <ScrollView

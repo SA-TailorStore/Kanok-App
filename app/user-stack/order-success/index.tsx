@@ -10,7 +10,7 @@ export default function OrderSuccess() {
 
     useEffect(() => {
         navigation.setOptions({
-            headerTitle: "รายการสั่งตัด",
+            headerTitle: "คำสั่งซื้อสำเร็จ",
             headerLeft: () => <View></View>
         });
     }, []);

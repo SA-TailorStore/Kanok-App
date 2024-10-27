@@ -40,23 +40,9 @@ export default function OrderDetail() {
         const unsubscribe = navigation.addListener('focus', () => {
             fetchOrder();
             fetchProducts();
-            checkIsReadyToShipping();
         });
         return unsubscribe;
     }, []);
-
-    const checkIsReadyToShipping = async () => {
-        // await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.success_tailor }).then((res) => {
-        //     if (res.status === 204) {
-        //         console.log('success');
-        //         showToast('พร้อมจัดส่งแล้ว', 'พร้อมจัดส่งแล้วคุณสามารถจัดส่งได้ทันที', 'success');
-        //     } else {
-        //         console.log(res.status);
-        //     }
-        // }).catch((err) => {
-        //     console.log(err);
-        // })
-    }
 
     const fetchOrder = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/get', { order_id: order_id }).then((res) => {
@@ -84,30 +70,7 @@ export default function OrderDetail() {
         })
     }
 
-    const updatePriceAndStatus = async () => {
-        setButtonDelay(true);
-        if (price === 0) {
-            setButtonDelay(false);
-            showToast('เกิดข้อผิดพลาด', 'เนื่องจากราคาสินค้าต้องมากกว่า 0 บาท', 'error');
-            return;
-        }
-        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, price: price, status: orderState.payment }).then((res) => {
-            if (res.status === 204) {
-                console.log('success');
-                fetchOrder();
-                showToast('แจ้งราคาสินค้าสำเร็จ', 'คุณได้แจ้งราคาสินค้าสำเร็จ', 'success');
-                setButtonDelay(false);
-                setIsPaymentPopup(false);
-                Keyboard.dismiss();
-            } else {
-                console.log(res.status);
-            }
-        }).catch((err) => {
-            console.log('error fetching orders');
-        })
-    }
-
-    const onReceivedOrder = async () => Alert.alert('ยืนยันการรับพัสดุ', 'คุณต้องการยืนยันว่าได้รับพัสดุแล้วหรือไม่', [
+    const onReceivedOrder = async () => Alert.alert('ยืนยันการรับสินค้า', 'คุณต้องการยืนยันว่าได้รับสินค้าแล้วหรือไม่', [
         {
             text: 'ยกเลิก',
             onPress: () => console.log('ยกเลิก'),
@@ -118,7 +81,7 @@ export default function OrderDetail() {
                 await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.processing_tailor }).then((res) => {
                     if (res.status === 204) {
                         console.log('success');
-                        showToast('ยืนยันการรับพัสดุสำเร็จ', 'คุณได้ยืนยันการรับพัสดุสำเร็จ', 'success');
+                        showToast('ยืนยันการรับสินค้าสำเร็จ', 'คุณได้ยืนยันการรับสินค้าสำเร็จ', 'success');
                         fetchOrder();
                     } else {
                         console.log(res.status);
@@ -188,15 +151,10 @@ export default function OrderDetail() {
                 </View>
             </ScrollView>
 
-            {(orderState.processing_tailor !== order.status && order.status !== orderState.checking_shop) && <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
-                {/* ยืนยันรับพัสดุ */}
+            {(orderState.processing_tailor !== order.status && ![orderState.received_shop, orderState.success_shop, orderState.received_user, orderState.success_user].includes(order.status)) && <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
+                {/* ฉันได้รับสินค้าแล้ว */}
                 {[orderState.received_tailor].includes(order?.status) && <TouchableOpacity onPress={onReceivedOrder} style={[{ flex: 1, height: 50, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.white} style={{ width: '100%', textAlign: 'center' }}>ยืนยันรับพัสดุ</SetText>
-                </TouchableOpacity>}
-                {/* ติดต่อลูกค้า */}
-                {[orderState.payment, orderState.received_user].includes(order?.status) && <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.user_phone}`)} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <Iconify icon="f7:phone-circle-fill" size={30} color={colors.mediumpink} />
-                    <SetText size={16} type="bold" color={colors.mediumpink} style={{ flex: 1, width: '100%', textAlign: 'center' }}>ติดต่อลูกค้า</SetText>
+                    <SetText size={16} type="bold" color={colors.white} style={{ width: '100%', textAlign: 'center' }}>ฉันได้รับสินค้าแล้ว</SetText>
                 </TouchableOpacity>}
                 {/* แจ้งจััดส่งพัสดุ */}
                 {order?.status === orderState.success_tailor && <TouchableOpacity onPress={() => router.push(`/tailor-stack/tracking_number/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>

@@ -158,7 +158,7 @@ export default function OrderDetail() {
         },
     ]);
 
-    const onConfirmFixButton = () => Alert.alert('ยืนยันการแก้ไขงาน', 'คุณต้องการจะแก้ไขงานหรือไม่', [
+    const onConfirmReceivedButton = () => Alert.alert('ยืนยันการรับสินค้า', 'ก่อนกดยืนยันการรับสินค้ากรุณา ตรวจสอบสินค้าทุกชิ้นว่าสินค้าที่ได้รับครบถ้วน', [
         {
             text: 'ยกเลิก',
             onPress: () => console.log('ยกเลิก'),
@@ -166,54 +166,7 @@ export default function OrderDetail() {
         },
         {
             text: 'ยืนยัน', onPress: async () => {
-                await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.fix_processing_shop }).then((res) => {
-                    if (res.status === 204) {
-                        console.log('success');
-                        showToast('ขอแก้ไขงานสำเร็จ', 'คุณได้ขอแก้งานสำเร็จแล้ว', 'success');
-                        router.back();
-                    } else {
-                        console.log(res.status);
-                    }
-                }).catch((err) => {
-                    console.log('error fetching orders');
-                })
-            }
-        },
-    ]);
-
-    const onConfirmCorrectButton = () => Alert.alert('ยืนยันการส่งงาน', 'ก่อนกดยืนยันการส่งงาน กรุณาตรวจสอบความถูกต้องของชิ้นงานที่ได้รับหลังจากนั้นจะไม่สามารถแก้ไขได้อีก', [
-        {
-            text: 'ยกเลิก',
-            onPress: () => console.log('ยกเลิก'),
-            style: 'cancel',
-        },
-        {
-            text: 'ยืนยันการส่งงาน', onPress: async () => {
                 await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.success_shop }).then((res) => {
-                    if (res.status === 204) {
-                        console.log('success');
-                        showToast('ส่งมอบงานสำเร็จ', 'คุณได้ส่งมอบงานสำเร็จแล้ว', 'success');
-                        fetchOrder();
-                        // router.back();
-                    } else {
-                        console.log(res.status);
-                    }
-                }).catch((err) => {
-                    console.log('error fetching orders');
-                })
-            }
-        },
-    ]);
-
-    const onConfirmReceivedButton = () => Alert.alert('ยืนยันการรับพัสดุ', 'ก่อนกดยืนยันการรับสินค้ากรุณา ตรวจสอบสินค้าทุกชิ้นว่าสินค้าที่ได้รับครบถ้วน', [
-        {
-            text: 'ยกเลิก',
-            onPress: () => console.log('ยกเลิก'),
-            style: 'cancel',
-        },
-        {
-            text: 'ยืนยัน', onPress: async () => {
-                await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.checking_shop }).then((res) => {
                     if (res.status === 204) {
                         console.log('success');
                         showToast('รับสินค้าสำเร็จ', 'คุณได้รับสินค้าสำเร็จแล้ว', 'success');
@@ -320,7 +273,7 @@ export default function OrderDetail() {
                 </View>
             </ScrollView>
 
-            {!storeOrderState[3].status.slice(1).includes(order.status) && <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
+            {(!storeOrderState[3].status.slice(1).includes(order.status) && !storeOrderState[7].status.includes(order.status)) && <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
                 {/* ยกเลิกคำสั่งซื้อ */}
                 {[orderState.pending, orderState.payment].includes(order?.status) && <TouchableOpacity onPress={onCancleOrder} style={[{ flex: 1, height: 50, backgroundColor: colors.line, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ width: '100%', textAlign: 'center' }}>ยกเลิกคำสั่งซื้อ</SetText>
@@ -346,14 +299,6 @@ export default function OrderDetail() {
                 {/* รับพัสดุจากช่าง */}
                 {order?.status === orderState.received_shop && <TouchableOpacity onPress={onConfirmReceivedButton} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ฉันได้รับสินค้าแล้ว</SetText>
-                </TouchableOpacity>}
-                {/* ส่งแก้ไขงาน */}
-                {[orderState.checking_shop].includes(order?.status) && <TouchableOpacity onPress={onConfirmFixButton} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.mediumpink} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ส่งแก้ไขงาน</SetText>
-                </TouchableOpacity>}
-                {/* ยืนยันการส่งมอบ */}
-                {[orderState.checking_shop].includes(order?.status) && <TouchableOpacity onPress={onConfirmCorrectButton} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ยืนยันการส่งมอบ</SetText>
                 </TouchableOpacity>}
             </View>}
 

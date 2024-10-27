@@ -31,7 +31,6 @@ export default function TabLayout() {
         name="order/index"
         options={{
           title: 'My Order',
-          headerRight: () => <TouchableOpacity onPress={()=>router.push('/store-stack/order-search')}><Iconify icon="mingcute:search-line" size={24} color={colors.mediumpink} /></TouchableOpacity>,
           tabBarIcon: ({ color, focused }) => (
             focused ? <OrderIcon /> : <Iconify icon="iconamoon:history" size={24} color={colors.grey}  />
           ),

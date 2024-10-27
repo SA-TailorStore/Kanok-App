@@ -20,7 +20,7 @@ export default function Material() {
     const { showToast } = useToast();
 
     const createTwoButtonAlert = (id: number) =>
-        Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบพัสดุที่คุณเลือก', [
+        Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบวัสดุที่คุณเลือก', [
             {
                 text: 'ยกเลิก',
                 onPress: () => console.log('ยกเลิก'),
@@ -31,7 +31,7 @@ export default function Material() {
                     await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/material/delete', { material_id: id }).then((res) => {
                         if (res.status === 200) {
                             getMaterials();
-                            showToast('ลบพัสดุสำเร็จ', `คุณลบพัสดุ id: ${id} สำเร็จ`, 'success');
+                            showToast('ลบวัสดุสำเร็จ', `คุณลบวัสดุ id: ${id} สำเร็จ`, 'success');
                         }
                     }).catch((err) => {
                         console.log(err);
@@ -68,11 +68,11 @@ export default function Material() {
                     <View style={{ width: '100%', flex: 1 }}>
                         <SearchItem />
                     </View>
-                    <TouchableOpacity onPress={() => setIsPopupAdd(true)} style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20 }}><SetText type="bold" color={colors.mediumpink}>เพิ่มพัสดุ</SetText></TouchableOpacity>
+                    <TouchableOpacity onPress={() => setIsPopupAdd(true)} style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20 }}><SetText type="bold" color={colors.mediumpink}>เพิ่มวัสดุ</SetText></TouchableOpacity>
                 </View>
                 <View style={{ flex: 1, height: '100%' }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: colors.grey, paddingHorizontal: 20 }}>
-                        <SetText type="bold">ชื่อพัสดุ</SetText>
+                        <SetText type="bold">ชื่อวัสดุ</SetText>
                         <SetText type="bold">จำนวน</SetText>
                         <SetText type="bold"></SetText>
                     </View>
@@ -176,14 +176,14 @@ const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', mat
         console.log(PATH, PAYLOAD);
         await axios.post(PATH, PAYLOAD).then((res) => {
             if (res.status === 201) {
-                showToast('เพิ่มพัสดุสำเร็จ', 'คุณเพิ่มพัสดุสำเร็จ', 'success');
+                showToast('เพิ่มวัสดุสำเร็จ', 'คุณเพิ่มวัสดุสำเร็จ', 'success');
             } else if (res.status === 204) {
-                showToast('แก้ไขพัสดุสำเร็จ', 'คุณแก้ไขพัสดุสำเร็จ', 'success');
+                showToast('แก้ไขวัสดุสำเร็จ', 'คุณแก้ไขวัสดุสำเร็จ', 'success');
             }
             setIsShow(false);
         }).catch((err) => {
             console.log(err);
-            showToast('มีข้อผิดพลาด', 'มีข้อผิดพลาดในการเพิ่มพัสดุ', 'error');
+            showToast('มีข้อผิดพลาด', 'มีข้อผิดพลาดในการเพิ่มวัสดุ', 'error');
         });
     }
 
@@ -199,14 +199,14 @@ const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', mat
                 <GestureHandlerRootView>
                     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 100}}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText type="bold" size={20}>{action === 'add' ? 'เพิ่มพัสดุ' : 'แก้ไขพัสดุ'}</SetText>
+                            <SetText type="bold" size={20}>{action === 'add' ? 'เพิ่มวัสดุ' : 'แก้ไขวัสดุ'}</SetText>
                             <TouchableOpacity onPress={() => setIsShow(false)}><Iconify icon="bx:bx-x" size={24} color={colors.grey} /></TouchableOpacity>
                         </View>
                         <View style={{ borderBottomWidth: 0.5, borderColor: colors.line, marginBottom: 20, paddingBottom: 20 }}>
-                            <SetText style={{ marginTop: 8 }}>กรอกชื่อและจำนวนของพัสดุ</SetText>
+                            <SetText style={{ marginTop: 8 }}>กรอกชื่อและจำนวนของวัสดุ</SetText>
                             <TextInput
                                 multiline
-                                placeholder="ชื่อพัสดุ"
+                                placeholder="ชื่อวัสดุ"
                                 onChange={(e) => setName(e.nativeEvent.text)}
                                 value={name}
                                 style={{ marginTop: 10, borderWidth: 0.5, borderColor: colors.line, borderRadius: 10, height: 60, fontFamily: 'notoSansThai', textAlignVertical: 'top', padding: 8 }}

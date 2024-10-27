@@ -1,5 +1,4 @@
 import ConfirmOrderCard, { ConfirmOrderCardSkeleton } from "@/components/ComfirmOrderCard";
-import { IFilterTab } from "@/components/OrderTab";
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
@@ -18,9 +17,7 @@ import { Iconify } from "react-native-iconify";
 
 export default function OrderDetail() {
     const router = useRouter();
-    const [isShow, setIsShow] = useState<boolean>(false);
     const [isShow2, setIsShow2] = useState<boolean>(false);
-    const [statusIndex, setStatusIndex] = useState<number>(0);
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
     const { showToast } = useToast();
 
@@ -65,7 +62,7 @@ export default function OrderDetail() {
         })
     }
 
-    const onReceivedOrder = async () => Alert.alert('ยืนยันการรับพัสดุ', 'ก่อนกดยืนยันการรับสินค้า กรุณาตรวจสอบสินค้าทุกชิ้นใบคำสีั่งซื้อว่าสินค้าที่ได้รับนั้นครบถ้วน หลังจากยืนยันแล้วจะไม่สามารถแก้ไขได้อีก', [
+    const onReceivedOrder = async () => Alert.alert('ยืนยันการรับสินค้า', 'ก่อนกดยืนยันการรับสินค้า กรุณาตรวจสอบสินค้าทุกชิ้นใบคำสีั่งซื้อว่าสินค้าที่ได้รับนั้นครบถ้วน หลังจากยืนยันแล้วจะไม่สามารถแก้ไขได้อีก', [
         {
             text: 'ยกเลิก',
             onPress: () => console.log('ยกเลิก'),
@@ -76,8 +73,7 @@ export default function OrderDetail() {
                 await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.success_user }).then((res) => {
                     if (res.status === 204) {
                         console.log('success');
-                        showToast('ยืนยันการรับพัสดุสำเร็จ', 'คุณได้ยืนยันการรับพัสดุสำเร็จ', 'success');
-                        router.back();
+                        showToast('ยืนยันการรับสินค้าสำเร็จ', 'คุณได้ยืนยันการรับสินค้าสำเร็จ', 'success');
                     } else {
                         console.log(res.status);
                     }
@@ -101,10 +97,10 @@ export default function OrderDetail() {
                         <SetText size={14} color={colors.grey}>วันที่สั่งซื้อสินค้า</SetText>
                         <SetText size={14} color={colors.grey}>{formatDate(order?.timestamp!)}</SetText>
                     </View>
-                    <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
+                    {(orderState.received_user === order.status) && <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
                         <SetText size={14} color={colors.whereblack} type='bold'>ข้อมูลการจัดส่ง</SetText>
-                        <SetText size={14} color={colors.grey}>ยังไม่มีข้อมูลการจัดส่ง</SetText>
-                    </View>
+                        <SetText size={14} color={colors.grey}>{order.tracking_number}</SetText>
+                    </View>}
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
                         <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
@@ -132,7 +128,7 @@ export default function OrderDetail() {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-            <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
+            {![orderState.cancel, orderState.success_user].includes(order.status) && <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
                 <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.store_phone}`)} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <Iconify icon="f7:phone-circle-fill" size={30} color={colors.mediumpink} />
                     <SetText size={16} type="bold" color={colors.mediumpink} style={{ flex: 1, width: '100%', textAlign: 'center' }}>ติดต่อร้าน</SetText>
@@ -144,22 +140,7 @@ export default function OrderDetail() {
                 {userOrderState[3].status.includes(order!.status) && <TouchableOpacity onPress={onReceivedOrder} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ฉันได้รับสินค้าแล้ว</SetText>
                 </TouchableOpacity>}
-            </View>
+            </View>}
         </WrapBackground>
     );
 }
-
-const StatusCard = ({ item, color }: { item: IFilterTab, color: string }) => {
-    return (
-        <View style={{ padding: 8, gap: 10, overflow: 'hidden', flexDirection: 'row' }}>
-            <View style={{ width: 12, height: 12, borderRadius: 999, backgroundColor: color, marginTop: 5 }} />
-            <View>
-                <SetText type="bold" size={14} color={colors.whereblack}>{item.title}</SetText>
-                <SetText size={14} color={colors.grey}>{item.status}</SetText>
-            </View>
-        </View>
-    )
-}
-
-
-
