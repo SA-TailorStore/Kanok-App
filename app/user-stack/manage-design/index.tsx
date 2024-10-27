@@ -12,8 +12,7 @@ import { ProductRequest } from "@/types/ProductRequest";
 export default function ManageDesign() {
     const navigation = useNavigation();
     const router = useRouter();
-    const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-    const { productContext, updateProductContext } = useSession();
+    const { productContext } = useSession();
 
     useEffect(() => {
         navigation.setOptions({
@@ -37,7 +36,7 @@ export default function ManageDesign() {
                         <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 330 }} showsVerticalScrollIndicator={false}>
                             {
                                 productContext.map((item: ProductRequest, index: number) => (
-                                    <ManageOrderCard item={item} id={index} setSelectedProduct={setSelectedProduct} key={index} />
+                                    <ManageOrderCard item={item} id={index} key={index} />
                                 ))
                             }
                         </ScrollView>

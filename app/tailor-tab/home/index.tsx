@@ -1,4 +1,3 @@
-import OrderCardShop from "@/components/OrderCardShop";
 import OrderCardTailor from "@/components/OrderCardTailor";
 import OrderTab from "@/components/OrderTab";
 import { SetText } from "@/components/SetText";
@@ -7,10 +6,9 @@ import { useSession } from "@/contexts/SessionContext";
 import { IOrder } from "@/types/IOrder";
 import { orderState } from "@/utils/orderState";
 import { colors } from "@/utils/styles";
-import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import { useNavigation } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 
 export default function Order() {

@@ -19,6 +19,7 @@ export default function TrackingNumber() {
     const [value, setValue] = useState<string>('');
     const [loading, setLoading] = useState(false);
     const route = useRoute() as { params: { order_id: string } };
+    const [ready, setReady] = useState(false);
     const { order_id } = route.params;
 
 
@@ -29,6 +30,16 @@ export default function TrackingNumber() {
             headerTitle: '',
         });
     }, []);
+
+    useEffect(() => {
+        if (trackingNumber !== '' && value !== '') {
+            setReady(true);
+        } else {
+            setReady(false);
+        }
+
+
+    }, [trackingNumber, value]);
 
 
     const createTwoButtonAlert = () => {
@@ -128,7 +139,7 @@ export default function TrackingNumber() {
                 }
             </View>
             <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
-                <TouchableOpacity disabled={loading} onPress={createTwoButtonAlert} style={[{ flex: 1, height: 50, backgroundColor: loading ? colors.grey : colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                <TouchableOpacity disabled={!ready} onPress={createTwoButtonAlert} style={[{ flex: 1, height: 50, backgroundColor: ready ? colors.mediumpink : colors.grey, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ width: '100%', textAlign: 'center' }}>ยืนยันการจัดส่งสินค้า</SetText>
                 </TouchableOpacity>
             </View>

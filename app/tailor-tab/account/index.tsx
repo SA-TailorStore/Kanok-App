@@ -1,15 +1,13 @@
 import { View, TouchableOpacity, Image } from "react-native";
 import { colors, styles } from "@/utils/styles";
-import { useRouter, } from "expo-router";
+import { useNavigation, useRouter, } from "expo-router";
 import WrapBackground from "@/components/WrapBackground";
 import { SetText } from "@/components/SetText";
 import { Iconify } from "react-native-iconify";
 import SettingMenuItem from "@/components/SettingMenuItem";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSession } from "@/contexts/SessionContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import { UserResponse } from "@/types/IUser";
+
 
 export type SettingMenuProps = {
     icon: JSX.Element;
@@ -22,22 +20,13 @@ export type SettingMenuProps = {
 export default function AccountPage() {
     const { removeToken, userContext } = useSession();
     const router = useRouter();
+    const navigation = useNavigation();
     // const [user, setUser] = useState<UserResponse | null>(null);
 
     useEffect(() => {
-        // const getUser = async () => {
-        //     // code here : get user data from @access_user
-        //     const token = await AsyncStorage.getItem('@access_token');
-        //     await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/token', {
-        //         token: token,
-        //     }).then(async (res) => {
-        //         console.log(res.data.data);
-        //         setUser(res.data.data);
-        //     }).catch((err) => {
-        //         console.log('getUser : ' + err)
-        //     })
-        // }
-        // getUser();
+        navigation.setOptions({
+            headerTitle: '',
+        });
     }, [])
 
     const settingMenu: SettingMenuProps[] = [

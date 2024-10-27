@@ -25,6 +25,7 @@ export default function ProductDetail() {
     const route = useRoute() as { params: { design_id: string } };
     const router = useRouter();
     const navigation = useNavigation();
+    const [total_quantity, setTotal_quantity] = useState<number>(1);
     const { design_id } = route.params;
 
     const { showToast } = useToast();
@@ -40,10 +41,13 @@ export default function ProductDetail() {
     }, [])
 
     useEffect(() => {
-        if (fabric !== null && size !== null) {
+        setTotal_quantity(fabrics.find((f: IFabric) => f.fabric_id === fabric)?.quantity || 1);
+        if (fabric !== null && size !== null && fabrics.find((f: IFabric) => f.fabric_id === fabric)?.quantity) {
             setIsReady(true);
+        } else {
+            setIsReady(false);
         }
-    },[fabric, size])
+    }, [fabric, size])
 
     const { width } = Dimensions.get('window');
 
@@ -73,11 +77,12 @@ export default function ProductDetail() {
         console.log(fabric, size, detail, quantity);
 
         updateProduct({
-            design_id: parseInt(design_id), 
-            fabric_id: fabric, 
-            size: size, 
-            detail: detail, 
-            total_quantity: quantity});
+            design_id: parseInt(design_id),
+            fabric_id: fabric,
+            size: size,
+            detail: detail,
+            total_quantity: quantity
+        });
         showToast('บันทึกแบบเรียบร้อยแล้ว', 'แบบที่คุณแก้ไขได้ถูกบันทึกเรียบร้อยแล้ว', 'success');
         router.dismissAll();
         router.replace('/user-stack/manage-design');
@@ -98,7 +103,7 @@ export default function ProductDetail() {
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '60%', marginBottom: '-15%' }}>
                 <FlatList data={fabrics} keyExtractor={(_, index: number) => index.toString()} renderItem={({ item, index }: { item: IFabric, index: number }) => {
-                    return <Image key={index} source={{ uri: item.fabric_url}} style={{ width: width, height: '100%' }} />
+                    return <Image key={index} source={{ uri: item.fabric_url }} style={{ width: width, height: '100%' }} />
                 }
                 } horizontal showsHorizontalScrollIndicator={false} pagingEnabled />
             </View>
@@ -121,7 +126,7 @@ export default function ProductDetail() {
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
                             <SetText size={16} type="bold">ลายผ้า</SetText>
-                            <SetText color={colors.grey} size={14} type="small">คลัง : 999</SetText>
+                            {fabric && <SetText color={colors.grey} size={14} type="small">คลัง : {fabrics.find((f: IFabric) => f.fabric_id === fabric)?.quantity ? fabrics.find((f: IFabric) => f.fabric_id === fabric)?.quantity : 'หมด'}</SetText>}
                         </View>
                         <SetText color={colors.grey} size={14} type="small">(1ผืน/1ตัว)</SetText>
                     </View>
@@ -171,7 +176,7 @@ export default function ProductDetail() {
                             style={{ height: 150, textAlignVertical: 'top', width: '100%', padding: 10, borderWidth: 1, borderRadius: 12, borderColor: colors.grey, fontFamily: 'notoSansThai' }}
                             placeholder="รายละเอียดเพิ่มเติม"
                             onChange={(e) => setDetail(e.nativeEvent.text)}
-                            value={detail||''}
+                            value={detail || ''}
                         />
                     </View>
                 </ScrollView>
@@ -184,12 +189,17 @@ export default function ProductDetail() {
                     <TouchableOpacity disabled={quantity === 1} style={quantity === 1 ? { opacity: 0.3 } : undefined} onPress={decreaseQuantity} onLongPress={decreaseQuantity10}>
                         <Iconify icon="simple-line-icons:minus" size={24} color={colors.whereblack} />
                     </TouchableOpacity>
-                    <SetText size={16} type="bold" style={{}}>{quantity}</SetText>
-                    <TouchableOpacity onPress={increaseQuantity} onLongPress={increaseQuantity10}>
+                    <TextInput
+                        keyboardType="number-pad"
+                        value={quantity.toString()}
+                        onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? parseInt(e.nativeEvent.text) > total_quantity ? setQuantity(total_quantity) : setQuantity(parseInt(e.nativeEvent.text)) : setQuantity(1)}
+                        style={{ borderWidth: 0.5, borderColor: colors.line, borderRadius: 10, height: 40, width: 100, textAlign: 'center', fontFamily: 'notoSansThai', padding: 8 }}
+                    />
+                    <TouchableOpacity disabled={quantity === total_quantity} style={quantity === total_quantity ? { opacity: 0.3 } : undefined} onPress={increaseQuantity} onLongPress={increaseQuantity10}>
                         <Iconify icon="simple-line-icons:plus" size={24} color={colors.whereblack} />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity disabled={!isReady} onPress={onButtonSubmit} style={[{ backgroundColor: isReady? colors.mediumpink : colors.grey, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12 }, styles.shadowCustom]}>
+                <TouchableOpacity disabled={!isReady} onPress={onButtonSubmit} style={[{ backgroundColor: isReady ? colors.mediumpink : colors.grey, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12 }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white}>เพิ่มลงตะกร้า</SetText>
                 </TouchableOpacity>
             </View>

@@ -8,9 +8,11 @@ import { IDesign } from "@/types/IDesign";
 import axios from "axios";
 import { DailyReportButton } from "./order-button/DailyReportButton";
 import { IOrder } from "@/types/IOrder";
+import { orderState } from "@/utils/orderState";
 
 export default function ConfirmOrderCardTailor({ order_id, item, setSelectedProduct, shadow, showDailyReport = true }: { order_id: string, item: ProductRequest, setSelectedProduct?: React.Dispatch<React.SetStateAction<string | null>>, shadow?: boolean, showDailyReport?: boolean }) {
     const [design, setDesign] = useState<IDesign>();
+
     const fetchDesign = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/design/get', {
             design_id: item.design_id
@@ -26,7 +28,7 @@ export default function ConfirmOrderCardTailor({ order_id, item, setSelectedProd
 
     useEffect(() => {
         fetchDesign();
-    }, [])
+    }, []);
 
     if (!design) return <ConfirmOrderCardSkeleton />;
     return (
@@ -63,7 +65,7 @@ export default function ConfirmOrderCardTailor({ order_id, item, setSelectedProd
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
                         <SetText size={14} type="bold" style={{}}></SetText>
-                        <DailyReportButton order_id={order_id} product_id={item.product_id} />
+                        {item.process_quantity !== item.total_quantity && <DailyReportButton order_id={order_id} product_id={item.product_id} />}
                     </View>
                 </View>}
             </View>

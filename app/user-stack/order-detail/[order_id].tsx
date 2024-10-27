@@ -2,17 +2,18 @@ import ConfirmOrderCard, { ConfirmOrderCardSkeleton } from "@/components/Comfirm
 import { IFilterTab } from "@/components/OrderTab";
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
+import { useToast } from "@/contexts/ToastContext";
 import { IOrder } from "@/types/IOrder";
 import { IProduct } from "@/types/IProduct";
 import { ProductRequest } from "@/types/ProductRequest";
 import { formatDate } from "@/utils/formatDate";
-import { userOrderState } from "@/utils/orderState";
+import { orderState, userOrderState } from "@/utils/orderState";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { TouchableOpacity, View, ScrollView, Linking } from "react-native";
+import { TouchableOpacity, View, ScrollView, Linking, Alert } from "react-native";
 import { Iconify } from "react-native-iconify";
 
 export default function OrderDetail() {
@@ -21,6 +22,7 @@ export default function OrderDetail() {
     const [isShow2, setIsShow2] = useState<boolean>(false);
     const [statusIndex, setStatusIndex] = useState<number>(0);
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+    const { showToast } = useToast();
 
     const route = useRoute() as { params: { order_id: string } };
     const navigation = useNavigation();
@@ -62,7 +64,31 @@ export default function OrderDetail() {
             console.log('error fetching products');
         })
     }
-    if (order === undefined) return null;
+
+    const onReceivedOrder = async () => Alert.alert('ยืนยันการรับพัสดุ', 'ก่อนกดยืนยันการรับสินค้า กรุณาตรวจสอบสินค้าทุกชิ้นใบคำสีั่งซื้อว่าสินค้าที่ได้รับนั้นครบถ้วน หลังจากยืนยันแล้วจะไม่สามารถแก้ไขได้อีก', [
+        {
+            text: 'ยกเลิก',
+            onPress: () => console.log('ยกเลิก'),
+            style: 'cancel',
+        },
+        {
+            text: 'ยืนยัน', onPress: async () => {
+                await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.success_user }).then((res) => {
+                    if (res.status === 204) {
+                        console.log('success');
+                        showToast('ยืนยันการรับพัสดุสำเร็จ', 'คุณได้ยืนยันการรับพัสดุสำเร็จ', 'success');
+                        router.back();
+                    } else {
+                        console.log(res.status);
+                    }
+                }).catch((err) => {
+                    console.log('error fetching orders');
+                })
+            }
+        },
+    ]);
+
+    if (!order) return null;
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '7%', backgroundColor: colors.wherewhite }} />
@@ -115,7 +141,7 @@ export default function OrderDetail() {
                     <Iconify icon="pepicons-pop:credit-card-circle-filled" size={30} color={colors.white} />
                     <SetText size={16} type="bold" color={colors.white} style={{ flex: 1, width: '100%', textAlign: 'center' }}>ชำระเงิน</SetText>
                 </TouchableOpacity>}
-                {userOrderState[3].status.includes(order!.status) && <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.store_phone}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                {userOrderState[3].status.includes(order!.status) && <TouchableOpacity onPress={onReceivedOrder} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ฉันได้รับสินค้าแล้ว</SetText>
                 </TouchableOpacity>}
             </View>

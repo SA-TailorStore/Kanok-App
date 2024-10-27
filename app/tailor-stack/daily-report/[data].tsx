@@ -13,6 +13,7 @@ import { IOrder } from "@/types/IOrder";
 import { formatDate } from "@/utils/formatDate";
 import { Iconify } from "react-native-iconify";
 import { ProductRequest } from "@/types/ProductRequest";
+import { orderState } from "@/utils/orderState";
 
 export default function TrackingNumber() {
     const route = useRoute() as { params: { data: string } };
@@ -29,6 +30,7 @@ export default function TrackingNumber() {
     const [design, setDesign] = useState<IDesign>();
     const [order, setOrder] = useState<IOrder>();
     const [quantity, setQuantity] = useState(0);
+    const [tempQuantity, setTempQuantity] = useState(0);
 
     useEffect(() => {
         navigation.setOptions({
@@ -44,6 +46,7 @@ export default function TrackingNumber() {
                 setProduct(res.data.data);
                 fetchDesign(res.data.data.design_id)
                 setQuantity(res.data.data.process_quantity)
+                setTempQuantity(res.data.data.process_quantity)
                 console.log(res.data.data.design_id)
             } else {
                 console.log(res.status);
@@ -81,20 +84,66 @@ export default function TrackingNumber() {
     }
 
     const createTwoButtonAlert = () => {
-        Alert.alert('ยืินยันการจัดส่งสินค้า', 'ก่อนกดยืนยันการจัดส่งสินค้า กรุณาตรวจสอบเลขพัสดุและช่องทางการจัดส่งถูกต้อง', [
+        Alert.alert('ยืินยันการส่งมอบ', 'งานของคุณเสร็จสิ้นแล้ว', [
             {
                 text: 'ยกเลิก',
-                onPress: () => console.log('ยกเลิก'),
+                onPress: async () => {
+                    updateQuantity(tempQuantity, product!.total_quantity);
+                    fetchOrder();
+                    fetchProduct();
+                },
                 style: 'cancel',
             },
             {
                 text: 'ยืนยันการจัดส่งสินค้า', onPress: async () => {
                     Keyboard.dismiss();
-                    console.log(order_id);
-
+                    updateOrderStatus(true);
+                    showToast('ส่งมอบงานสำเร็จ', 'คุณสามารถจัดส่งสินค้าได้ทันที', 'success');
+                    router.back();
                 }
             },
         ]);
+    }
+
+    const updateOrderStatus = async (isSuccess: boolean) => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', {
+            order_id: order_id,
+            status: isSuccess ? orderState.success_tailor : orderState.processing_tailor
+        }).then((res) => {
+            console.log(res.status)
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+    const checkQrderProcess = async () => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/product/check', { order_id: order_id }).then((res) => {
+            if (res.data.response) {
+                createTwoButtonAlert();
+            } else {
+                updateOrderStatus(false);
+                fetchOrder();
+                fetchProduct();
+            }
+        });
+
+    }
+
+    const updateQuantity = async (quantity: number, tempQuantity: number) => {
+        console.log('e', quantity, tempQuantity);
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/product/update/process', {
+            product_id: product_id,
+            increase_quantity: (quantity - tempQuantity > 0) ? quantity - tempQuantity : 0,
+            decrease_quantity: (tempQuantity - quantity > 0) ? tempQuantity - quantity : 0
+        }).then(async (res) => {
+            if (res.status === 204) {
+                await checkQrderProcess();
+            } else {
+                showToast('บันทึกไม่สำเร็จ', '', 'error');
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
     }
 
     const increaseQuantity = () => {
@@ -102,7 +151,10 @@ export default function TrackingNumber() {
     }
 
     const increaseQuantity10 = () => {
-        setQuantity((q) => q + 10);
+        setQuantity((q) => {
+            if (q + 10 > product!.total_quantity) return product!.total_quantity;
+            return q + 10
+        });
     }
 
     const decreaseQuantity = () => {
@@ -148,16 +200,18 @@ export default function TrackingNumber() {
                     <TextInput
                         keyboardType="number-pad"
                         value={quantity.toString()}
-                        onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? setQuantity(parseInt(e.nativeEvent.text)) : setQuantity(0)}
+                        onChange={(e) => {
+                            parseInt(e.nativeEvent.text) > 0 ? parseInt(e.nativeEvent.text) > product.total_quantity ? setQuantity(product.total_quantity) : setQuantity(parseInt(e.nativeEvent.text)) : setQuantity(0)
+                        }}
                         style={{ flex: 1, borderBottomWidth: 0.5, borderColor: colors.line, borderRadius: 10, height: 40, width: '100%', textAlign: 'center', fontFamily: 'notoSansThai', padding: 8 }}
                     />
-                    <TouchableOpacity onPress={increaseQuantity} onLongPress={increaseQuantity10}>
+                    <TouchableOpacity disabled={quantity === product.total_quantity} onPress={increaseQuantity} onLongPress={increaseQuantity10}>
                         <Iconify icon="simple-line-icons:plus" size={24} color={colors.whereblack} />
                     </TouchableOpacity>
                 </View>
             </ScrollView>
             <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
-                <TouchableOpacity disabled={loading} onPress={createTwoButtonAlert} style={[{ flex: 1, height: 50, backgroundColor: loading ? colors.grey : colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                <TouchableOpacity disabled={loading} onPress={() => updateQuantity(quantity, tempQuantity)} style={[{ flex: 1, height: 50, backgroundColor: loading ? colors.grey : colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ width: '100%', textAlign: 'center' }}>บันทึกรายงานประจำวัน</SetText>
                 </TouchableOpacity>
             </View>

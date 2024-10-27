@@ -158,6 +158,53 @@ export default function OrderDetail() {
         },
     ]);
 
+    const onConfirmFixButton = () => Alert.alert('ยืนยันการแก้ไขงาน', 'คุณต้องการจะแก้ไขงานหรือไม่', [
+        {
+            text: 'ยกเลิก',
+            onPress: () => console.log('ยกเลิก'),
+            style: 'cancel',
+        },
+        {
+            text: 'ยืนยัน', onPress: async () => {
+                await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.fix_processing_shop }).then((res) => {
+                    if (res.status === 204) {
+                        console.log('success');
+                        showToast('ขอแก้ไขงานสำเร็จ', 'คุณได้ขอแก้งานสำเร็จแล้ว', 'success');
+                        router.back();
+                    } else {
+                        console.log(res.status);
+                    }
+                }).catch((err) => {
+                    console.log('error fetching orders');
+                })
+            }
+        },
+    ]);
+
+    const onConfirmCorrectButton = () => Alert.alert('ยืนยันการส่งงาน', 'ก่อนกดยืนยันการส่งงาน กรุณาตรวจสอบความถูกต้องของชิ้นงานที่ได้รับหลังจากนั้นจะไม่สามารถแก้ไขได้อีก', [
+        {
+            text: 'ยกเลิก',
+            onPress: () => console.log('ยกเลิก'),
+            style: 'cancel',
+        },
+        {
+            text: 'ยืนยันการส่งงาน', onPress: async () => {
+                await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.success_shop }).then((res) => {
+                    if (res.status === 204) {
+                        console.log('success');
+                        showToast('ส่งมอบงานสำเร็จ', 'คุณได้ส่งมอบงานสำเร็จแล้ว', 'success');
+                        fetchOrder();
+                        // router.back();
+                    } else {
+                        console.log(res.status);
+                    }
+                }).catch((err) => {
+                    console.log('error fetching orders');
+                })
+            }
+        },
+    ]);
+
     const onConfirmReceivedButton = () => Alert.alert('ยืนยันการรับพัสดุ', 'ก่อนกดยืนยันการรับสินค้ากรุณา ตรวจสอบสินค้าทุกชิ้นว่าสินค้าที่ได้รับครบถ้วน', [
         {
             text: 'ยกเลิก',
@@ -170,7 +217,8 @@ export default function OrderDetail() {
                     if (res.status === 204) {
                         console.log('success');
                         showToast('รับสินค้าสำเร็จ', 'คุณได้รับสินค้าสำเร็จแล้ว', 'success');
-                        router.back();
+                        fetchOrder();
+                        // router.back();
                     } else {
                         console.log(res.status);
                     }
@@ -180,6 +228,8 @@ export default function OrderDetail() {
             }
         },
     ]);
+
+    
 
     if (order === undefined) return null;
     if (order?.status === orderState.cancel) return null;
@@ -281,31 +331,30 @@ export default function OrderDetail() {
                     <SetText size={16} type="bold" color={colors.white} style={{ flex: 1, width: '100%', textAlign: 'center' }}>แจ้งราคาสินค้า</SetText>
                 </TouchableOpacity>}
                 {/* ติดต่อลูกค้า */}
-                {[orderState.payment, orderState.received_user].includes(order?.status) && <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.user_phone}`)} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                {[orderState.payment, orderState.received_user, orderState.success_shop].includes(order?.status) && <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.user_phone}`)} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <Iconify icon="f7:phone-circle-fill" size={30} color={colors.mediumpink} />
                     <SetText size={16} type="bold" color={colors.mediumpink} style={{ flex: 1, width: '100%', textAlign: 'center' }}>ติดต่อลูกค้า</SetText>
                 </TouchableOpacity>}
                 {/* มอบหมายงานให้ช่าง */}
-                {order?.status === orderState.waiting_assign && <TouchableOpacity onPress={() => router.push(`/store-stack/assign-work/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                {[orderState.waiting_assign].includes(order?.status) && <TouchableOpacity onPress={() => router.push(`/store-stack/assign-work/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>มอบหมายงานให้ช่าง</SetText>
                 </TouchableOpacity>}
-                {/* จัดส่งพัสดุให้ช่าง */}
-                {order?.status === orderState.processing_user && <TouchableOpacity onPress={() => router.push(`/store-stack/tracking_number/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>จัดส่งพัสดุ</SetText>
+                {/* จัดส่งพัสดุให้ช่าง & ลูกค้า */}
+                {[orderState.processing_user, orderState.success_shop].includes(order?.status) && <TouchableOpacity onPress={() => router.push(`/store-stack/tracking_number/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>{orderState.success_shop === order?.status ? "แจ้งจัดส่งพัสดุ" : "จัดส่งพัสดุ"}</SetText>
                 </TouchableOpacity>}
                 {/* รับพัสดุจากช่าง */}
                 {order?.status === orderState.received_shop && <TouchableOpacity onPress={onConfirmReceivedButton} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ฉันได้รับสินค้าแล้ว</SetText>
                 </TouchableOpacity>}
                 {/* ส่งแก้ไขงาน */}
-                {[orderState.checking_shop].includes(order?.status) && <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.user_phone}`)} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                {[orderState.checking_shop].includes(order?.status) && <TouchableOpacity onPress={onConfirmFixButton} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.mediumpink} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ส่งแก้ไขงาน</SetText>
                 </TouchableOpacity>}
                 {/* ยืนยันการส่งมอบ */}
-                {[orderState.checking_shop].includes(order?.status) && <TouchableOpacity onPress={onConfirmReceivedButton} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                {[orderState.checking_shop].includes(order?.status) && <TouchableOpacity onPress={onConfirmCorrectButton} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ยืนยันการส่งมอบ</SetText>
                 </TouchableOpacity>}
-
             </View>}
 
             <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 9999, display: isPaymentPopup ? 'flex' : 'none', justifyContent: 'flex-end', alignItems: 'center' }}>

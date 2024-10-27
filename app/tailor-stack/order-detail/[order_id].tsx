@@ -107,7 +107,7 @@ export default function OrderDetail() {
         })
     }
 
-    const onReceivedOrder = async () => Alert.alert('ยืนยันการรับพัสดถ', 'คุณต้องการยืนยันว่าได้รับพัสดุแล้วหรือไม่', [
+    const onReceivedOrder = async () => Alert.alert('ยืนยันการรับพัสดุ', 'คุณต้องการยืนยันว่าได้รับพัสดุแล้วหรือไม่', [
         {
             text: 'ยกเลิก',
             onPress: () => console.log('ยกเลิก'),
@@ -201,7 +201,7 @@ export default function OrderDetail() {
                 </View>
             </ScrollView>
 
-            {orderState.processing_tailor !== order.status && <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
+            {(orderState.processing_tailor !== order.status && order.status !== orderState.checking_shop) && <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
                 {/* ยืนยันรับพัสดุ */}
                 {[orderState.received_tailor].includes(order?.status) && <TouchableOpacity onPress={onReceivedOrder} style={[{ flex: 1, height: 50, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ width: '100%', textAlign: 'center' }}>ยืนยันรับพัสดุ</SetText>

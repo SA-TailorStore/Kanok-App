@@ -10,6 +10,8 @@ export const orderState = {
     success_tailor: 'success_tailor',
     received_shop: 'received_shop',
     checking_shop: 'checking_shop',
+    fix_processing_shop: 'fix_processing_shop',
+    success_shop: 'success_shop',
     fix_received_tailor: 'fix_received_tailor',
     fix_success_tailor: 'fix_success_tailor',
     fix_received_shop: 'fix_received_shop',
@@ -35,7 +37,7 @@ export const userOrderState: IFilterTab[] = [
     {
         title: 'กำลังดำเนินการ',
         description: 'ร้านค้ากำลังดำเนินการ',
-        status: ['waiting_assign', 'processing_user', 'received_tailor', 'processing_tailor', 'success_tailor', 'received_shop', 'checking_shop', 'fix_received_tailor', 'fix_success_tailor', 'fix_received_shop', 'fix_checking_shop',]
+        status: ['waiting_assign', 'processing_user', 'received_tailor', 'processing_tailor', 'success_tailor', 'received_shop', 'checking_shop', 'fix_received_tailor', 'fix_success_tailor', 'fix_received_shop', 'fix_checking_shop', 'success_shop', 'fix_processing_shop']
     },
     {
         title: 'ที่ต้องได้รับ',
@@ -73,7 +75,7 @@ export const storeOrderState: IFilterTab[] = [
     {
         title: 'กำลังดำเนินการ',
         description: 'ช่างกำลังทำงานให้คุณ',
-        status: ['processing_user', 'received_tailor', 'processing_tailor', 'success_tailor']
+        status: ['processing_user', 'received_tailor', 'processing_tailor', 'success_tailor', 'fix_processing_shop']
     },
     {
         title: 'ที่ต้องได้รับ',
@@ -84,6 +86,11 @@ export const storeOrderState: IFilterTab[] = [
         title: 'รอตวจสอบ',
         description: 'รอตวจสอบสินค้า',
         status: ['checking_shop']
+    },
+    {
+        title: 'พร้อมจัดส่ง',
+        description: 'รอการจัดส่งสินค้าให้ลูกค้า',
+        status: ['success_shop']
     },
     {
         title: 'ที่กำลังจัดส่ง',
@@ -105,7 +112,7 @@ export const storeOrderState: IFilterTab[] = [
 export const tailorOrderState: IFilterTab[] = [
     {
         title: 'ที่ต้องได้รับ',
-        status: ['received_tailor'],
+        status: ['received_tailor', 'fix_received_tailor'],
         description: 'รอรับพัสดุจากร้าน'
     },
     {
@@ -115,7 +122,7 @@ export const tailorOrderState: IFilterTab[] = [
     },
     {
         title: 'พร้อมจัดส่ง',
-        status: ['success_tailor'],
+        status: ['success_tailor',],
         description: 'สินค้าพร้อมส่ง'
     },
     {
@@ -131,7 +138,7 @@ export const tailorOrderState: IFilterTab[] = [
     {
         title: 'สำเร็จ',
         status: ['received_user', 'success_user'],
-        description: 'สินค้าถึงมือลูกค้าแล้ว'
+        description: 'ร้านค้ารับพัสดุของคุณแล้ว'
     },
     {
         title: 'ยกเลิก',

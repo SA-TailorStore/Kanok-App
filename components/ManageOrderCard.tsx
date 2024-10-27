@@ -10,10 +10,11 @@ import axios from "axios";
 import { useSession } from "@/contexts/SessionContext";
 import { IProduct } from "@/types/IProduct";
 
-export default function ManageOrderCard({ item, setSelectedProduct, id }: { item: ProductRequest, setSelectedProduct: React.Dispatch<React.SetStateAction<string | null>>, id: number }) {
+export default function ManageOrderCard({ item, id }: { item: ProductRequest, id: number}) {
     const [quantity, setQuantity] = useState<number>(item.total_quantity);
-    const [isHidden, setIsHidden] = useState<boolean>(false);
+
     const [design, setDesign] = useState<IDesign>();
+    const [remaining, setRemaining] = useState<number>(0);
     const { setProductContext } = useSession();
 
     const createTwoButtonAlert = () =>
@@ -29,11 +30,17 @@ export default function ManageOrderCard({ item, setSelectedProduct, id }: { item
         ]);
 
     const increaseQuantity = () => {
-        setQuantity((q) => q + 1);
+        setQuantity((q) => {
+            if (q + 1 > remaining) return remaining;
+            return q + 1;
+        });
     }
 
     const increaseQuantity10 = () => {
-        setQuantity((q) => q + 10);
+        setQuantity((q) => {
+            if (q + 10 > remaining) return remaining;
+            return q + 10;
+        });
     }
 
     const decreaseQuantity = () => {
@@ -51,27 +58,44 @@ export default function ManageOrderCard({ item, setSelectedProduct, id }: { item
     }
 
     const fetchDesign = async () => {
-        console.log(typeof item.design_id)
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/design/get', {
             design_id: item.design_id
         }).then((res) => {
             if (res.status === 200) {
                 setDesign(res.data.data);
-                console.log(res.data.data)
             }
         }).catch((err) => {
             console.log(err);
         })
     }
 
+    const fetchFabric = async () => {
+        console.log('dfdfdfdfdfdfdfdfd')
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/fabric/get', {
+            fabric_id: item.fabric_id
+        }).then((res) => {
+            if (res.status === 200) {
+                setRemaining(res.data.data.quantity);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
+    const checkQuantity = (quantity: number, remaining: number) => {
+        if (quantity > remaining || remaining == 0) {
+            return false;
+        }
+        return true;
+    }
+
     useEffect(() => {
         fetchDesign();
-        console.log(item)
+        fetchFabric();
     }, [])
 
     useEffect(() => {
-       setProductContext((prev: IProduct[]) => {
-            // id == index of product in productContext
+        setProductContext((prev: IProduct[]) => {
             const newProduct = {
                 ...prev[id],
                 total_quantity: quantity
@@ -79,7 +103,7 @@ export default function ManageOrderCard({ item, setSelectedProduct, id }: { item
             prev[id] = newProduct;
             return prev;
 
-       })
+        })
     }, [quantity])
 
     return (
@@ -102,10 +126,16 @@ export default function ManageOrderCard({ item, setSelectedProduct, id }: { item
                 <View style={{ backgroundColor: colors.white, height: 180, borderRadius: 16, padding: 16 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <SetText type="bold" size={16}>รหัสสินค้า : {item.design_id}</SetText>
+                        {remaining === 0 && <SetText color={colors.red}>สินค้าหมด</SetText>}
+                        {remaining < quantity && remaining !== 0 && <SetText color={colors.red}>สินค้ามีไม่เพียงพอ</SetText>}
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: 5, gap: 10 }}>
                         <View style={{ width: 100, height: 100, alignItems: 'center', justifyContent: 'center', borderRadius: 8, ...styles.shadowCustom }}>
                             {design && <Image source={{ uri: design?.design_url }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />}
+                            <View style={{ position: 'absolute', bottom: 0, backgroundColor: colors.whereblack, opacity: 0.8, width: '100%', alignItems: 'center', borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }}>
+                                <SetText color={colors.white}>{remaining > 0 ? `เหลือ ${remaining} ชิ้น` : 'สิ้นค้านี้หมด'}</SetText>
+                            </View>
+
                         </View>
                         <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', height: 130 }}>
                             <View style={{ flex: 1 }}>
@@ -127,10 +157,10 @@ export default function ManageOrderCard({ item, setSelectedProduct, id }: { item
                                     <TextInput
                                         keyboardType="number-pad"
                                         value={quantity.toString()}
-                                        onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? setQuantity(parseInt(e.nativeEvent.text)) : setQuantity(0)}
+                                        onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? parseInt(e.nativeEvent.text) > remaining ? setQuantity(remaining) : setQuantity(parseInt(e.nativeEvent.text)) : setQuantity(1)}
                                         style={{ borderWidth: 0.5, borderColor: colors.line, borderRadius: 10, height: 40, width: 100, textAlign: 'center', fontFamily: 'notoSansThai', padding: 8 }}
                                     />
-                                    <TouchableOpacity onPress={increaseQuantity} onLongPress={increaseQuantity10}>
+                                    <TouchableOpacity disabled={quantity === remaining} style={quantity === remaining ? { opacity: 0.3 } : undefined}  onPress={increaseQuantity} onLongPress={increaseQuantity10}>
                                         <Iconify icon="simple-line-icons:plus" size={24} color={colors.whereblack} />
                                     </TouchableOpacity>
                                 </View>
