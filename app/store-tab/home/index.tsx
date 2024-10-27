@@ -26,18 +26,14 @@ export default function HomePage() {
                 <View style={[styles.formContainer, { paddingHorizontal: 0 }, styles.shadowCustom3]}>
                     <View style={{ paddingHorizontal: 30, height: '100%' }}>
                         <SetText size={27} type="bold" style={{ paddingTop: 14 }}>เลือกหมวดหมู่ที่ต้องการ</SetText>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 15 }}>
                             <ItemChoice title="ออเดอร์" icon={<Iconify icon="lets-icons:order-fill" size={60} color={colors.mediumpink} />} to={() => router.push('/store-stack/order')} />
                             <ItemChoice title="แบบดีไซน์" icon={<Iconify icon="mdi:clothes-hanger" size={60} color={colors.mediumpink} />} to={()=>router.push('/store-stack/design')} />
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10, }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 15, }}>
                             <ItemChoice title="พัสดุ" icon={<Knitwork/>} to={()=>router.push('/store-stack/material')}/>
                             <ItemChoice title="ลายผ้า" icon={<Iconify icon="game-icons:rolled-cloth" size={60} color={colors.mediumpink} />} to={()=>router.push('/store-stack/fabric')} />
                         </View>
-                    </View>
-
-                    <View style={[styles.orderCurrentContainer, styles.shadowCustom]}>
-                        <SetText style={{ color: colors.grey }}>ยังไม่มีคำสั่งซื้อในปัจจุบัน</SetText>
                     </View>
                 </View>
             </View>

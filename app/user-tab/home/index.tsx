@@ -82,10 +82,6 @@ export default function HomePage() {
                     </View>
 
                     <Slider items={ads} />
-
-                    <View style={[styles.orderCurrentContainer, styles.shadowCustom]}>
-                        <SetText style={{ color: colors.grey }}>ยังไม่มีคำสั่งซื้อในปัจจุบัน</SetText>
-                    </View>
                 </View>
             </View>            
         </WrapBackground>
