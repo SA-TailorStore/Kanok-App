@@ -1,13 +1,14 @@
 import { colors, styles } from '@/utils/styles';
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import React from 'react';
 import { Iconify } from 'react-native-iconify';
 import HomeIcon from "@/assets/icons/home";
 import AccountIcon from "@/assets/icons/account";
 import OrderIcon from "@/assets/icons/order";
+import { TouchableOpacity } from 'react-native';
 
 export default function TabLayout() {
-
+  const router = useRouter();
   return (
     <Tabs
       screenOptions={{
@@ -30,6 +31,7 @@ export default function TabLayout() {
         name="order/index"
         options={{
           title: 'My Order',
+          headerRight: () => <TouchableOpacity onPress={()=>router.push('/store-stack/order-search')}><Iconify icon="mingcute:search-line" size={24} color={colors.mediumpink} /></TouchableOpacity>,
           tabBarIcon: ({ color, focused }) => (
             focused ? <OrderIcon /> : <Iconify icon="iconamoon:history" size={24} color={colors.grey}  />
           ),

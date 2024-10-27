@@ -192,7 +192,7 @@ export default function ProductDetail() {
                     <TextInput
                         keyboardType="number-pad"
                         value={quantity.toString()}
-                        onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? parseInt(e.nativeEvent.text) > total_quantity ? setQuantity(total_quantity) : setQuantity(parseInt(e.nativeEvent.text)) : setQuantity(1)}
+                        onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? parseInt(e.nativeEvent.text) > total_quantity ? setQuantity(total_quantity) : setQuantity(parseInt(e.nativeEvent.text)) : setQuantity(0)}
                         style={{ borderWidth: 0.5, borderColor: colors.line, borderRadius: 10, height: 40, width: 100, textAlign: 'center', fontFamily: 'notoSansThai', padding: 8 }}
                     />
                     <TouchableOpacity disabled={quantity === total_quantity} style={quantity === total_quantity ? { opacity: 0.3 } : undefined} onPress={increaseQuantity} onLongPress={increaseQuantity10}>

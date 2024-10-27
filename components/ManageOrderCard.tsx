@@ -82,13 +82,6 @@ export default function ManageOrderCard({ item, id }: { item: ProductRequest, id
         })
     }
 
-    const checkQuantity = (quantity: number, remaining: number) => {
-        if (quantity > remaining || remaining == 0) {
-            return false;
-        }
-        return true;
-    }
-
     useEffect(() => {
         fetchDesign();
         fetchFabric();
@@ -157,7 +150,7 @@ export default function ManageOrderCard({ item, id }: { item: ProductRequest, id
                                     <TextInput
                                         keyboardType="number-pad"
                                         value={quantity.toString()}
-                                        onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? parseInt(e.nativeEvent.text) > remaining ? setQuantity(remaining) : setQuantity(parseInt(e.nativeEvent.text)) : setQuantity(1)}
+                                        onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? parseInt(e.nativeEvent.text) > remaining ? setQuantity(remaining) : setQuantity(parseInt(e.nativeEvent.text)) : setQuantity(0)}
                                         style={{ borderWidth: 0.5, borderColor: colors.line, borderRadius: 10, height: 40, width: 100, textAlign: 'center', fontFamily: 'notoSansThai', padding: 8 }}
                                     />
                                     <TouchableOpacity disabled={quantity === remaining} style={quantity === remaining ? { opacity: 0.3 } : undefined}  onPress={increaseQuantity} onLongPress={increaseQuantity10}>

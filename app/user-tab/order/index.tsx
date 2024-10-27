@@ -2,12 +2,12 @@ import OrderCard from "@/components/OrderCard";
 import OrderTab from "@/components/OrderTab";
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
+import { useSession } from "@/contexts/SessionContext";
 import { IOrder } from "@/types/IOrder";
 import { orderState } from "@/utils/orderState";
 import { colors } from "@/utils/styles";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { useNavigation, useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 
@@ -15,11 +15,11 @@ export default function OrderPage() {
     const navigation = useNavigation();
     const [selected, setSelected] = useState<string[]>(['pending']);
     const [orders, setOrders] = useState<IOrder[]>([]);
+    const { tokenContext } = useSession();
 
     const fetchOrders = async () => {
-        const token = await AsyncStorage.getItem('@access_token');
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/user', {
-            token: token,
+            token: tokenContext,
         }).then((res) => {
             if (res.status === 200) {
                 setOrders(res.data.data);
@@ -36,6 +36,7 @@ export default function OrderPage() {
         const unsubscribe = navigation.addListener('focus', () => {
             fetchOrders();
         });
+        
         return unsubscribe;
     }, []);
 

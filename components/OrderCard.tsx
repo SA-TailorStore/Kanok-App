@@ -35,7 +35,7 @@ export default function OrderCard({ order }: { order: IOrder }) {
                         <SetText type='bold' color={colors.mediumpink}>{
                             userOrderState.find((item) => item.status.includes(order.status))?.description
                         }</SetText>
-                        <SetText type="bold" color={colors.mediumpink}>{status[order.status]}</SetText>
+                        {/* <SetText type="bold" color={colors.mediumpink}>{status[order.status]}</SetText> */}
                     </View>
                 </View>
             </View>

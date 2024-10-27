@@ -37,7 +37,7 @@ export default function OrderCardShop({ order }: { order: IOrder }) {
                         <SetText type='bold' color={colors.mediumpink}>
                             {order.status === orderState.processing_user ? "รอส่งพัสดุให้ช่าง" : storeOrderState.find((item) => item.status.includes(order.status))?.description}
                         </SetText>
-                        <SetText type="bold" color={colors.mediumpink}>{status[order.status]}</SetText>
+                        {/* <SetText type="bold" color={colors.mediumpink}>{status[order.status]}</SetText> */}
                     </View>
                 </View>
             </View>

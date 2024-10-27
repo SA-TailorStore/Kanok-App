@@ -51,7 +51,7 @@ export default function ConfirmOrder() {
                 router.dismissAll();
                 router.replace('/user-stack/order-success');
             } else if (res.status === 200) {
-                showToast('สั่งสินค้าไม่เร็จ', `คุณได้ทำการสั่งสินค้าจำนวน ${productContext.length} รายการสำเร็จ`, 'success');
+                showToast('สั่งสินค้าไม่เร็จ', `เนื่องจากสินค้าที่คุณสั่งนั้นหมดหรือมีไม่พอ`, 'error');
             }
         }).catch((err) => {
             showToast('เกิดข้อผิดพลาด', 'ไม่สามารถสั่งสินค้าได้ (err: product}', 'error');
