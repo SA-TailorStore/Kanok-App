@@ -2,7 +2,7 @@ import { SetText } from "@/components/SetText";
 import WrapManageDesign from "@/components/WrapManageDesign";
 import { colors, styles } from "@/utils/styles";
 import { useNavigation, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import ManageOrderCard from "@/components/ManageOrderCard";

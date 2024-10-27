@@ -119,26 +119,13 @@ export default function OrderDetail() {
                     if (res.status === 204) {
                         console.log('success');
                         showToast('ยืนยันการรับพัสดุสำเร็จ', 'คุณได้ยืนยันการรับพัสดุสำเร็จ', 'success');
-                        router.back();
+                        fetchOrder();
                     } else {
                         console.log(res.status);
                     }
                 }).catch((err) => {
                     console.log('error fetching orders');
                 })
-            }
-        },
-    ]);
-
-    const onConfirmButton = () => Alert.alert('ยืนยันราคาสินค้า', 'ตรวจสอบราคาสินค้าก่อนยืนยันเมื่อลูกค้าแจ้งหลักฐานโอนระบบจะตรวจสอบความถูกต้องของหลักฐาน', [
-        {
-            text: 'ยกเลิก',
-            onPress: () => console.log('ยกเลิก'),
-            style: 'cancel',
-        },
-        {
-            text: 'ยืนยัน', onPress: () => {
-                updatePriceAndStatus();
             }
         },
     ]);
@@ -206,52 +193,16 @@ export default function OrderDetail() {
                 {[orderState.received_tailor].includes(order?.status) && <TouchableOpacity onPress={onReceivedOrder} style={[{ flex: 1, height: 50, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ width: '100%', textAlign: 'center' }}>ยืนยันรับพัสดุ</SetText>
                 </TouchableOpacity>}
-                {/* แจ้งราคาสินค้า */}
-                {order?.status === 'pending' && <TouchableOpacity onPress={() => setIsPaymentPopup(p => !p)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <Iconify icon="pepicons-pop:credit-card-circle-filled" size={30} color={colors.white} style={{ flex: 1 }} />
-                    <SetText size={16} type="bold" color={colors.white} style={{ flex: 1, width: '100%', textAlign: 'center' }}>แจ้งราคาสินค้า</SetText>
-                </TouchableOpacity>}
                 {/* ติดต่อลูกค้า */}
                 {[orderState.payment, orderState.received_user].includes(order?.status) && <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.user_phone}`)} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <Iconify icon="f7:phone-circle-fill" size={30} color={colors.mediumpink} />
                     <SetText size={16} type="bold" color={colors.mediumpink} style={{ flex: 1, width: '100%', textAlign: 'center' }}>ติดต่อลูกค้า</SetText>
-                </TouchableOpacity>}
-                {/* มอบหมายงานให้ช่าง */}
-                {order?.status === orderState.waiting_assign && <TouchableOpacity onPress={() => router.push(`/store-stack/assign-work/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>มอบหมายงานให้ช่าง</SetText>
                 </TouchableOpacity>}
                 {/* แจ้งจััดส่งพัสดุ */}
                 {order?.status === orderState.success_tailor && <TouchableOpacity onPress={() => router.push(`/tailor-stack/tracking_number/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>แจ้งจัดส่งพัสดุ</SetText>
                 </TouchableOpacity>}
             </View>}
-
-            <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 9999, display: isPaymentPopup ? 'flex' : 'none', justifyContent: 'flex-end', alignItems: 'center' }}>
-                <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 'auto', paddingTop: 20, justifyContent: 'flex-end', paddingBottom: 30, paddingHorizontal: '5%', zIndex: 90 }}>
-                    <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-                        <View style={{ marginBottom: 10 }}>
-                            <SetText type="bold" size={24}>แจ้งราคาสินค้า</SetText>
-                            <SetText size={14}>กรอกราคารายการสั่งตัดทั้งหมด</SetText>
-                        </View>
-                        <TouchableOpacity onPress={() => setIsPaymentPopup(false)}><SetText type="bold" size={16}>ยกเลิก</SetText></TouchableOpacity>
-                    </View>
-                    <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, gap: 10 }}>
-                        <SetText type="bold" size={16}>จำนวน</SetText>
-                        <TextInput keyboardType="number-pad"
-                            value={price ? price.toString() : ''}
-                            onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? setPrice(parseInt(e.nativeEvent.text)) : setPrice(0)}
-                            style={{ flex: 1, width: '100%', height: 50, borderColor: colors.line, borderWidth: 1, borderRadius: 5, textAlignVertical: 'top', padding: 5, paddingHorizontal: 10 }} placeholder="กรอกราคา" />
-                        <SetText type="bold" size={16}>บาท</SetText>
-                    </View>
-                    <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-                        <SetText type="bold" size={16}>จำนวน</SetText>
-                        <SetText type="bold" size={16}>{products.length} รายการ</SetText>
-                    </View>
-                    <TouchableOpacity disabled={buttonDelay} onPress={onConfirmButton} style={[{ backgroundColor: buttonDelay ? colors.lesspink : colors.mediumpink, paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center' }, styles.shadowCustom]}>
-                        <SetText size={16} type="bold" color={colors.white}>แจ้งราคาสินค้า</SetText>
-                    </TouchableOpacity>
-                </View>
-            </View>
         </WrapBackground>
     );
 }

@@ -2,7 +2,7 @@ import WrapBackground from "@/components/WrapBackground";
 import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Iconify } from 'react-native-iconify';
 import { FormInput } from "@/components/FormInput";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { SetText } from "@/components/SetText";
 import { ScrollView } from "react-native";
 import { colors } from "@/utils/styles";
@@ -11,7 +11,6 @@ import axios from "axios";
 import { useSession } from "@/contexts/SessionContext";
 
 export default function SignIn() {
-    const router = useRouter();
     const { setToken, checkRole, userContext } = useSession();
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');

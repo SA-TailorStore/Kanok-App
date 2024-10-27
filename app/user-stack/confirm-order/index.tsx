@@ -42,32 +42,21 @@ export default function ConfirmOrder() {
 
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/create', {
             token: token,
-        }).then(async (res) => {
+            products: productContext
+        }).then((res) => {
             if (res.status === 201) {
-                console.log('Order created' + res.data.order_id);
-                await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/product/create', {
-                    order_id: res.data.order_id,
-                    products: productContext
-                }).then((res) => {
-                    if (res.status === 201) {
-                        console.log('Products created');
-                        showToast('สั่งสินค้าสำเร็จ', `คุณได้ทำการสั่งสินค้าจำนวน ${productContext.length} รายการสำเร็จ`, 'success');
-                        setProductContext([])
-                        router.dismissAll();
-                        router.replace('/user-stack/order-success');
-                    }
-                }).catch((err) => {
-                    showToast('เกิดข้อผิดพลาด', 'ไม่สามารถสั่งสินค้าได้ (err: product}', 'error');
-                    setButtonDelay(false);
-                })
-            } else {
-                showToast('เกิดข้อผิดพลาด', 'ไม่สามารถสั่งสินค้าได้ (err: status)', 'error');
-                setButtonDelay(false);
+                console.log('Products created');
+                showToast('สั่งสินค้าสำเร็จ', `คุณได้ทำการสั่งสินค้าจำนวน ${productContext.length} รายการสำเร็จ`, 'success');
+                setProductContext([])
+                router.dismissAll();
+                router.replace('/user-stack/order-success');
+            } else if (res.status === 200) {
+                showToast('สั่งสินค้าไม่เร็จ', `คุณได้ทำการสั่งสินค้าจำนวน ${productContext.length} รายการสำเร็จ`, 'success');
             }
         }).catch((err) => {
-            showToast('เกิดข้อผิดพลาด', 'ไม่สามารถสั่งสินค้าได้ (err: order)', 'error');
+            showToast('เกิดข้อผิดพลาด', 'ไม่สามารถสั่งสินค้าได้ (err: product}', 'error');
             setButtonDelay(false);
-        })
+        });
     }
 
     if (!userContext) return null;
