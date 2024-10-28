@@ -49,7 +49,7 @@ export default function ConfirmOrderCard({ item, setSelectedProduct, shadow }: {
                             <SetText>คำอธิบาย : {item.detail.length > 20 ? item.detail.substring(0, 20) + '...' : item.detail}</SetText>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                            <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                            <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center', justifyContent: 'flex-end', width: '100%' }}>
                                 <SetText size={16} type="bold" color={colors.grey} style={{}}>x{item.total_quantity}</SetText>
                             </View>
                         </View>

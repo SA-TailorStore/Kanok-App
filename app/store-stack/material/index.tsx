@@ -173,7 +173,7 @@ const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', mat
             material_name: name,
             amount: quantity
         }
-        // console.log(PATH, PAYLOAD);
+        
         await axios.post(PATH, PAYLOAD).then((res) => {
             if (res.status === 201) {
                 showToast('เพิ่มวัสดุสำเร็จ', 'คุณเพิ่มวัสดุสำเร็จ', 'success');
@@ -182,8 +182,8 @@ const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', mat
             }
             setIsShow(false);
         }).catch((err) => {
-            console.log(err);
-            showToast('มีข้อผิดพลาด', 'มีข้อผิดพลาดในการเพิ่มวัสดุ', 'error');
+            console.log(err.response.data.error)
+            showToast('เกิดข้อผิดพลาด', err.response.data.error, 'error');
         });
     }
 

@@ -112,7 +112,7 @@ export default function Payment() {
         }).then((res) => {
             if (res.status === 204) {
                 console.log('เปลี่ยน state จ้า');
-                showToast('ชำระเงินสำเร็จ', 'การชำระเงินสำเร็จ รอตรวจสอบการชำระเงิน', 'success');
+                showToast('ชำระเงินสำเร็จ', 'การชำระเงินสำเร็จ ร้านค้ากำลังดำเนินการ', 'success');
                 router.replace(`/user-stack/order-detail/${order_id}`);
             } else {
                 console.log(res.status);

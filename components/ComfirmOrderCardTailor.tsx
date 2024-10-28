@@ -7,8 +7,6 @@ import { ProductRequest } from "@/types/ProductRequest";
 import { IDesign } from "@/types/IDesign";
 import axios from "axios";
 import { DailyReportButton } from "./order-button/DailyReportButton";
-import { IOrder } from "@/types/IOrder";
-import { orderState } from "@/utils/orderState";
 
 export default function ConfirmOrderCardTailor({ order_id, item, setSelectedProduct, shadow, showDailyReport = true }: { order_id: string, item: ProductRequest, setSelectedProduct?: React.Dispatch<React.SetStateAction<string | null>>, shadow?: boolean, showDailyReport?: boolean }) {
     const [design, setDesign] = useState<IDesign>();
