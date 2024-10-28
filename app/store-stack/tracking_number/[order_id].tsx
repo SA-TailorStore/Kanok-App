@@ -102,7 +102,7 @@ export default function TrackingNumber() {
         'Flash Express',
         'ไปรษณีย์ไทย',
         'Kerry Express',
-        'อื่นๆ',
+        // 'อื่นๆ',
     ]
     return (
         <WrapBackground color={colors.backgroundColor}>
