@@ -1,4 +1,5 @@
 import ConfirmOrderCard, { ConfirmOrderCardSkeleton } from "@/components/ComfirmOrderCard";
+import { ContactButton } from "@/components/order-button/ContactButton";
 import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
@@ -28,12 +29,14 @@ export default function OrderDetail() {
     const [products, setProducts] = useState<ProductRequest[]>([]);
 
     useEffect(() => {
-        console.log(order_id);
+        // console.log(order_id);
         navigation.setOptions({
             headerTitle: "รายละเอียดคำสั่งซื้อ",
         });
-
         fetchOrder();
+        setInterval(() => {
+            fetchOrder();
+        }, 3000);
     }, [])
 
     const fetchOrder = async () => {
@@ -41,7 +44,7 @@ export default function OrderDetail() {
             if (res.status === 200) {
                 setOrder(res.data.data);
                 fetchProducts();
-                console.log(res.data.data)
+                // console.log(res.data.data)
             } else {
                 console.log(res.status);
             }
@@ -94,20 +97,36 @@ export default function OrderDetail() {
                         <SetText type="bold" size={16} color={colors.white}>หมายเลขคำสั่งซื้อ #{order_id}</SetText>
                     </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: colors.line }}>
-                        <SetText size={14} color={colors.grey}>วันที่สั่งซื้อสินค้า</SetText>
-                        <SetText size={14} color={colors.grey}>{formatDate(order?.timestamp!)}</SetText>
+                        <SetText color={colors.grey}>วันที่สั่งซื้อสินค้า</SetText>
+                        <SetText color={colors.grey}>{formatDate(order?.timestamp!)}</SetText>
                     </View>
                     {(orderState.received_user === order.status) && <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
-                        <SetText size={14} color={colors.whereblack} type='bold'>ข้อมูลการจัดส่ง</SetText>
-                        <SetText size={14} color={colors.grey}>{order.tracking_number}</SetText>
+                        <SetText color={colors.whereblack} type='bold'>ข้อมูลการจัดส่ง</SetText>
+                        <SetText>{order.tracking_number.split('|')[0]} {order.tracking_number.split('|')[1]}</SetText>
                     </View>}
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
-                        <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
+                    <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
+                            <SetText size={14} color={colors.grey}><ContactButton phone_number={order.store_address} who="ร้าน" /></SetText>
+                        </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
                             <Iconify icon="bx:bx-map" size={20} color={colors.whereblack} />
-                            <View style={{ flexDirection: 'column' }}>
-                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}>{order?.user_address.split('|')[0]}</SetText>
-                                <SetText color={colors.grey} type="small">ที่อยู่ {order?.user_address.split('|')[1]}</SetText>
+                            <View style={{ flexDirection: 'column', flexWrap: 'wrap', flex: 1, padding: 5 }}>
+                                <SetText
+                                    color={colors.whereblack}
+                                    size={12}
+                                    type="bold"
+                                    style={{ flexWrap: 'wrap', width: '100%' }}
+                                >
+                                    {order.user_address.split('|')[0]}, {order.user_phone}
+                                </SetText>
+                                <SetText
+                                    color={colors.grey}
+                                    type="small"
+                                    style={{ flex: 1, flexWrap: 'wrap', width: '100%' }}
+                                >
+                                    ที่อยู่ {order.user_address.split('|')[1]}
+                                </SetText>
                             </View>
                         </View>
                     </View>

@@ -15,7 +15,7 @@ export default function Material() {
     const navigation = useNavigation();
     const [isPopupAdd, setIsPopupAdd] = useState<boolean>(false);
     const [isPopupEdit, setIsPopupEdit] = useState<boolean>(false);
-    const [material_id, setMaterialId] = useState<number>(0);
+    const [material_id, setMaterialId] = useState<number>(1);
     const [materials, setMaterials] = useState<IMaterial[]>([]);
     const { showToast } = useToast();
 
@@ -29,7 +29,7 @@ export default function Material() {
             {
                 text: 'ลบ', onPress: async () => {
                     await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/material/delete', { material_id: id }).then((res) => {
-                        if (res.status === 200) {
+                        if (res.status === 204) {
                             getMaterials();
                             showToast('ลบวัสดุสำเร็จ', `คุณลบวัสดุ id: ${id} สำเร็จ`, 'success');
                         }
@@ -173,7 +173,7 @@ const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', mat
             material_name: name,
             amount: quantity
         }
-        console.log(PATH, PAYLOAD);
+        // console.log(PATH, PAYLOAD);
         await axios.post(PATH, PAYLOAD).then((res) => {
             if (res.status === 201) {
                 showToast('เพิ่มวัสดุสำเร็จ', 'คุณเพิ่มวัสดุสำเร็จ', 'success');

@@ -25,7 +25,7 @@ export default function OrderPage() {
         }).then((res) => {
             if (res.status === 200) {
                 setOrders(res.data.data);
-                console.log(res.data.data)
+                // console.log(res.data.data)
             } else {
                 console.log(res.status);
             }
@@ -35,6 +35,7 @@ export default function OrderPage() {
     }
 
     useEffect(() => {
+        fetchOrders();
         const unsubscribe = navigation.addListener('focus', () => {
             setInterval(() => {
                 fetchOrders();

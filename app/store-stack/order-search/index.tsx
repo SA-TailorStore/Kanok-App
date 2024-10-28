@@ -22,7 +22,7 @@ export default function OrderSearch() {
         await axios.get(process.env.EXPO_PUBLIC_API_URL + '/api/orders').then((res) => {
             if (res.status === 200) {
                 setOrders(res.data.data);
-                console.log(res.data.data);
+                // console.log(res.data.data);
             } else {
                 console.log(res.status);
             }

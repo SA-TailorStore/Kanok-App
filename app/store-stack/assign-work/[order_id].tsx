@@ -4,7 +4,7 @@ import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
 import { IOrder } from "@/types/IOrder";
-import { IUser } from "@/types/IUser";
+import { ITailor, IUser } from "@/types/IUser";
 import { orderState } from "@/utils/orderState";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
@@ -18,82 +18,34 @@ import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 export default function AssignWork() {
     const [selected, setSelected] = useState<string>('');
     const route = useRoute() as { params: { order_id: string } };
-    const router = useRouter();
     const navigation = useNavigation();
     const { order_id } = route.params;
-    const [order, setOrder] = useState<IOrder>();
     const [tailors, setTailor] = useState<any>();
     const [showAssignDate, setShowAssignDate] = useState<boolean>(false);
 
-    const { showToast } = useToast();
-
     useEffect(() => {
-        console.log(order_id);
+        // console.log(order_id);
         navigation.setOptions({
             headerTitle: "",
         });
-        fetchOrder();
         getTailor();
     }, [])
 
     useEffect(() => {
-        console.log(selected);
+        // console.log(selected);
     }, [selected])
 
     const getTailor = async () => {
         await axios.get(process.env.EXPO_PUBLIC_API_URL + '/api/tailors').then((res) => {
             if (res.status === 200) {
                 setTailor(res.data.data);
-                console.log(res.data.data)
-            } else {
-                console.log(res.status);
+                // console.log(res.data.data)
             }
         }).catch((err) => {
             console.log('error fetching tailors');
         })
     }
 
-    const fetchOrder = async () => {
-        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/get', { order_id: order_id }).then((res) => {
-            if (res.status === 200) {
-                setOrder(res.data.data);
-                console.log(res.data.data)
-            } else {
-                console.log(res.status);
-            }
-        }).catch((err) => {
-            console.log('error fetching orders');
-        })
-    }
-
-    const handleConfirmButton = () =>
-        Alert.alert('ยืนยันการชำระเงิน', 'กรุณาตรวจสอบการอัพโหลดหลักฐาน ก่อนการยืนยันการชำระเงิน', [
-            {
-                text: 'ยกเลิก',
-                onPress: () => console.log('ยกเลิก'),
-                style: 'cancel',
-            },
-            {
-                text: 'ยืนยันการชำระเงิน', onPress: () => updateOrderTailor()
-            },
-        ]);
-
-    const updateOrderTailor = () => {
-        axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', {
-            order_id: order_id,
-            status: orderState.waiting_assign,
-        }).then((res) => {
-            if (res.status === 204) {
-                console.log('เปลี่ยน state จ้า');
-                showToast('ชำระเงินสำเร็จ', 'การชำระเงินสำเร็จ รอตรวจสอบการชำระเงิน', 'success');
-                router.replace(`/user-stack/order-detail/${order_id}`);
-            } else {
-                console.log(res.status);
-            }
-        }).catch((err) => {
-            console.log('error updating order status');
-        });
-    }
 
     return (
         <WrapBackground color={colors.backgroundColor}>
@@ -161,26 +113,18 @@ const AssignDate = ({ setShowAssignDate, order_id, tailor }: { setShowAssignDate
     };
 
     const handleConfirmButton = async () => {
-        console.log(order_id, tailor.user_id, date.toISOString());
+        // console.log(order_id, tailor.user_id, date.toISOString());
 
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/tailor', { order_id: order_id, tailor_id: tailor.user_id, due_date: date.toISOString() }).then(async (res) => {
-            await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', {
-                "order_id": order_id,
-                "status": "processing_user",
-            }).then((res) => {
-                if (res.status === 204) {
-                    showToast("มอบหมายงานสำเร็จ", "คุณได้มอบหมายงานให้ช่างสำเร็จ", "success")
-                } else {
-                    showToast("มอบหมายงานไม่สำเร็จ", "มอบหมายงานไม่สำเร็จ กรุณาลองใหม่อีกครั้ง", "error")
-                }
+            if (res.status === 204) {
+                showToast("มอบหมายงานสำเร็จ", "คุณได้มอบหมายงานให้ช่างสำเร็จ", "success");
                 router.back();
-            }).catch((err) => {
-                console.log(err);
-                showToast("เกิดข้อผิดพลาด", "ไม่สามารถเชื่อมต่อกับเซิฟเวอร์ได้ (2)", "error")
-            })
+            } else {
+                showToast("มอบหมายงานไม่สำเร็จ", "มอบหมายงานไม่สำเร็จ กรุณาลองใหม่อีกครั้ง", "error");
+            }
         }).catch((err) => {
             console.log(err);
-            showToast("เกิดข้อผิดพลาด", "ไม่สามารถเชื่อมต่อกับเซิฟเวอร์ได้ (1)", "error")
+            showToast("เกิดข้อผิดพลาด", "ไม่สามารถเชื่อมต่อกับเซิฟเวอร์ได้ (1)", "error");
         })
 
 
@@ -220,7 +164,7 @@ const AssignDate = ({ setShowAssignDate, order_id, tailor }: { setShowAssignDate
     )
 }
 
-const TailorCard = ({ tailor, index, selected, setSelected }: { tailor: IUser, index: number, selected: boolean, setSelected: React.Dispatch<React.SetStateAction<string>> }) => {
+const TailorCard = ({ tailor, index, selected, setSelected }: { tailor: ITailor, index: number, selected: boolean, setSelected: React.Dispatch<React.SetStateAction<string>> }) => {
     const onSelected = () => {
         setSelected(index.toString());
     }
@@ -231,7 +175,7 @@ const TailorCard = ({ tailor, index, selected, setSelected }: { tailor: IUser, i
             </View>
             <View style={{ flexDirection: 'column' }}>
                 <SetText type='bold'>{tailor.display_name}</SetText>
-                <SetText type='bold'>จำนวนงานปัจจุบัน : 15 / 20</SetText>
+                <SetText type='bold'>จำนวนงานปัจจุบัน : {tailor.order_id === "No Order" ? "-" : `${tailor.product_process} / ${tailor.product_total}`}</SetText>
                 <View style={{ width: 90 }}>
                     <ContactButton phone_number='123456' who="ช่าง" />
                 </View>

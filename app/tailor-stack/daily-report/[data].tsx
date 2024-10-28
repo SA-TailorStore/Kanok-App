@@ -47,7 +47,7 @@ export default function TrackingNumber() {
                 fetchDesign(res.data.data.design_id)
                 setQuantity(res.data.data.process_quantity)
                 setTempQuantity(res.data.data.process_quantity)
-                console.log(res.data.data.design_id)
+                // console.log(res.data.data.design_id)
             } else {
                 console.log(res.status);
             }
@@ -76,7 +76,7 @@ export default function TrackingNumber() {
         }).then((res) => {
             if (res.status === 200) {
                 setDesign(res.data.data);
-                console.log(res.data.data)
+                // console.log(res.data.data)
             }
         }).catch((err) => {
             console.log(err);
@@ -118,7 +118,7 @@ export default function TrackingNumber() {
 
     const checkQrderProcess = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/product/check', { order_id: order_id }).then((res) => {
-            if (res.data.response) {
+            if (res.status === 200) {
                 createTwoButtonAlert();
             } else {
                 updateOrderStatus(false);

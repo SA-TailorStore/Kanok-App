@@ -29,7 +29,7 @@ export default function ConfirmOrder() {
         navigation.setOptions({
             headerTitle: "คำสั่งซื้อ",
         });
-        console.log(productContext);
+        // console.log(productContext);
     }, []);
 
     const onConfirmOrderButton = async () => {

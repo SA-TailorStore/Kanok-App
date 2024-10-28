@@ -34,10 +34,10 @@ export default function Order() {
             headerTitle: 'คำสั่งซื้อ',
             headerRight: () => <TouchableOpacity onPress={()=>router.push('/store-stack/order-search')}><Iconify icon="mingcute:search-line" size={24} color={colors.mediumpink} /></TouchableOpacity>
         });
-        const unsubscribe = navigation.addListener('focus', () => {
+        fetchOrders();
+        setInterval(() => {
             fetchOrders();
-        });
-        return unsubscribe;
+        }, 3000);
     }, []);
 
     useEffect(() => {

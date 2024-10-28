@@ -20,10 +20,10 @@ export default function SignIn() {
             username: username,
             password: password,
         }).then(async(res) => {
-            console.log("Access Token: " + res.data.token);      
+            // console.log("Access Token: " + res.data.token);      
             setToken(res.data.token);
         }).catch((err) => {
-            console.log('sign-in : ' + err)
+            // console.log('sign-in : ' + err)
         });
     }
 

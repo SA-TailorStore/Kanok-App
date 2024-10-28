@@ -19,7 +19,7 @@ export default function ConfirmOrderCardTailor({ order_id, item, setSelectedProd
         }).then((res) => {
             if (res.status === 200) {
                 setDesign(res.data.data);
-                console.log(res.data.data)
+                // console.log(res.data.data)
             }
         }).catch((err) => {
             console.log(err);

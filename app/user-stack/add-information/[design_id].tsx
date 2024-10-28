@@ -93,7 +93,7 @@ export default function ProductDetail() {
             if (res.status === 200) {
                 setFabrics(res.data.data);
                 setFabric(1);
-                console.log(res.data.data);
+                // console.log(res.data.data);
             }
         }).catch((err) => {
             console.log(err);

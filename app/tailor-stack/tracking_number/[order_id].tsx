@@ -53,7 +53,7 @@ export default function TrackingNumber() {
                 text: 'ยืนยันการจัดส่งสินค้า', onPress: async () => {
                     Keyboard.dismiss();
                     setLoading(true);
-                    console.log(order_id);
+                    // console.log(order_id);
                     await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/tracking', { order_id: order_id, tracking_number: value + '|' + trackingNumber }).then(async(res) => {
                         if (res.status === 204) {
                             await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.received_shop }).then((res) => {

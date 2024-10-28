@@ -185,7 +185,7 @@ const Popup = ({ action, design_id, setIsShow }: { action: 'add' | 'edit', desig
     const [isEditImage, setIsEditImage] = useState<boolean>(false);
 
     const getDesign = async () => {
-        console.log(process.env.EXPO_PUBLIC_API_URL + '/api/design/get');
+        // console.log(process.env.EXPO_PUBLIC_API_URL + '/api/design/get');
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/design/get', { design_id: design_id }).then((res) => {
             if (res.data.data) {
                 const data = res.data.data;

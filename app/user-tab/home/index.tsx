@@ -1,7 +1,7 @@
 import { SetText } from "@/components/SetText";
 import { Image, TouchableOpacity, View, type ImageSourcePropType } from "react-native";
 import { colors, styles } from "@/utils/styles";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import Knitwork from "@/assets/icons/knitwork";
 import StoreFront from "@/assets/icons/storefront-plus";
 import Slider from "@/components/Slider";

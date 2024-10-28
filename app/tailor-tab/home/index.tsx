@@ -7,7 +7,7 @@ import { IOrder } from "@/types/IOrder";
 import { orderState } from "@/utils/orderState";
 import { colors } from "@/utils/styles";
 import axios from "axios";
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 
@@ -16,12 +16,13 @@ export default function Order() {
     const { tokenContext } = useSession();
     const [selected, setSelected] = useState<string[]>(['pending']);
     const [orders, setOrders] = useState<IOrder[]>([]);
+    const { userContext } = useSession();
+    const router = useRouter();
 
     const fetchOrders = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/user', {token: tokenContext}).then((res) => {
             if (res.status === 200) {
                 setOrders(res.data.data);
-                console.log(res.data.data)
             } else {
                 console.log(res.status);
             }
@@ -31,10 +32,13 @@ export default function Order() {
     }
     
     useEffect(() => {
+        if (userContext.display_name.length < 5 && userContext.address.length < 5 && userContext.phone_number.length < 5) {
+            router.push('/user-stack/my-address');
+        }
         navigation.setOptions({
             headerTitle: 'งานทั้งหมด',
         });
-        
+        fetchOrders();
         const unsubscribe = navigation.addListener('focus', () => {
             setInterval(() => {
                 fetchOrders();

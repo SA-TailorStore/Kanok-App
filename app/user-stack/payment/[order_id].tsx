@@ -43,7 +43,7 @@ export default function Payment() {
     const { showToast } = useToast();
 
     useEffect(() => {
-        console.log(order_id);
+        // console.log(order_id);
         navigation.setOptions({
             headerTitle: "",
         });
@@ -55,7 +55,7 @@ export default function Payment() {
             if (res.status === 200) {
                 setOrder(res.data.data);
                 fetchProducts();
-                console.log(res.data.data)
+                // console.log(res.data.data)
             } else {
                 console.log(res.status);
             }
@@ -68,7 +68,7 @@ export default function Payment() {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/product/get/order', { order_id: order_id }).then((res) => {
             if (res.status === 200) {
                 setProducts(res.data.data);
-                console.log(res.data.data)
+                // console.log(res.data.data)
             } else {
                 console.log(res.status);
             }

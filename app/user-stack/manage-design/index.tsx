@@ -21,7 +21,7 @@ export default function ManageDesign() {
         if (productContext.length === 0) {
             router.replace('/user-stack/choose-design-user');
         }
-        console.log(productContext);
+        // console.log(productContext);
     }, []);
 
     return (

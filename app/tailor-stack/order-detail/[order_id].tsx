@@ -32,14 +32,18 @@ export default function OrderDetail() {
     const [products, setProducts] = useState<ProductRequest[]>([]);
 
     useEffect(() => {
-        console.log(order_id);
+        // console.log(order_id);
         navigation.setOptions({
-            headerTitle: "รายละเอียดคำสั่งซื้อ",
+            headerTitle: "รายละเอียดของงาน",
         });
 
         const unsubscribe = navigation.addListener('focus', () => {
             fetchOrder();
             fetchProducts();
+            setInterval(() => {
+                fetchOrder();
+                fetchProducts();
+            }, 3000);
         });
         return unsubscribe;
     }, []);
@@ -111,6 +115,10 @@ export default function OrderDetail() {
                             <SetText size={14} color={colors.grey}>{formatDate(order.due_date)}</SetText>
                         </View>
                     </View>
+                    {([orderState.received_tailor, orderState.received_shop].includes(order.status)) && <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
+                        <SetText color={colors.whereblack} type='bold'>ข้อมูลการจัดส่ง</SetText>
+                        <SetText>{order.tracking_number.split('|')[0]} {order.tracking_number.split('|')[1]}</SetText>
+                    </View>}
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่งของร้าน</SetText>
@@ -118,9 +126,22 @@ export default function OrderDetail() {
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
                             <Iconify icon="bx:bx-map" size={20} color={colors.whereblack} />
-                            <View style={{ flexDirection: 'column' }}>
-                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}>{order.store_address.split('|')[0]}</SetText>
-                                <SetText color={colors.grey} type="small">ที่อยู่ {order.store_address.split('|')[1]}</SetText>
+                            <View style={{ flexDirection: 'column', flexWrap: 'wrap', flex: 1, padding: 5 }}>
+                                <SetText
+                                    color={colors.whereblack}
+                                    size={12}
+                                    type="bold"
+                                    style={{ flexWrap: 'wrap', width: '100%' }}
+                                >
+                                    {order.store_address.split('|')[0]}, {order.store_phone}
+                                </SetText>
+                                <SetText
+                                    color={colors.grey}
+                                    type="small"
+                                    style={{ flex: 1, flexWrap: 'wrap', width: '100%' }}
+                                >
+                                    ที่อยู่ {order.store_address.split('|')[1]}
+                                </SetText>
                             </View>
                         </View>
                     </View>
@@ -138,7 +159,7 @@ export default function OrderDetail() {
                     </View>
                     {products[0] === undefined ? <ConfirmOrderCardSkeleton /> : isShow2 ?
                         <>
-                            {products.map((item: IProduct | any, index: number) => <ConfirmOrderCardTailor showDailyReport={order.status !== orderState.received_tailor} order_id={order_id} item={item}  key={index} />)}
+                            {products.map((item: IProduct | any, index: number) => <ConfirmOrderCardTailor showDailyReport={order.status !== orderState.received_tailor} order_id={order_id} item={item} key={index} />)}
                         </> : <ConfirmOrderCardTailor showDailyReport={order.status !== orderState.received_tailor} order_id={order_id} item={products[0]} />
                     }
                     <TouchableOpacity onPress={() => setIsShow2((s) => !s)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: '5%', borderTopWidth: 1, borderColor: colors.line, paddingVertical: '3%' }}>

@@ -11,6 +11,12 @@ export type IUser = {
     created_at: number;
 };
 
+export type ITailor = IUser & {
+    order_id: string;
+    product_process: 0;
+    product_total: 0;
+}
+
 export type UserResponse = {
     user_id: string;
     username: string;
