@@ -36,7 +36,9 @@ export default function Order() {
         });
         
         const unsubscribe = navigation.addListener('focus', () => {
-            fetchOrders();
+            setInterval(() => {
+                fetchOrders();
+            }, 3000);
         });
         return unsubscribe;
     }, []);
@@ -49,7 +51,7 @@ export default function Order() {
                 {/* OrderCardList */}
                 <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
                     {orders.map((order: IOrder, index: number) => {
-                       if (selected.includes(order.status) || (selected.includes('all') && ![orderState.cancel, orderState.fix_success_user, orderState.success_user].includes(order.status))) return (
+                       if (selected.includes(order.status) || (selected.includes('all') && ![orderState.cancel, orderState.success_user].includes(order.status))) return (
                             <OrderCardTailor key={index} order={order} />
                         )
                     })}

@@ -40,7 +40,7 @@ export default function HomePage() {
     const { userContext } = useSession();
 
     useEffect(() => {
-        if (userContext.display_name.length > 5 && userContext.address && userContext.phone_number) {
+        if (userContext.display_name.length < 5 && userContext.address.length < 5 && userContext.phone_number.length < 5) {
             router.push('/user-stack/my-address');
         }
     },[]); 

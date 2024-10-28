@@ -36,7 +36,9 @@ export default function OrderPage() {
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-            fetchOrders();
+            setInterval(() => {
+                fetchOrders();
+            }, 3000);
         });
         
         return unsubscribe;
