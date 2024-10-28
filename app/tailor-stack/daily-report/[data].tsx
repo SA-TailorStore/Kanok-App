@@ -119,7 +119,11 @@ export default function TrackingNumber() {
     const checkQrderProcess = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/product/check', { order_id: order_id }).then((res) => {
             if (res.status === 200) {
-                createTwoButtonAlert();
+                // createTwoButtonAlert();
+                Keyboard.dismiss();
+                updateOrderStatus(true);
+                // showToast('ส่งมอบงานสำเร็จ', 'คุณสามารถจัดส่งสินค้าได้ทันที', 'success');
+                router.back();
             } else {
                 updateOrderStatus(false);
                 fetchOrder();
