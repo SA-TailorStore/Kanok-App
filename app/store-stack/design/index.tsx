@@ -95,7 +95,7 @@ export default function Design() {
     }
 
     const createTwoButtonAlert = (design_id: number) =>
-        Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบแบบที่คุณเลือก', [
+        Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบดีไซน์ที่คุณเลือก', [
             {
                 text: 'ยกเลิก',
                 onPress: () => console.log('ยกเลิก'),
@@ -107,9 +107,9 @@ export default function Design() {
                         design_id: design_id
                     }).then((res) => {
                         getDesign();
-                        showToast('ลบดีไซน์สำเร็จ', `ลบดีไซน์ id: ${design_id} ของคุณสำเร็จ`, 'success');
+                        showToast('ลบดีไซน์สำเร็จ', `คุณลบดีไซน์สำเร็จ`, 'success');
                     }).catch((err) => {
-                        console.log(err.response);
+                        console.log(err.response.data.error);
                     })
                 }
             },

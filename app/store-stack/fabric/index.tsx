@@ -59,7 +59,7 @@ export default function Fabric() {
     }
 
     const createTwoButtonAlert = (id: number) =>
-        Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบแบบที่คุณเลือก', [
+        Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบลายผ้าที่คุณเลือก', [
             {
                 text: 'ยกเลิก',
                 onPress: () => console.log('ยกเลิก'),
