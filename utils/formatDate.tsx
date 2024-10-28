@@ -6,6 +6,3 @@ export const formatDate = (dateString: string) => {
 
   return `${day} ${months[d.getMonth()]} ${d.getFullYear().toString().slice(2)}, ${d.getHours() > 9 ? d.getHours() : '0' + d.getHours()}:${d.getMinutes() > 9 ? d.getMinutes() : '0' + d.getMinutes()}`;
 };
-
-
-// 7 พ.ย. 24, 14:41
