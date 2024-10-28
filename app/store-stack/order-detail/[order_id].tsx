@@ -20,7 +20,6 @@ import { Iconify } from "react-native-iconify";
 export default function OrderDetail() {
     const router = useRouter();
     const { showToast } = useToast();
-    const [isShow, setIsShow] = useState<boolean>(false);
     const [isShow2, setIsShow2] = useState<boolean>(false);
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
     const [isPaymentPopup, setIsPaymentPopup] = useState<boolean>(false);
@@ -301,7 +300,7 @@ export default function OrderDetail() {
                             {products.map((item: IProduct | any, index: number) => <ConfirmOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />)}
                         </> : <ConfirmOrderCard item={products[0]} setSelectedProduct={setSelectedProduct} />
                     }
-                    <TouchableOpacity onPress={() => setIsShow2((s) => !s)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: '5%', borderTopWidth: 1, borderColor: colors.line, paddingVertical: '3%' }}>
+                    <TouchableOpacity disabled={products.length <= 1} onPress={() => setIsShow2((s) => !s)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: '5%', borderTopWidth: 1, borderColor: colors.line, paddingVertical: '3%' }}>
                         <SetText type='bold' size={14}>รวมจำนวนสินค้าทั้งหมด</SetText>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                             <SetText type='bold' size={14}>{products.length} รายการ</SetText>

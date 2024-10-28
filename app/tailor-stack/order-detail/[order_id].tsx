@@ -14,16 +14,13 @@ import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { TouchableOpacity, View, ScrollView, TextInput, Alert, Keyboard, Linking } from "react-native";
+import { TouchableOpacity, View, ScrollView, Alert } from "react-native";
 import { Iconify } from "react-native-iconify";
 
 export default function OrderDetail() {
     const router = useRouter();
     const { showToast } = useToast();
     const [isShow2, setIsShow2] = useState<boolean>(false);
-    const [isPaymentPopup, setIsPaymentPopup] = useState<boolean>(false);
-    const [buttonDelay, setButtonDelay] = useState<boolean>(false);
-    const [price, setPrice] = useState<number>(0);
 
     const route = useRoute() as { params: { order_id: string } };
     const navigation = useNavigation();
@@ -162,7 +159,7 @@ export default function OrderDetail() {
                             {products.map((item: IProduct | any, index: number) => <ConfirmOrderCardTailor showDailyReport={order.status !== orderState.received_tailor} order_id={order_id} item={item} key={index} />)}
                         </> : <ConfirmOrderCardTailor showDailyReport={order.status !== orderState.received_tailor} order_id={order_id} item={products[0]} />
                     }
-                    <TouchableOpacity onPress={() => setIsShow2((s) => !s)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: '5%', borderTopWidth: 1, borderColor: colors.line, paddingVertical: '3%' }}>
+                    <TouchableOpacity disabled={products.length <= 1} onPress={() => setIsShow2((s) => !s)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: '5%', borderTopWidth: 1, borderColor: colors.line, paddingVertical: '3%' }}>
                         <SetText type='bold' size={14}>รวมจำนวนสินค้าทั้งหมด</SetText>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                             <SetText type='bold' size={14}>{products.length} รายการ</SetText>
