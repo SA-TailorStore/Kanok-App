@@ -189,7 +189,7 @@ const CardItem = ({ item, isEditor, setFabricUpdate }: { item: any, isEditor: bo
 
 const Popup = ({ action, fabric_id, setIsShow }: { action: 'add' | 'edit', fabric_id?: number, setIsShow: (value: boolean) => void }) => {
     const [photo, setPhoto] = useState<string | null>(null);
-    const [quantity, setQuantity] = useState<number>(0);
+    const [quantity, setQuantity] = useState<number>(1);
     const [buttonDelay, setButtonDelay] = useState<boolean>(false);
     const { showToast } = useToast();
 
