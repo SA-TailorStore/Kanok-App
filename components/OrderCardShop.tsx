@@ -9,6 +9,7 @@ import { ReceivedButton } from "./order-button/ReceivedButton";
 import { orderState, storeOrderState } from "@/utils/orderState";
 import { ContactButton } from "./order-button/ContactButton";
 import { AssignWorkButton } from "./order-button/AssignWorkButton";
+import { formatDate } from "@/utils/formatDate";
 
 export default function OrderCardShop({ order }: { order: IOrder }) {
     const router = useRouter();
@@ -32,7 +33,7 @@ export default function OrderCardShop({ order }: { order: IOrder }) {
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
                         <SetText type='bold' size={14}>หมายเลขคำสั่งซื้อ #{order.order_id}</SetText>
                     </View>
-                    <SetText color={colors.grey}>7 พ.ย. 27, 14:41</SetText>
+                    <SetText color={colors.grey}>{formatDate(order.timestamp)}</SetText>
                     <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', position: 'absolute', bottom: 0, width: '100%' }}>
                         <SetText type='bold' color={colors.mediumpink}>
                             {order.status === orderState.processing_user ? "รอส่งพัสดุให้ช่าง" : storeOrderState.find((item) => item.status.includes(order.status))?.description}
