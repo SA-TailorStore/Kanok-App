@@ -8,6 +8,7 @@ import { IOrder } from "@/types/IOrder";
 import { IProduct } from "@/types/IProduct";
 import { ProductRequest } from "@/types/ProductRequest";
 import { formatDate } from "@/utils/formatDate";
+import { formatTrackingNumber } from "@/utils/formatTrackingNumber";
 import { orderState } from "@/utils/orderState";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
@@ -114,7 +115,7 @@ export default function OrderDetail() {
                     </View>
                     {([orderState.received_tailor, orderState.received_shop].includes(order.status)) && <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
                         <SetText color={colors.whereblack} type='bold'>ข้อมูลการจัดส่ง</SetText>
-                        <SetText>{order.tracking_number.split('|')[0]} {order.tracking_number.split('|')[1]}</SetText>
+                        <SetText>{formatTrackingNumber(order.tracking_number)}</SetText>
                     </View>}
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
