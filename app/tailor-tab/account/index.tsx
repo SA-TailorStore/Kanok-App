@@ -5,8 +5,12 @@ import WrapBackground from "@/components/WrapBackground";
 import { SetText } from "@/components/SetText";
 import { Iconify } from "react-native-iconify";
 import SettingMenuItem from "@/components/SettingMenuItem";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "@/contexts/SessionContext";
+import * as ImagePicker from 'expo-image-picker';
+import { useToast } from "@/contexts/ToastContext";
+import axios from "axios";
+import Loading from "@/components/Loading";
 
 
 export type SettingMenuProps = {
@@ -18,7 +22,8 @@ export type SettingMenuProps = {
 }
 
 export default function AccountPage() {
-    const { removeToken, userContext } = useSession();
+    const { removeToken, userContext, tokenContext, refreshSession } = useSession();
+    const { showToast } = useToast();
     const router = useRouter();
     const navigation = useNavigation();
     // const [user, setUser] = useState<UserResponse | null>(null);
@@ -63,10 +68,46 @@ export default function AccountPage() {
         }
     ]
 
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const handleChoosePhoto = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            aspect: [1, 1],
+            allowsEditing: true,
+            quality: 0.5
+        });
+
+        if (!result.canceled) {
+            let formData = new FormData() as any;
+            formData.append('jwt', tokenContext);
+            formData.append('image', {
+                uri: result.assets[0].uri,
+                type: 'image/jpeg',
+                name: 'profile.jpg'
+            });
+            setLoading(true);
+            await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/profile/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(async (res) => {
+                showToast('บันทึกข้อมูลสำเร็จ', 'ข้อมูลของคุณได้รับการบันทึกเรียบร้อยแล้ว', 'success');
+                setLoading(false);
+                refreshSession();
+            }).catch((err) => {
+                setLoading(false);
+                console.log(err);
+            })
+        }
+    }
+
     if (!userContext) return null;
+
 
     return (
         <WrapBackground color={colors.backgroundColor}>
+            <Loading visible={loading} />
             <View style={[{ width: '100%', height: '25%', borderBottomRightRadius: 51, borderBottomLeftRadius: 51, backgroundColor: colors.mediumpink }, styles.shadowCustom2]}>
                 <SetText size={30} type='bold' style={{ marginTop: '16%', marginLeft: '4%' }}> My Account</SetText>
             </View>
@@ -77,8 +118,8 @@ export default function AccountPage() {
                     </View>
                     <View>
                         <SetText type='bold' size={20}>{userContext.display_name}</SetText>
-                        <TouchableOpacity style={[{ flexDirection: 'row', alignItems: 'center', height: 30, gap: 6, }, { marginTop: -4 }]} onPress={() => router.push('/user-stack/change-profile')}>
-                            <SetText size={16} color={colors.grey}>แก้ไขข้อมูลส่วนตัว</SetText>
+                        <TouchableOpacity onPress={handleChoosePhoto} style={[{ flexDirection: 'row', alignItems: 'center', height: 30, gap: 6, }, { marginTop: -4 }]}>
+                            <SetText size={16} color={colors.grey}>เปลี่ยนรูปโปรไฟล์</SetText>
                             <Iconify icon="weui:back-filled" size={14} color={colors.grey} style={{ transform: [{ rotate: '180deg' }, { scaleX: 1.5 }] }} />
                         </TouchableOpacity>
                     </View>

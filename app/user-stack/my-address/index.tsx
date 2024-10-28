@@ -2,9 +2,7 @@ import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { useSession } from "@/contexts/SessionContext";
 import { useToast } from "@/contexts/ToastContext";
-import { UserResponse } from "@/types/IUser";
 import { colors, styles } from "@/utils/styles";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -35,14 +33,13 @@ export default function MyAddress() {
             address: address1 + '|' + address2,
         }).then(async (res) => {
             if (res.status === 204) {
-                showToast('บันทึกข้อมูลสำเร็จ', 'ข้อมูลของคุณได้รับการบันทึกเรียบร้อยแล้ว', 'success');
+                showToast('แก้ไขข้อมูลที่อยู่สำเร็จ', 'คุณได้แก้ไขข้อมูลที่อยู่สำเร็จ', 'success');
                 refreshSession();
             }
         }).catch((err) => {
-            showToast('เกิดข้อผิดพลาด', 'error', 'error');
+            showToast('เกิดข้อผิดพลาด', err.response.data.error, 'error');
         })
     }
-
 
     if (!userContext) return null;
     return (

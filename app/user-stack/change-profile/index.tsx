@@ -33,7 +33,7 @@ export default function ChangeProfile() {
 
     const saveProfile = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/update/address', { token: tokenContext, display_name: displayName.length ? displayName : userContext.display_name, phone_number: phoneNumber.length ? phoneNumber : userContext.phone_number }).then(async (res) => {
-            showToast('บันทึกข้อมูลสำเร็จ', 'ข้อมูลของคุณได้รับการบันทึกเรียบร้อยแล้ว', 'success');
+            showToast('บันทึกข้อมูลโปรไฟล์สำเร็จ', 'คุณได้บันทึกข้อมูลโปรไฟล์สำเร็จ', 'success');
             setDisplayName('');
             setPhoneNumber('');
             refreshSession();
