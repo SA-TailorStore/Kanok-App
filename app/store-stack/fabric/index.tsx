@@ -36,11 +36,11 @@ export default function Fabric() {
         if (isEditor && fabricUpdate.length > 0) {
             await axios.post(PATH, fabricUpdate).then((res) => {
                 if (res?.status === 204) {
-                    showToast('อัปเดทลายผ้าสำเร็จ', 'คุณอัปเดทลายผ้าสำเร็จแล้ว', 'success');
+                    showToast('อัพเดตลายผ้าสำเร็จ', 'คุณอัพเดตลายผ้าสำเร็จแล้ว', 'success');
                 }
                 setFabricUpdate([]);
             }).catch((err) => {
-                showToast('อัปเดทลายผ้าไม่สำเร็จ', 'กรุณาลองใหม่อีกครั้งหรือติดต่อนักพัฒนา', 'error');
+                showToast('อัพเดตลายผ้าไม่สำเร็จ', err.response.data.error, 'error');
             })
         }
     }
