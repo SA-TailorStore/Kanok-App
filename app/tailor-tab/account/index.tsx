@@ -30,31 +30,31 @@ export default function AccountPage() {
     }, [])
 
     const settingMenu: SettingMenuProps[] = [
-        {
-            icon: <Iconify icon="ion:notifcations" size={30} color={colors.whereblack} />,
-            title: 'การแจ้งเตือน',
-            detail: 'เปลี่ยนการแจ้งเตือน',
-            to: () => router.push('/')
-        },
-        {
-            icon: <Iconify icon="mdi:about" size={30} color={colors.whereblack} />,
-            title: 'ติดต่อเรา',
-            detail: 'ช่องทางการติดต่อ',
-            to: () => router.push('/')
-        },
-        {
-            icon: <Iconify icon="ph:password-fill" size={30} color={colors.whereblack} />,
-            title: 'เปลี่ยนรหัสผ่าน',
-            detail: 'เปลี่ยนรหัสผ่านของฉัน',
-            to: () => router.push('/')
-        },
-        {
-            icon: <Iconify icon="lucide:user-x" size={30} color={colors.whereblack} />,
-            title: 'ลบบัญชีของฉัน',
-            color: colors.danger,
-            detail: 'ลบบัญชีของฉัน',
-            to: () => router.push('/')
-        },
+        // {
+        //     icon: <Iconify icon="ion:notifcations" size={30} color={colors.whereblack} />,
+        //     title: 'การแจ้งเตือน',
+        //     detail: 'เปลี่ยนการแจ้งเตือน',
+        //     to: () => router.push('/')
+        // },
+        // {
+        //     icon: <Iconify icon="mdi:about" size={30} color={colors.whereblack} />,
+        //     title: 'ติดต่อเรา',
+        //     detail: 'ช่องทางการติดต่อ',
+        //     to: () => router.push('/')
+        // },
+        // {
+        //     icon: <Iconify icon="ph:password-fill" size={30} color={colors.whereblack} />,
+        //     title: 'เปลี่ยนรหัสผ่าน',
+        //     detail: 'เปลี่ยนรหัสผ่านของฉัน',
+        //     to: () => router.push('/')
+        // },
+        // {
+        //     icon: <Iconify icon="lucide:user-x" size={30} color={colors.whereblack} />,
+        //     title: 'ลบบัญชีของฉัน',
+        //     color: colors.danger,
+        //     detail: 'ลบบัญชีของฉัน',
+        //     to: () => router.push('/')
+        // },
         {
             icon: <Iconify icon="majesticons:logout" size={30} color={colors.whereblack} />,
             title: 'ออกจากระบบ',
@@ -98,7 +98,7 @@ export default function AccountPage() {
 
             <View style={{ width: '100%', height: '100%', marginTop: '25%', paddingHorizontal: '5%', gap: 8 }}>
                 <SetText size={30} type='bold'>Settings</SetText>
-                <View style={[{ flexDirection: 'column', paddingHorizontal: 10, paddingVertical: 20, gap: 5, backgroundColor: colors.white, borderRadius: 16 }, styles.shadowCustom]}>
+                <View style={[{ flexDirection: 'column', paddingHorizontal: 10, paddingVertical: 10, gap: 5, backgroundColor: colors.white, borderRadius: 16 }, styles.shadowCustom]}>
                     {settingMenu.map((item: SettingMenuProps, index) => {
                         return (
                             <View key={index} style={{ paddingVertical: 7, marginHorizontal: 10, borderTopWidth: index === 0 ? 0 : 1, borderColor: colors.line }}>
