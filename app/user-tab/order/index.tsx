@@ -23,12 +23,7 @@ export default function OrderPage() {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/user', {
             token: tokenContext,
         }).then((res) => {
-            if (res.status === 200) {
-                setOrders(res.data.data);
-                // console.log(res.data.data)
-            } else {
-                console.log(res.status);
-            }
+            if (res.status === 200) setOrders(res.data.data);
         }).catch((err) => {
             console.log('error fetching orders');
         });

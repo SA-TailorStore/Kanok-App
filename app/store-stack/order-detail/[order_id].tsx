@@ -55,11 +55,7 @@ export default function OrderDetail() {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/get', { order_id: order_id }).then((res) => {
             if (res.status === 200) {
                 setOrder(res.data.data);
-
                 fetchOrderOwner(res.data.data);
-                // console.log(res.data.data)
-            } else {
-                console.log(res.status);
             }
         }).catch((err) => {
             console.log('error fetching orders');
@@ -68,11 +64,7 @@ export default function OrderDetail() {
 
     const fetchProducts = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/product/get/order', { order_id: order_id }).then((res) => {
-            if (res.status === 200) {
-                setProducts(res.data.data);
-            } else {
-                console.log(res.status);
-            }
+            if (res.status === 200) setProducts(res.data.data);
         }).catch((err) => {
             console.log('error fetching products');
         })
@@ -91,11 +83,7 @@ export default function OrderDetail() {
         });
 
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/id', { user_id: order?.tailor_id }).then((res) => {
-            if (res.status === 200) {
-                setOrderTailor(res.data.data);
-            } else {
-                console.log(res.status);
-            }
+            if (res.status === 200) setOrderTailor(res.data.data);
         }
         ).catch((err) => {
             console.log('error fetching tailor');
@@ -185,7 +173,7 @@ export default function OrderDetail() {
         },
     ]);
 
-    
+
 
     if (order === undefined) return null;
     if (order?.status === orderState.cancel) return null;

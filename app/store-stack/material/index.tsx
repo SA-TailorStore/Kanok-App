@@ -31,7 +31,7 @@ export default function Material() {
                     await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/material/delete', { material_id: id }).then((res) => {
                         if (res.status === 204) {
                             getMaterials();
-                            showToast('ลบวัสดุสำเร็จ', `คุณลบวัสดุ id: ${id} สำเร็จ`, 'success');
+                            showToast('ลบวัสดุสำเร็จ', `คุณลบวัสดุสำเร็จ`, 'success');
                         }
                     }).catch((err) => {
                         console.log(err);

@@ -22,23 +22,6 @@ export type SettingMenuProps = {
 export default function AccountPage() {
     const { removeToken, userContext } = useSession();
     const router = useRouter();
-    // const [user, setUser] = useState<UserResponse | null>(null);
-
-    useEffect(() => {
-        // const getUser = async () => {
-        //     // code here : get user data from @access_user
-        //     const token = await AsyncStorage.getItem('@access_token');
-        //     await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/token', {
-        //         token: token,
-        //     }).then(async (res) => {
-        //         console.log(res.data.data);
-        //         setUser(res.data.data);
-        //     }).catch((err) => {
-        //         console.log('getUser : ' + err)
-        //     })
-        // }
-        // getUser();
-    }, [])
 
     const settingMenu: SettingMenuProps[] = [
         {

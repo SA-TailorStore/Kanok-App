@@ -74,7 +74,6 @@ export default function SessionProvider({ children }: any) {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/token', {
             token: token,
         }).then(async (res) => {
-            console.log(res.data.data);
             await setUserContext(res.data.data);
         }).catch((err) => {
             console.log('getUser : ' + err)
@@ -82,12 +81,10 @@ export default function SessionProvider({ children }: any) {
     }
 
     const getUser = async () => {
-        // code here : get user data from @access_user
         const token = await AsyncStorage.getItem('@access_token');
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/user/token', {
             token: token,
         }).then(async (res) => {
-            // console.log(res.data.data);
             await setUserContext(res.data.data);
             await checkRole(res.data.data.role);
         }).catch((err) => {
