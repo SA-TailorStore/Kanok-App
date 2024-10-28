@@ -290,11 +290,11 @@ const Popup = ({ action, fabric_id, setIsShow }: { action: 'add' | 'edit', fabri
     return (
         <View style={{ position: 'absolute', height: '100%', width: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
             <Loading visible={buttonDelay} />
-            <View style={{ backgroundColor: colors.backgroundColor, width: '100%', height: '65%', position: 'absolute', bottom: 0, alignSelf: 'center', borderRadius: 16, padding: 20 }}>
+            <View style={{ backgroundColor: colors.backgroundColor, width: '100%', height: '55%', position: 'absolute', bottom: 0, alignSelf: 'center', borderRadius: 16, padding: 20 }}>
                 <GestureHandlerRootView style={{ flex: 1 }}>
                     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 100 }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <SetText type="bold" size={20}>{action === 'add' ? 'เพิ่มแบบ' : 'แก้ไขแบบ'}</SetText>
+                            <SetText type="bold" size={20}>{action === 'add' ? 'เพิ่มลายผ้า' : 'แก้ไขลายผ้า'}</SetText>
                             <TouchableOpacity onPress={() => setIsShow(false)}><Iconify icon="bx:bx-x" size={24} color={colors.grey} /></TouchableOpacity>
                         </View>
                         <View style={{ borderColor: colors.line, paddingBottom: 20, gap: 10 }}>
@@ -305,10 +305,10 @@ const Popup = ({ action, fabric_id, setIsShow }: { action: 'add' | 'edit', fabri
                                     : <Iconify icon="fluent-emoji-high-contrast:plus" size={40} color={colors.line} />
                                 }
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={handleShotPhoto} style={{ width: 160, marginTop: 10, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
+                            {/* <TouchableOpacity onPress={handleShotPhoto} style={{ width: 160, marginTop: 10, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
                                 <Iconify icon="fluent-emoji-high-contrast:camera" size={24} color={colors.whereblack} />
                                 <SetText>ถ่ายภาพ</SetText>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', borderTopWidth: 1, paddingTop: 20, borderColor: colors.line }}>
                             <SetText type='bold' color={colors.whereblack} size={16}>จำนวน</SetText>
