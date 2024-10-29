@@ -83,7 +83,7 @@ export default function OrderDetail() {
                 await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.processing_tailor }).then((res) => {
                     if (res.status === 204) {
                         console.log('success');
-                        showToast('ยืนยันการรับสินค้าสำเร็จ', 'คุณได้ยืนยันการรับสินค้าสำเร็จ', 'success');
+                        showToast('ยืนยันการรับพัสดุ', 'คุณได้ยืนยันการรับพัสดุสำเร็จ', 'success');
                         fetchOrder();
                     } else {
                         console.log(res.status);

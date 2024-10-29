@@ -150,7 +150,7 @@ export default function OrderDetail() {
         },
     ]);
 
-    const onConfirmReceivedButton = () => Alert.alert('ยืนยันการรับสินค้า', 'ก่อนกดยืนยันการรับสินค้ากรุณา ตรวจสอบสินค้าทุกชิ้นว่าสินค้าที่ได้รับครบถ้วน', [
+    const onConfirmReceivedButton = () => Alert.alert('ยืนยันการรับพัสดุ', 'คุณได้ยืนยันการรับพัสดุสำเร็จ', [
         {
             text: 'ยกเลิก',
             onPress: () => console.log('ยกเลิก'),
@@ -320,7 +320,7 @@ export default function OrderDetail() {
                 </TouchableOpacity>}
                 {/* จัดส่งพัสดุให้ช่าง & ลูกค้า */}
                 {[orderState.processing_user, orderState.success_shop].includes(order?.status) && <TouchableOpacity onPress={() => router.push(`/store-stack/tracking_number/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
-                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>{orderState.success_shop === order?.status ? "แจ้งจัดส่งพัสดุ" : "จัดส่งพัสดุ"}</SetText>
+                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>แจ้งจัดส่งพัสดุ</SetText>
                 </TouchableOpacity>}
                 {/* รับพัสดุจากช่าง */}
                 {order?.status === orderState.received_shop && <TouchableOpacity onPress={onConfirmReceivedButton} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>

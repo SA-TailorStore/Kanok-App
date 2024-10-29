@@ -38,7 +38,7 @@ export const userOrderState: IFilterTab[] = [
     },
     {
         title: 'สำเร็จ',
-        description: 'สินค้าถึงมือคุณแล้ว',
+        description: 'คำสั่งซื้อเสร็จสมบูรณ์',
         status: [orderState.success_user]
     },
     {
@@ -86,7 +86,7 @@ export const storeOrderState: IFilterTab[] = [
     },
     {
         title: 'สำเร็จ',
-        description: 'สินค้าถึงมือลูกค้าแล้ว', 
+        description: 'คำสั่งซื้อเสร็จสมบูรณ์', 
         status: [orderState.success_user]
     },
     {
@@ -120,7 +120,7 @@ export const tailorOrderState: IFilterTab[] = [
     {
         title: 'สำเร็จ',
         status: [orderState.success_shop, orderState.received_user, orderState.success_user],
-        description: 'ร้านค้ารับพัสดุของคุณแล้ว'
+        description: 'คำสั่งซื้อเสร็จสมบูรณ์'
     },
     {
         title: 'ยกเลิก',

@@ -83,7 +83,7 @@ export default function ProductDetail() {
             detail: detail,
             total_quantity: quantity
         });
-        showToast('บันทึกแบบเรียบร้อยแล้ว', 'แบบที่คุณแก้ไขได้ถูกบันทึกเรียบร้อยแล้ว', 'success');
+        showToast('เพิ่มแบบเรียบร้อยแล้ว', 'แบบที่คุณเพิ่มได้เข้าสู่รายการแบบของคุณ', 'success');
         router.dismissAll();
         router.replace('/user-stack/manage-design');
     }
