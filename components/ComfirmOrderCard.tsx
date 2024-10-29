@@ -1,14 +1,17 @@
 import { colors, styles } from "@/utils/styles";
-import { Image, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import { SetText } from "./SetText";
 import { Iconify } from "react-native-iconify";
 import { useEffect, useState } from "react";
 import { ProductRequest } from "@/types/ProductRequest";
 import { IDesign } from "@/types/IDesign";
 import axios from "axios";
+import { useRouter } from "expo-router";
 
 export default function ConfirmOrderCard({ item, setSelectedProduct, shadow }: { item: ProductRequest, setSelectedProduct: React.Dispatch<React.SetStateAction<string | null>>, shadow?: boolean }) {
     const [design, setDesign] = useState<IDesign>();
+    const router = useRouter();
+
     const fetchDesign = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/design/get', {
             design_id: item.design_id
@@ -28,7 +31,7 @@ export default function ConfirmOrderCard({ item, setSelectedProduct, shadow }: {
 
     if (!design) return <ConfirmOrderCardSkeleton /> ;
     return (
-        <>
+        <TouchableOpacity disabled={!item.product_id} onPress={() => router.push(`/product_information/${item.product_id}`)}>
             <View style={[{ backgroundColor: colors.white, height: 160, borderRadius: 16, padding: 16 }, shadow ? styles.shadowCustom : undefined]}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <SetText type="bold" size={16}>รหัสสินค้า : {item.design_id}</SetText>
@@ -56,7 +59,7 @@ export default function ConfirmOrderCard({ item, setSelectedProduct, shadow }: {
                     </View>
                 </View>
             </View>
-        </>
+        </TouchableOpacity>
     )
 }
 

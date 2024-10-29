@@ -33,7 +33,7 @@ export default function Order() {
     }
     
     useEffect(() => {
-        if (userContext.display_name.length < 5 && userContext.address.length < 5 && userContext.phone_number.length < 5) {
+        if (userContext.display_name.length < 5 || userContext.address.length < 5 || userContext.phone_number.length < 5) {
             router.push('/user-stack/my-address');
         }
         navigation.setOptions({

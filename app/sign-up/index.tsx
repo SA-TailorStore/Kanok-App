@@ -21,13 +21,13 @@ export default function SignUp() {
 
 
     const signUpButtonClicked = async() => {
-        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/store/register', {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/register', {
             username: username,
             phone_number: phone,
             password: password1,
             confirm_password: password2,
         }).then(async(res) => {
-            showToast('เพิ่มช่างสำเร็จแล้ว', 'คุณได้ทำการเพิ่มช่างเรียบร้อยแล้ว', 'success');
+            showToast('สมัครสมาชิกสำเร็จ', 'ตอนนี้คุณสามารถลงชื่อเข้าใช้งานได้แล้ว', 'success');
             router.replace('/sign-in');
         }).catch((err) => {
             setErrorMsg(err.response.data.error);

@@ -2,13 +2,14 @@ import { SetText } from "@/components/SetText";
 import WrapBackground from "@/components/WrapBackground";
 import { useSession } from "@/contexts/SessionContext";
 import { useToast } from "@/contexts/ToastContext";
+import { IDesign } from "@/types/IDesign";
 import { IFabric } from "@/types/IFabric";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { useNavigation, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { View, Image, ScrollView, TouchableOpacity, FlatList, Dimensions, TextInput, } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { View, Image, ScrollView, TouchableOpacity, FlatList, Dimensions, TextInput, Animated, } from "react-native";
 import { Iconify } from "react-native-iconify";
 
 export const sizeList = ['S', 'M', 'L', 'XL', 'XXL'];
@@ -19,17 +20,27 @@ export default function ProductDetail() {
     const [detail, setDetail] = useState<string>("");
     const [quantity, setQuantity] = useState<number>(1);
     const [fabrics, setFabrics] = useState<IFabric[]>([]);
+    const [design, setDesign] = useState<IDesign>();
 
     const [isReady, setIsReady] = useState<boolean>(false);
 
     const route = useRoute() as { params: { design_id: string } };
+    const { design_id } = route.params;
     const router = useRouter();
     const navigation = useNavigation();
     const [total_quantity, setTotal_quantity] = useState<number>(1);
-    const { design_id } = route.params;
 
     const { showToast } = useToast();
     const { updateProduct } = useSession();
+    const { width } = Dimensions.get('window');
+    const [activeIndex, setActiveIndex] = useState(0);
+    const scrollX = useRef(new Animated.Value(0)).current;
+
+    const handleScroll = (event: any) => {
+        const scrollPosition = event.nativeEvent.contentOffset.x;
+        const index = Math.round(scrollPosition / width);
+        setActiveIndex(index);
+    };
 
 
     useEffect(() => {
@@ -38,6 +49,7 @@ export default function ProductDetail() {
             headerTitle: "",
         });
         fetchFabrics();
+        fetchDesign();
     }, [])
 
     useEffect(() => {
@@ -48,8 +60,6 @@ export default function ProductDetail() {
             setIsReady(false);
         }
     }, [fabric, size, quantity])
-
-    const { width } = Dimensions.get('window');
 
     const increaseQuantity = () => {
         setQuantity((q) => q + 1);
@@ -100,20 +110,64 @@ export default function ProductDetail() {
         })
     }
 
+    const fetchDesign = async () => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/design/get', {
+            design_id: Number(design_id)
+        }).then((res) => {
+            if (res.status === 200) {
+                setDesign(res.data.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
+    if (!design) return null;
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '60%', marginBottom: '-15%' }}>
-                <FlatList data={fabrics} keyExtractor={(_, index: number) => index.toString()} renderItem={({ item, index }: { item: IFabric, index: number }) => {
-                    return <Image key={index} source={{ uri: item.fabric_url }} style={{ width: width, height: '100%' }} />
-                }
-                } horizontal showsHorizontalScrollIndicator={false} pagingEnabled />
+                <FlatList
+                    data={fabrics}
+                    keyExtractor={(_, index) => index.toString()}
+                    ListHeaderComponent={
+                        <Image
+                            source={{ uri: design?.design_url }}
+                            style={{ width: width, height: '100%' }}
+                        />
+                    }
+                    renderItem={({ item, index }) => (
+                        <Image
+                            key={index}
+                            source={{ uri: item.fabric_url }}
+                            style={{ width: width, height: '100%' }}
+                        />
+                    )}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    pagingEnabled
+                    onScroll={Animated.event(
+                        [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                        { listener: handleScroll, useNativeDriver: false }
+                    )}
+                />
             </View>
             <View style={{ width: '100%', height: '60%', borderTopLeftRadius: 51, borderTopRightRadius: 51, backgroundColor: colors.backgroundColor, marginTop: 1, ...styles.shadowCustom3, paddingBottom: 100 }}>
-                <View
-                    style={{ width: '15%', alignSelf: 'center', height: 5, borderRadius: 999, marginTop: '2%', backgroundColor: colors.grey, marginBottom: '2%' }}
-                />
+                <View style={{ position: 'absolute', flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', top: '-5%' }}>
+                    {[design, ...fabrics].map((_, index) => (
+                        <View
+                            key={index}
+                            style={{
+                                width: 9,
+                                height: 9,
+                                borderRadius: 4,
+                                backgroundColor: index === activeIndex ? '#333' : '#ccc',
+                                marginHorizontal: 4,
+                            }}
+                        />
+                    ))}
+                </View>
                 <ScrollView
-                    contentContainerStyle={{ paddingHorizontal: '8%', paddingBottom: 100 }}
+                    contentContainerStyle={{ paddingHorizontal: '8%', paddingBottom: 100, overflow: 'hidden'}}
                     showsVerticalScrollIndicator={false}
                 >
                     <View style={{ marginTop: '5%' }}>

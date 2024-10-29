@@ -122,14 +122,13 @@ export default function Payment() {
             }
         }).then((res) => {
             if (res.status === 204) {
-                console.log('เปลี่ยน state จ้า');
                 showToast('ชำระเงินสำเร็จ', 'การชำระเงินสำเร็จ ร้านค้ากำลังดำเนินการ', 'success');
                 router.replace(`/user-stack/order-detail/${order_id}`);
             }
         }).catch((err) => {
             console.log('error updating order status');
-            console.log(err);
-            showToast('ชำระเงินไม่สำเร็จ', err.response.data.error, 'error');
+            console.log(err.response);
+            if (err.response) showToast('ชำระเงินไม่สำเร็จ', err.response.data.error, 'error');
         });
     }
 

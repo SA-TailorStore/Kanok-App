@@ -1,5 +1,5 @@
 import { colors, styles } from "@/utils/styles";
-import { Image, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import { SetText } from "./SetText";
 import { Iconify } from "react-native-iconify";
 import { useEffect, useState } from "react";
@@ -7,9 +7,11 @@ import { ProductRequest } from "@/types/ProductRequest";
 import { IDesign } from "@/types/IDesign";
 import axios from "axios";
 import { DailyReportButton } from "./order-button/DailyReportButton";
+import { useRouter } from "expo-router";
 
 export default function ConfirmOrderCardTailor({ order_id, item, setSelectedProduct, shadow, showDailyReport = true }: { order_id: string, item: ProductRequest, setSelectedProduct?: React.Dispatch<React.SetStateAction<string | null>>, shadow?: boolean, showDailyReport?: boolean }) {
     const [design, setDesign] = useState<IDesign>();
+    const router = useRouter();
 
     const fetchDesign = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/design/get', {
@@ -30,7 +32,7 @@ export default function ConfirmOrderCardTailor({ order_id, item, setSelectedProd
 
     if (!design) return <ConfirmOrderCardSkeleton />;
     return (
-        <>
+        <TouchableOpacity onPress={() => router.push(`/product_information/${item.product_id}`)}>
             <View style={[{ backgroundColor: colors.white, borderRadius: 16, padding: 16 }, shadow ? styles.shadowCustom : undefined]}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <SetText type="bold" size={16}>รหัสสินค้า : {item.design_id}</SetText>
@@ -67,7 +69,7 @@ export default function ConfirmOrderCardTailor({ order_id, item, setSelectedProd
                     </View>
                 </View>}
             </View>
-        </>
+        </TouchableOpacity>
     )
 }
 

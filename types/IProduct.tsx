@@ -7,4 +7,6 @@ export type IProduct = {
     fabric_id: number,
     created_at: number
     created_by: number,
+    design_url: string,
+    
 }

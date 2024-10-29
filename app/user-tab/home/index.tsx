@@ -40,7 +40,7 @@ export default function HomePage() {
     const { userContext } = useSession();
 
     useEffect(() => {
-        if (userContext.display_name.length < 5 && userContext.address.length < 5 && userContext.phone_number.length < 5) {
+        if (userContext.display_name.length < 5 || userContext.address.length < 5 || userContext.phone_number.length < 5) {
             router.push('/user-stack/my-address');
         }
     },[]); 
@@ -58,11 +58,13 @@ export default function HomePage() {
         },
     ]
 
+    if (!userContext) return null;
     return (
         <WrapBackground color={colors.mediumpink}>
             <View style={styles.logoUserContainer}>
                 <Image source={require('@/assets/images/logo-with-kanok.png')} />
-                <Image source={require('@/assets/images/Avatar.png')} style={styles.avatar} />
+                {userContext.user_profile_url === "-" && <Image source={require('@/assets/images/Avatar.png')} style={styles.avatar} />}
+                {userContext.user_profile_url !== "-" && <Image source={{uri: userContext.user_profile_url}} style={styles.avatar} />}
             </View>
 
             <View style={{ flex: 1, alignItems: 'center' }}>

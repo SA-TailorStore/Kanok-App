@@ -9,25 +9,35 @@ import { IDesign } from "@/types/IDesign";
 import axios from "axios";
 import { useSession } from "@/contexts/SessionContext";
 import { IProduct } from "@/types/IProduct";
+import { useRouter } from "expo-router";
 
-export default function ManageOrderCard({ item, id }: { item: ProductRequest, id: number}) {
+export default function ManageOrderCard({ item, id }: { item: ProductRequest, id: number }) {
     const [quantity, setQuantity] = useState<number>(item.total_quantity);
+    const router = useRouter();
 
     const [design, setDesign] = useState<IDesign>();
     const [remaining, setRemaining] = useState<number>(0);
     const { setProductContext } = useSession();
 
-    const createTwoButtonAlert = () =>
-        Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบแบบที่คุณเลือก', [
-            {
-                text: 'ยกเลิก',
-                onPress: () => console.log('ยกเลิก'),
-                style: 'cancel',
-            },
-            {
-                text: 'ลบ', onPress: () => console.log('ลบ')
-            },
-        ]);
+    const onDeleteButton = () => {
+        setProductContext((prev: IProduct[]) => {
+            prev.splice(id, 1);
+            return prev;
+        })
+        router.replace('/user-stack/manage-design');
+    }
+
+    const onDuplicateButton = () => {
+        setProductContext((prev: IProduct[]) => {
+            const newProduct = {
+                ...prev[id],
+                total_quantity: quantity
+            }
+            prev.push(newProduct);
+            return prev;
+        })
+        router.replace('/user-stack/manage-design');
+    }
 
     const increaseQuantity = () => {
         setQuantity((q) => {
@@ -70,7 +80,6 @@ export default function ManageOrderCard({ item, id }: { item: ProductRequest, id
     }
 
     const fetchFabric = async () => {
-        console.log('dfdfdfdfdfdfdfdfd')
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/fabric/get', {
             fabric_id: item.fabric_id
         }).then((res) => {
@@ -106,10 +115,10 @@ export default function ManageOrderCard({ item, id }: { item: ProductRequest, id
                 renderRightActions={() => {
                     return (
                         <>
-                            <TouchableOpacity onPress={createTwoButtonAlert} style={{ backgroundColor: colors.red, alignItems: 'center', justifyContent: 'center', width: 50 }}>
+                            <TouchableOpacity onPress={onDeleteButton} style={{ backgroundColor: colors.red, alignItems: 'center', justifyContent: 'center', width: 50 }}>
                                 <SetText color={colors.white} size={10}>ลบ</SetText>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{ backgroundColor: colors.whereblack, alignItems: 'center', justifyContent: 'center', width: 50 }}>
+                            <TouchableOpacity onPress={onDuplicateButton} style={{ backgroundColor: colors.whereblack, alignItems: 'center', justifyContent: 'center', width: 50 }}>
                                 <SetText color={colors.white} size={10}>ทำสำเนา</SetText>
                             </TouchableOpacity>
                         </>
@@ -153,7 +162,7 @@ export default function ManageOrderCard({ item, id }: { item: ProductRequest, id
                                         onChange={(e) => parseInt(e.nativeEvent.text) > 0 ? parseInt(e.nativeEvent.text) > remaining ? setQuantity(remaining) : setQuantity(parseInt(e.nativeEvent.text)) : setQuantity(0)}
                                         style={{ borderWidth: 0.5, borderColor: colors.line, borderRadius: 10, height: 40, width: 100, textAlign: 'center', fontFamily: 'notoSansThai', padding: 8 }}
                                     />
-                                    <TouchableOpacity disabled={quantity === remaining} style={quantity === remaining ? { opacity: 0.3 } : undefined}  onPress={increaseQuantity} onLongPress={increaseQuantity10}>
+                                    <TouchableOpacity disabled={quantity === remaining} style={quantity === remaining ? { opacity: 0.3 } : undefined} onPress={increaseQuantity} onLongPress={increaseQuantity10}>
                                         <Iconify icon="simple-line-icons:plus" size={24} color={colors.whereblack} />
                                     </TouchableOpacity>
                                 </View>
