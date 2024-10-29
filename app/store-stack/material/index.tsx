@@ -17,7 +17,71 @@ export default function Material() {
     const [isPopupEdit, setIsPopupEdit] = useState<boolean>(false);
     const [material_id, setMaterialId] = useState<number>(1);
     const [materials, setMaterials] = useState<IMaterial[]>([]);
+    const [sortBy, setSortBy] = useState<number>(0);
     const { showToast } = useToast();
+
+    const sortMaterials = () => {
+        let sortedMaterials = [...materials];
+        if (sortBy === 0) {
+            sortedMaterials.sort(sortByName);
+        } else if (sortBy === 1) {
+            sortedMaterials.sort(sortByNameDesc);
+        } else if (sortBy === 2) {
+            sortedMaterials.sort(sortByAmount);
+        } else if (sortBy === 3) {
+            sortedMaterials.sort(sortByAmountDesc);
+        }
+        setMaterials(sortedMaterials);
+    };
+
+    useEffect(() => {
+        sortMaterials();
+    }, [sortBy]);
+
+
+    // sort by a-z
+    const sortByName = (a: IMaterial, b: IMaterial) => {
+        if (a.material_name < b.material_name) {
+            return -1;
+        }
+        if (a.material_name > b.material_name) {
+            return 1;
+        }
+        return 0;
+    }
+
+    // sort by z-a
+    const sortByNameDesc = (a: IMaterial, b: IMaterial) => {
+        if (a.material_name < b.material_name) {
+            return 1;
+        }
+        if (a.material_name > b.material_name) {
+            return -1;
+        }
+        return 0;
+    }
+
+    // sort by 0-9
+    const sortByAmount = (a: IMaterial, b: IMaterial) => {
+        if (a.amount < b.amount) {
+            return -1;
+        }
+        if (a.amount > b.amount) {
+            return 1;
+        }
+        return 0;
+    }
+
+    //sort y 9-0
+    const sortByAmountDesc = (a: IMaterial, b: IMaterial) => {
+        if (a.amount < b.amount) {
+            return 1;
+        }
+        if (a.amount > b.amount) {
+            return -1;
+        }
+        return 0;
+    }
 
     const createTwoButtonAlert = (id: number) =>
         Alert.alert('แน่ใจหรือไม่ว่าต้องการลบ', 'แน่ใจหรือไม่ว่าต้องการลบวัสดุที่คุณเลือก', [
@@ -45,6 +109,7 @@ export default function Material() {
             if (res.status === 200) {
                 if (res.data.data) {
                     setMaterials(res.data.data)
+                    sortMaterials();
                 } else {
                     setMaterials([]);
                 };
@@ -68,30 +133,33 @@ export default function Material() {
                     <View style={{ width: '100%', flex: 1 }}>
                         <SearchItem />
                     </View>
-                    <TouchableOpacity onPress={() => setIsPopupAdd(true)} style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20 }}><SetText type="bold" color={colors.mediumpink}>เพิ่มวัสดุ</SetText></TouchableOpacity>
+                    <TouchableOpacity onPress={() => setIsPopupAdd(true)} style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
+                        <SetText type="bold" color={colors.mediumpink}>เพิ่มวัสดุ</SetText>
+                    </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1, height: '100%' }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: colors.grey, paddingHorizontal: 20 }}>
-                        <SetText type="bold">ชื่อวัสดุ</SetText>
-                        <SetText type="bold">จำนวน</SetText>
+                        <TouchableOpacity onPress={() => setSortBy(sortBy === 0 ? 1 : 0)}>
+                            <SetText type="bold">ชื่อวัสดุ
+                                <Iconify icon="icon-park-solid:sort" size={15} color={sortBy === 0 || sortBy === 1 ? colors.black : colors.grey} />
+                            </SetText>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setSortBy(sortBy === 2 ? 3 : 2)}>
+                            <SetText type="bold">จำนวน
+                                <Iconify icon="icon-park-solid:sort" size={15} color={sortBy === 2 || sortBy === 3 ? colors.black : colors.grey} />
+                            </SetText>
+                        </TouchableOpacity>
                         <SetText type="bold"></SetText>
                     </View>
                     <GestureHandlerRootView style={{ flex: 1 }}>
                         <ScrollView>
-                            {   materials.length > 0 ?
+                            {materials.length > 0 ?
                                 materials.map((item: IMaterial, index: number) => (
-                                    <Swipeable
-                                        key={index}
-                                        renderRightActions={() => {
-                                            return (
-                                                <>
-                                                    <TouchableOpacity onPress={() => createTwoButtonAlert(item.material_id)} style={{ backgroundColor: colors.red, alignItems: 'center', justifyContent: 'center', width: 100 }}>
-                                                        <SetText color={colors.white} size={10}>ลบ</SetText>
-                                                    </TouchableOpacity>
-                                                </>
-                                            )
-                                        }}
-                                    >
+                                    <Swipeable key={index} renderRightActions={() => (
+                                        <TouchableOpacity onPress={() => createTwoButtonAlert(item.material_id)} style={{ backgroundColor: colors.red, alignItems: 'center', justifyContent: 'center', width: 100 }}>
+                                            <SetText color={colors.white} size={10}>ลบ</SetText>
+                                        </TouchableOpacity>
+                                    )}>
                                         <View onTouchEnd={() => {
                                             setMaterialId(item.material_id);
                                             setIsPopupEdit(true);
@@ -109,7 +177,6 @@ export default function Material() {
             </View>
             {isPopupAdd && <Popup action="add" setIsShow={setIsPopupAdd} />}
             {isPopupEdit && <Popup action="edit" material_id={material_id} setIsShow={setIsPopupEdit} />}
-
         </WrapBackground>
     )
 }
@@ -173,7 +240,7 @@ const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', mat
             material_name: name,
             amount: quantity
         }
-        
+
         await axios.post(PATH, PAYLOAD).then((res) => {
             if (res.status === 201) {
                 showToast('เพิ่มวัสดุสำเร็จ', 'คุณเพิ่มวัสดุสำเร็จ', 'success');
@@ -197,7 +264,7 @@ const Popup = ({ action, material_id, setIsShow }: { action: 'add' | 'edit', mat
         <View style={{ position: 'absolute', height: '100%', width: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
             <View style={{ backgroundColor: colors.backgroundColor, width: '100%', height: '45%', position: 'absolute', bottom: 0, alignSelf: 'center', borderRadius: 16, padding: 20 }}>
                 <GestureHandlerRootView>
-                    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 100}}>
+                    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 100 }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <SetText type="bold" size={20}>{action === 'add' ? 'เพิ่มวัสดุ' : 'แก้ไขวัสดุ'}</SetText>
                             <TouchableOpacity onPress={() => setIsShow(false)}><Iconify icon="bx:bx-x" size={24} color={colors.grey} /></TouchableOpacity>
