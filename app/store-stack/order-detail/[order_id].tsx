@@ -5,11 +5,12 @@ import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
 import { IOrder } from "@/types/IOrder";
 import { IProduct } from "@/types/IProduct";
+import { IProductCheck } from "@/types/IProductCheck";
 import { IUser } from "@/types/IUser";
 import { ProductRequest } from "@/types/ProductRequest";
 import { formatDate } from "@/utils/formatDate";
 import { formatTrackingNumber } from "@/utils/formatTrackingNumber";
-import { orderState, storeOrderState, userOrderState } from "@/utils/orderState";
+import { orderState, storeOrderState } from "@/utils/orderState";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
@@ -28,6 +29,7 @@ export default function OrderDetail() {
     const [price, setPrice] = useState<number>(0);
     const [orderOwner, setOrderOwner] = useState<IUser>();
     const [orderTailor, setOrderTailor] = useState<IUser>();
+    const [productCheck, setProductCheck] = useState<IProductCheck>();
 
     const route = useRoute() as { params: { order_id: string } };
     const navigation = useNavigation();
@@ -44,13 +46,24 @@ export default function OrderDetail() {
         const unsubscribe = navigation.addListener('focus', () => {
             fetchOrder();
             fetchProducts();
+            fetchProductCheck();
             setInterval(() => {
                 fetchOrder();
                 fetchProducts();
+                fetchProductCheck();
             }, 3000);
         });
         return unsubscribe;
     }, []);
+
+    const fetchProductCheck = async () => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/product/check', { order_id: order_id }).then((res) => {
+            if (res.status === 200) setProductCheck(res.data.message);
+            console.log(res.data.message);
+        }).catch((err) => {
+            console.log('error fetching product check');
+        })
+    }
 
     const fetchOrder = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/get', { order_id: order_id }).then((res) => {
@@ -176,8 +189,7 @@ export default function OrderDetail() {
 
 
 
-    if (order === undefined) return null;
-    if (order?.status === orderState.cancel) return null;
+    if (order === undefined || order?.status === orderState.cancel || !productCheck) return null;
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '7%', backgroundColor: colors.wherewhite }} />
@@ -284,6 +296,15 @@ export default function OrderDetail() {
                 </View>}
 
                 <View style={{ marginTop: '3%', marginHorizontal: '5%', backgroundColor: colors.white, borderRadius: 10, ...styles.shadowCustom }}>
+                    {(storeOrderState[3].status.slice(1).includes(order.status) || storeOrderState[4].status.includes(order.status)) && <View style={{ flexDirection: 'column', marginTop: 10, paddingHorizontal: 15, borderBottomWidth: 1, paddingBottom: 15, borderColor: colors.line }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText size={14} type="bold" style={{}}>ความคืบหน้าทั้งหมด</SetText>
+                            <SetText size={14} type="bold" style={{}}>สำเร็จแล้ว {productCheck.process_quantity}/{productCheck.total_quantity} ตัว</SetText>
+                        </View>
+                        <View style={{ height: 6, borderRadius: 999, backgroundColor: colors.line }}>
+                            <View style={{ height: 6, borderRadius: 999, backgroundColor: colors.primary, width: `${products.reduce((acc, item) => acc + item.process_quantity, 0) / products.reduce((acc, item) => acc + item.total_quantity, 0) * 100}%` }}></View>
+                        </View>
+                    </View>}
                     {products[0] === undefined ? <ConfirmOrderCardSkeleton /> : isShow2 ?
                         <>
                             {products.map((item: IProduct | any, index: number) => <ConfirmOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />)}

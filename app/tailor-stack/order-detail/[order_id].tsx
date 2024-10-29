@@ -6,6 +6,7 @@ import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
 import { IOrder } from "@/types/IOrder";
 import { IProduct } from "@/types/IProduct";
+import { IProductCheck } from "@/types/IProductCheck";
 import { ProductRequest } from "@/types/ProductRequest";
 import { formatDate } from "@/utils/formatDate";
 import { formatTrackingNumber } from "@/utils/formatTrackingNumber";
@@ -22,6 +23,7 @@ export default function OrderDetail() {
     const router = useRouter();
     const { showToast } = useToast();
     const [isShow2, setIsShow2] = useState<boolean>(false);
+    const [productCheck, setProductCheck] = useState<IProductCheck>();
 
     const route = useRoute() as { params: { order_id: string } };
     const navigation = useNavigation();
@@ -38,13 +40,24 @@ export default function OrderDetail() {
         const unsubscribe = navigation.addListener('focus', () => {
             fetchOrder();
             fetchProducts();
+            fetchProductCheck();
             setInterval(() => {
                 fetchOrder();
                 fetchProducts();
+                fetchProductCheck
             }, 3000);
         });
         return unsubscribe;
     }, []);
+
+    const fetchProductCheck = async () => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/product/check', { order_id: order_id }).then((res) => {
+            if (res.status === 200) setProductCheck(res.data.message);
+            console.log(res.data.message);
+        }).catch((err) => {
+            console.log('error fetching product check');
+        })
+    }
 
     const fetchOrder = async () => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/get', { order_id: order_id }).then((res) => {
@@ -95,8 +108,7 @@ export default function OrderDetail() {
         },
     ]);
 
-    if (order === undefined) return null;
-    if (order?.status === orderState.cancel) return null;
+    if (order === undefined || order?.status === orderState.cancel || !productCheck) return null;
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '7%', backgroundColor: colors.wherewhite }} />
@@ -149,7 +161,7 @@ export default function OrderDetail() {
                     <View style={{ flexDirection: 'column', marginTop: 10, paddingHorizontal: 15, borderBottomWidth: 1, paddingBottom: 15, borderColor: colors.line }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <SetText size={14} type="bold" style={{}}>ความคืบหน้าทั้งหมด</SetText>
-                            <SetText size={14} type="bold" style={{}}>สำเร็จแล้ว {products.reduce((acc, item) => acc + item.process_quantity, 0)}/{products.reduce((acc, item) => acc + item.total_quantity, 0)} ตัว</SetText>
+                            <SetText size={14} type="bold" style={{}}>สำเร็จแล้ว {productCheck.process_quantity}/{productCheck.total_quantity} ตัว</SetText>
                         </View>
                         <View style={{ height: 6, borderRadius: 999, backgroundColor: colors.line }}>
                             <View style={{ height: 6, borderRadius: 999, backgroundColor: colors.primary, width: `${products.reduce((acc, item) => acc + item.process_quantity, 0) / products.reduce((acc, item) => acc + item.total_quantity, 0) * 100}%` }}></View>
