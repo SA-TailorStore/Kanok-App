@@ -9,7 +9,8 @@ import { colors } from "@/utils/styles";
 import axios from "axios";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
+import { Iconify } from "react-native-iconify";
 
 export default function Order() {
     const navigation = useNavigation();
@@ -37,6 +38,9 @@ export default function Order() {
         }
         navigation.setOptions({
             headerTitle: 'งานทั้งหมด',
+            headerRight: () => (
+                <TouchableOpacity onPress={()=>router.push('/tailor-stack/order-search')} style={{ marginRight: 15 }}><Iconify icon="mingcute:search-line" size={24} color={colors.mediumpink} /></TouchableOpacity>
+            ),
         });
         fetchOrders();
         const unsubscribe = navigation.addListener('focus', () => {
