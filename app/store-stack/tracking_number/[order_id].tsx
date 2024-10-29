@@ -68,27 +68,22 @@ export default function TrackingNumber() {
                     Keyboard.dismiss();
                     setLoading(true);
                     // console.log(order_id);
-                    await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/tracking', { order_id: order_id, tracking_number: value + '|' + trackingNumber }).then(async(res) => {
+                    await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/tracking', { 
+                        order_id: order_id, 
+                        tracking_number: value + '|' + trackingNumber, 
+                        status: order?.status === orderState.success_shop ? orderState.received_user : orderState.received_tailor 
+                    }).then(async (res) => {
                         if (res.status === 204) {
-                            await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: order?.status === orderState.success_shop ? orderState.received_user : orderState.received_tailor }).then((res) => {
-                                if (res.status === 204) {
-                                    console.log('success');
-                                    showToast('จัดส่งพัสดุสำเร็จ', 'พัสดุของคุณกำลังถูกส่งไปหาช่าง', 'success');
-                                    router.back();
-                                } else {
-                                    console.log(res.status);
-                                    setLoading(false);
-                                }
-                            }).catch((err) => {
-                                console.log(err);
-                                setLoading(false);
-                            })
+                            console.log('success');
+                            showToast('จัดส่งพัสดุสำเร็จ', 'พัสดุของคุณกำลังถูกส่งไปหาช่าง', 'success');
+                            router.back();
                         } else {
-                            console.log(res.status);
+                            showToast('จัดส่งพัสดุไม่สำเร็จ', '???', 'success');
                             setLoading(false);
                         }
                     }).catch((err) => {
                         console.log(err);
+                        showToast('จัดส่งพัสดุไม่สำเร็จ', err.response.data.error, 'error');
                         setLoading(false);
                     });
                 }

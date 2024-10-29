@@ -53,23 +53,22 @@ export default function TrackingNumber() {
                 text: 'ยืนยันการจัดส่งสินค้า', onPress: async () => {
                     Keyboard.dismiss();
                     setLoading(true);
-                    await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/tracking', { order_id: order_id, tracking_number: value + '|' + trackingNumber }).then(async(res) => {
+                    await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/tracking', { 
+                        order_id: order_id, 
+                        tracking_number: value + '|' + trackingNumber, 
+                        status: orderState.received_shop
+                    }).then(async (res) => {
                         if (res.status === 204) {
-                            await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.received_shop }).then((res) => {
-                                if (res.status === 204) {
-                                    showToast('จัดส่งพัสดุสำเร็จ', 'พัสดุของคุณกำลังถูกส่งไปหาร้านค้า', 'success');
-                                    router.back();
-                                } else {
-                                    setLoading(false);
-                                }
-                            }).catch((err) => {
-                                setLoading(false);
-                            })
+                            console.log('success');
+                            showToast('จัดส่งพัสดุสำเร็จ', 'พัสดุของคุณกำลังถูกส่งไปหาช่าง', 'success');
+                            router.back();
                         } else {
+                            showToast('จัดส่งพัสดุไม่สำเร็จ', '???', 'success');
                             setLoading(false);
                         }
                     }).catch((err) => {
                         console.log(err);
+                        showToast('จัดส่งพัสดุไม่สำเร็จ', err.response.data.error, 'error');
                         setLoading(false);
                     });
                 }

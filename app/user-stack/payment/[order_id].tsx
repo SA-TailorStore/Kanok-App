@@ -105,20 +105,31 @@ export default function Payment() {
             },
         ]);
 
-    const updateOrderStatus = () => {
-        axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', {
-            order_id: order_id,
-            status: orderState.waiting_assign,
+    const updateOrderStatus = async () => {
+        const formData = new FormData() as any;
+        formData.append('order_id', order_id);
+        formData.append('image', {
+            name: photo.assets[0].fileName,
+            type: photo.assets[0].type,
+            uri: photo.assets[0].uri,
+        });
+
+        console.log(formData)
+
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/payment', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
         }).then((res) => {
             if (res.status === 204) {
                 console.log('เปลี่ยน state จ้า');
                 showToast('ชำระเงินสำเร็จ', 'การชำระเงินสำเร็จ ร้านค้ากำลังดำเนินการ', 'success');
                 router.replace(`/user-stack/order-detail/${order_id}`);
-            } else {
-                console.log(res.status);
             }
         }).catch((err) => {
             console.log('error updating order status');
+            console.log(err);
+            showToast('ชำระเงินไม่สำเร็จ', err.response.data.error, 'error');
         });
     }
 

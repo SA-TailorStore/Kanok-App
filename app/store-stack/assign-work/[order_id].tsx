@@ -123,8 +123,7 @@ const AssignDate = ({ setShowAssignDate, order_id, tailor }: { setShowAssignDate
                 showToast("มอบหมายงานไม่สำเร็จ", "มอบหมายงานไม่สำเร็จ กรุณาลองใหม่อีกครั้ง", "error");
             }
         }).catch((err) => {
-            console.log(err);
-            showToast("เกิดข้อผิดพลาด", "ไม่สามารถเชื่อมต่อกับเซิฟเวอร์ได้ (1)", "error");
+            showToast("เกิดข้อผิดพลาด", err.response.data.error, "error");
         })
 
 
