@@ -108,8 +108,17 @@ export default function Material() {
         await axios.get(process.env.EXPO_PUBLIC_API_URL + '/api/materials').then((res) => {
             if (res.status === 200) {
                 if (res.data.data) {
-                    setMaterials(res.data.data)
-                    sortMaterials();
+                    let materials = res.data.data;
+                    if (sortBy === 0) {
+                        materials.sort(sortByName);
+                    } else if (sortBy === 1) {
+                        materials.sort(sortByNameDesc);
+                    } else if (sortBy === 2) {
+                        materials.sort(sortByAmount);
+                    } else if (sortBy === 3) {
+                        materials.sort(sortByAmountDesc);
+                    }
+                    setMaterials(materials)
                 } else {
                     setMaterials([]);
                 };
