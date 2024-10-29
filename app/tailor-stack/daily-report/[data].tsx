@@ -122,6 +122,7 @@ export default function TrackingNumber() {
                 // createTwoButtonAlert();
                 if (res.data.message.is_ready) {
                     Keyboard.dismiss();
+                    showToast('สินค้าของคุณพร้อมจัดส่ง', 'สินค้าของคุณพร้อมจัดส่งแล้ว', 'success');
                     updateOrderStatus(true);
                     router.back();
                 } else {

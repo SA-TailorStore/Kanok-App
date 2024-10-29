@@ -57,7 +57,7 @@ export default function TrackingNumber() {
                         if (res.status === 204) {
                             await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.received_shop }).then((res) => {
                                 if (res.status === 204) {
-                                    showToast('จัดส่งพัสดุสำเร็จ', 'พัสดุของคุณกำลังถูกส่งไปหาช่าง', 'success');
+                                    showToast('จัดส่งพัสดุสำเร็จ', 'พัสดุของคุณกำลังถูกส่งไปหาร้านค้า', 'success');
                                     router.back();
                                 } else {
                                     setLoading(false);
@@ -83,7 +83,7 @@ export default function TrackingNumber() {
         'Flash Express',
         'ไปรษณีย์ไทย',
         'Kerry Express',
-        'อื่นๆ',
+        // 'อื่นๆ',
     ]
     return (
         <WrapBackground color={colors.backgroundColor}>
