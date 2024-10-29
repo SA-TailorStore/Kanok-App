@@ -23,15 +23,15 @@ export type SliderItemProps = {
 const ads: SliderItemProps[] = [
     {
         title: "โปรโมชั่น",
-        img_url: require('@/assets/images/promote.png')
+        img_url: require('@/assets/images/banner_kanok3.png')
     },
     {
         title: "2",
-        img_url: require('@/assets/images/loading.png')
+        img_url: require('@/assets/images/banner_kanok4.jpg')
     },
     {
         title: "3",
-        img_url: require('@/assets/images/loading.png')
+        img_url: require('@/assets/images/banner_kanok5.png')
     }
 ]
 
