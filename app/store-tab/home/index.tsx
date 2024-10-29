@@ -43,6 +43,9 @@ export default function HomePage() {
                             <ItemChoice title="วัสดุ" icon={<Knitwork/>} to={()=>router.push('/store-stack/material')}/>
                             <ItemChoice title="ลายผ้า" icon={<Iconify icon="game-icons:rolled-cloth" size={60} color={colors.mediumpink} />} to={()=>router.push('/store-stack/fabric')} />
                         </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 15, }}>
+                            <ItemChoice title="เพิ่มช่าง" icon={<Iconify icon="material-symbols:manage-accounts-rounded" size={60} color={colors.mediumpink}/>} to={()=>router.push('/store-stack/sign-up')}/>
+                        </View>
                     </View>
                 </View>
             </View>

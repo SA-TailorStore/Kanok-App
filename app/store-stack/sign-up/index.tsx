@@ -2,13 +2,13 @@ import WrapBackground from "@/components/WrapBackground";
 import { Text, View, Image, StyleSheet } from "react-native";
 import { Iconify } from 'react-native-iconify';
 import { FormInput } from "@/components/FormInput";
-import { Link, Redirect, useRouter } from "expo-router";
+import { Link, Redirect, useNavigation, useRouter } from "expo-router";
 import { ScrollView } from "react-native";
 import { SetText } from "@/components/SetText";
 import { colors } from "@/utils/styles";
 import { useToast } from "@/contexts/ToastContext";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function SignUp() {
     const { showToast } = useToast();
@@ -18,21 +18,28 @@ export default function SignUp() {
     const [password1, setPassword1] = useState('');
     const [password2, setPassword2] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
+    const navigation = useNavigation();
 
 
     const signUpButtonClicked = async() => {
-        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/store/register', {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/register', {
             username: username,
             phone_number: phone,
             password: password1,
             confirm_password: password2,
         }).then(async(res) => {
-            showToast('เพิ่มช่างสำเร็จแล้ว', 'คุณได้ทำการเพิ่มช่างเรียบร้อยแล้ว', 'success');
+            showToast('สมัครสมาชิกสำเร็จ', 'ตอนนี้คุณสามารถลงชื่อเข้าใช้งานได้แล้ว', 'success');
             router.replace('/sign-in');
         }).catch((err) => {
             setErrorMsg(err.response.data.error);
         });
     }
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerTitle: "",
+        });
+    },[]);
 
     return (
         <WrapBackground>
@@ -40,7 +47,7 @@ export default function SignUp() {
                 <View style={styles.container}>
                     <Image source={require('@/assets/images/logo-black.png')} style={styles.logo} />
                     <View style={styles.formContainer}>
-                        <SetText type="bold" style={styles.title}>สร้างบัญชี</SetText>
+                        <SetText type="bold" style={styles.title}>สร้างบัญชีให้ช่าง</SetText>
                         <View style={styles.formContent}>
                             <FormInput
                                 key="username"
@@ -82,11 +89,6 @@ export default function SignUp() {
 
                         <View style={styles.signUpButton} onTouchEnd={() => signUpButtonClicked()}>
                             <SetText color={colors.wherewhite} type="bold" style={styles.signUpButtonText}>สร้างบัญชี</SetText>
-                        </View>
-
-                        <View style={styles.signUpLinkContainer} onTouchEnd={() => <Redirect href="/sign-in" />}>
-                            <SetText>มีบัญชีอยู่แล้ว?</SetText>
-                            <Link href="/sign-in"><SetText color={colors.primary} style={styles.signUpLink}>ลงชื่อเข้าใช้งาน</SetText></Link>
                         </View>
                     </View>
                 </View>
