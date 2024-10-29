@@ -14,6 +14,7 @@ export default function SignIn() {
     const { setToken, checkRole, userContext } = useSession();
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [errorMsg, setErrorMsg] = useState<string>('');
 
     const signButtonClicked = async() => {
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/login', {
@@ -23,7 +24,7 @@ export default function SignIn() {
             // console.log("Access Token: " + res.data.token);      
             setToken(res.data.token);
         }).catch((err) => {
-            // console.log('sign-in : ' + err)
+            setErrorMsg(err.response.data.error);
         });
     }
 
@@ -56,7 +57,7 @@ export default function SignIn() {
                                 placeholder="รหัสผ่าน"
                                 eye
                             />
-                            <SetText style={styles.errorText} color={colors.red}>The password isn't correct.</SetText>
+                            {errorMsg.length > 3 && <SetText style={styles.errorText} color={colors.red}>{errorMsg}</SetText>}
                         </View>
 
                         <TouchableOpacity style={styles.signInButton} onPress={signButtonClicked}>
