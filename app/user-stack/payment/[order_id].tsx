@@ -127,8 +127,8 @@ export default function Payment() {
             }
         }).catch((err) => {
             console.log('error updating order status');
-            console.log(err.response);
             if (err.response) showToast('ชำระเงินไม่สำเร็จ', err.response.data.error, 'error');
+            else { showToast('ชำระเงินไม่สำเร็จ', 'ไม่ทราบสาเหตุกรุณาติดต่อนักพัฒนา', 'error'); }
         });
     }
 
