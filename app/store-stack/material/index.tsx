@@ -19,6 +19,7 @@ export default function Material() {
     const [materials, setMaterials] = useState<IMaterial[]>([]);
     const [sortBy, setSortBy] = useState<number>(0);
     const { showToast } = useToast();
+    const [search, setSearch] = useState<string>('');
 
     const sortMaterials = () => {
         let sortedMaterials = [...materials];
@@ -140,7 +141,7 @@ export default function Material() {
             <View style={{ flex: 1, flexDirection: 'column', gap: 15 }}>
                 <View style={{ paddingTop: '15%', paddingHorizontal: 20, flexDirection: 'row', gap: 10 }}>
                     <View style={{ width: '100%', flex: 1 }}>
-                        <SearchItem />
+                        <FormInput iconHeader={<Iconify icon="mingcute:search-line" size={24} color={colors.grey} />} value={search} onChange={(e) => setSearch(e.nativeEvent.text)} placeholder="ค้นหา" />
                     </View>
                     <TouchableOpacity onPress={() => setIsPopupAdd(true)} style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
                         <SetText type="bold" color={colors.mediumpink}>เพิ่มวัสดุ</SetText>
@@ -163,7 +164,9 @@ export default function Material() {
                     <GestureHandlerRootView style={{ flex: 1 }}>
                         <ScrollView>
                             {materials.length > 0 ?
-                                materials.map((item: IMaterial, index: number) => (
+                                materials.filter((m: IMaterial) => {
+                                    return m.material_name.includes(search)
+                                }).map((item: IMaterial, index: number) => (
                                     <Swipeable key={index} renderRightActions={() => (
                                         <TouchableOpacity onPress={() => createTwoButtonAlert(item.material_id)} style={{ backgroundColor: colors.red, alignItems: 'center', justifyContent: 'center', width: 100 }}>
                                             <SetText color={colors.white} size={10}>ลบ</SetText>

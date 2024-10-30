@@ -39,6 +39,7 @@ export default function Payment() {
     const { order_id } = route.params;
     const [order, setOrder] = useState<IOrder>();
     const [products, setProducts] = useState<IProduct[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const { showToast } = useToast();
 
@@ -101,7 +102,7 @@ export default function Payment() {
                 style: 'cancel',
             },
             {
-                text: 'ยืนยันการชำระเงิน', onPress: () => handleUploadPhoto()
+                text: 'ยืนยัน', onPress: () => handleUploadPhoto()
             },
         ]);
 
@@ -115,6 +116,7 @@ export default function Payment() {
         });
 
         console.log(formData)
+        setLoading(true);
 
         await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/payment', formData, {
             headers: {
@@ -125,10 +127,12 @@ export default function Payment() {
                 showToast('ชำระเงินสำเร็จ', 'การชำระเงินสำเร็จ ร้านค้ากำลังดำเนินการ', 'success');
                 router.replace(`/user-stack/order-detail/${order_id}`);
             }
+            setLoading(false);
         }).catch((err) => {
             console.log('error updating order status');
             if (err.response) showToast('ชำระเงินไม่สำเร็จ', err.response.data.error, 'error');
             else { showToast('ชำระเงินไม่สำเร็จ', 'ไม่ทราบสาเหตุกรุณาติดต่อนักพัฒนา', 'error'); }
+            setLoading(false);
         });
     }
 
@@ -138,7 +142,7 @@ export default function Payment() {
 
     return (
         <WrapBackground color={colors.backgroundColor}>
-            <Loading visible={false} text='กำลังตรวจสอบข้อมูล...' />
+            <Loading visible={loading} text='กำลังตรวจสอบข้อมูล...' />
             <ScrollView style={{ flex: 1, marginBottom: 100 }}>
                 <View style={{ borderBottomWidth: 1, paddingTop: '15%', marginHorizontal: '8%', borderColor: colors.line, paddingBottom: 10 }}>
                     <SetText size={24} type="bold">ชำระเงิน</SetText>
