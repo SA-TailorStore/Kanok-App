@@ -108,7 +108,7 @@ export default function TrackingNumber() {
                         placeholderStyle={{ fontSize: 16, fontFamily: 'notoSansThai', color: colors.grey }}
                         selectedTextStyle={{ fontSize: 16, fontFamily: 'notoSansThai' }}
                         itemTextStyle={{ fontSize: 16, fontFamily: 'notoSansThai' }}
-                        data={tag.slice(1).map((item) => { return { label: item, value: item } })}
+                        data={tag.map((item) => { return { label: item, value: item } })}
                         maxHeight={300}
                         labelField="label"
                         valueField="value"
