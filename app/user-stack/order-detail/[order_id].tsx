@@ -1,247 +1,166 @@
-import ConfirmOrderCard from "@/components/ComfirmOrderCard";
-import Loading from "@/components/Loading";
-import { filterTab, IFilterTab } from "@/components/OrderTab";
+import ConfirmOrderCard, { ConfirmOrderCardSkeleton } from "@/components/ComfirmOrderCard";
+import { ContactButton } from "@/components/order-button/ContactButton";
 import { SetText } from "@/components/SetText";
-import SettingMenuItem from "@/components/SettingMenuItem";
 import WrapBackground from "@/components/WrapBackground";
 import { useToast } from "@/contexts/ToastContext";
+import { IOrder } from "@/types/IOrder";
 import { IProduct } from "@/types/IProduct";
+import { ProductRequest } from "@/types/ProductRequest";
+import { formatDate } from "@/utils/formatDate";
+import { formatTrackingNumber } from "@/utils/formatTrackingNumber";
+import { orderState, userOrderState } from "@/utils/orderState";
 import { colors, styles } from "@/utils/styles";
 import { useRoute } from "@react-navigation/native";
+import axios from "axios";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { TouchableOpacity, View, ScrollView } from "react-native";
+import { TouchableOpacity, View, ScrollView, Linking, Alert } from "react-native";
 import { Iconify } from "react-native-iconify";
 
-const exampleData: IProduct[] = [
-    {
-        product_id: '0',
-        design_id: 0,
-        detail: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nihil suscipit accusantium placeat voluptatum, non a sunt sed incidunt itaque? Omnis nisi, in facere nam voluptas aliquid ducimus quidem voluptatum amet.',
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '1',
-        design_id: 0,
-        detail: "รายละเอียด2",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '2',
-        design_id: 0,
-        detail: "รายละเอียด3",
-        size: 'XXL',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '0',
-        design_id: 0,
-        detail: "รายละเอียด",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '1',
-        design_id: 0,
-        detail: "รายละเอียด2",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '2',
-        design_id: 0,
-        detail: "รายละเอียด3",
-        size: 'XXL',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '0',
-        design_id: 0,
-        detail: "รายละเอียด",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '1',
-        design_id: 0,
-        detail: "รายละเอียด2",
-        size: 'S',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    },
-    {
-        product_id: '2',
-        design_id: 0,
-        detail: "รายละเอียด3",
-        size: 'XXL',
-        quantity: 1,
-        fabric_id: 0,
-        created_at: 0,
-        created_by: 0,
-    }
-];
-
 export default function OrderDetail() {
-    const [isShow, setIsShow] = useState<boolean>(false);
-    const [isShow2, setIsShow2] = useState<boolean>(false);
-    const [statusIndex, setStatusIndex] = useState<number>(0);
-
     const router = useRouter();
+    const [isShow2, setIsShow2] = useState<boolean>(false);
+    const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+    const { showToast } = useToast();
+
     const route = useRoute() as { params: { order_id: string } };
     const navigation = useNavigation();
     const { order_id } = route.params;
-    const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-
-    const { showToast } = useToast();
-
-    const status = 'processing';
+    const [order, setOrder] = useState<IOrder>();
+    const [products, setProducts] = useState<ProductRequest[]>([]);
 
     useEffect(() => {
-        console.log(order_id);
+        // console.log(order_id);
         navigation.setOptions({
             headerTitle: "รายละเอียดคำสั่งซื้อ",
         });
-
-        filterTab.map((item: IFilterTab, index: number) => {
-            if (item.status === status) {
-                setStatusIndex(index);
-            }
-        });
+        fetchOrder();
+        setInterval(() => {
+            fetchOrder();
+        }, 3000);
     }, [])
 
+    const fetchOrder = async () => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/get', { order_id: order_id }).then((res) => {
+            if (res.status === 200) {
+                setOrder(res.data.data);
+                fetchProducts();
+                // console.log(res.data.data)
+            } else {
+                console.log(res.status);
+            }
+        }).catch((err) => {
+            console.log('error fetching orders');
+        })
+    }
+
+    const fetchProducts = async () => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/product/get/order', { order_id: order_id }).then((res) => {
+            if (res.status === 200) {
+                setProducts(res.data.data);
+            } else {
+                console.log(res.status);
+            }
+        }).catch((err) => {
+            console.log('error fetching products');
+        })
+    }
+
+    const onReceivedOrder = async () => Alert.alert('ยืนยันการรับสินค้า', 'ก่อนกดยืนยันการรับสินค้า กรุณาตรวจสอบสินค้าทุกชิ้นใบคำสีั่งซื้อว่าสินค้าที่ได้รับนั้นครบถ้วน หลังจากยืนยันแล้วจะไม่สามารถแก้ไขได้อีก', [
+        {
+            text: 'ยกเลิก',
+            onPress: () => console.log('ยกเลิก'),
+            style: 'cancel',
+        },
+        {
+            text: 'ยืนยัน', onPress: async () => {
+                await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/order/update/status', { order_id: order_id, status: orderState.success_user }).then((res) => {
+                    if (res.status === 204) {
+                        console.log('success');
+                        showToast('ยืนยันการรับสินค้าสำเร็จ', 'คุณได้ยืนยันการรับสินค้าสำเร็จ', 'success');
+                    } else {
+                        console.log(res.status);
+                    }
+                }).catch((err) => {
+                    console.log('error fetching orders');
+                })
+            }
+        },
+    ]);
+
+    if (!order) return null;
     return (
         <WrapBackground color={colors.backgroundColor}>
             <View style={{ width: '100%', height: '7%', backgroundColor: colors.wherewhite }} />
-            <ScrollView style={{ flex: 1, height: '100%' }} contentContainerStyle={{ paddingBottom: 120}}>
+            <ScrollView style={{ flex: 1, height: '100%' }} contentContainerStyle={{ paddingBottom: 120 }}>
                 <View style={{ marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
                     <View style={{ backgroundColor: colors.mediumpink, padding: 10 }}>
-                        <SetText type="bold" size={16} color={colors.white}>หมายเลขคำสั่งซื้อ #1234567890</SetText>
+                        <SetText type="bold" size={16} color={colors.white}>หมายเลขคำสั่งซื้อ #{order_id}</SetText>
                     </View>
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: colors.line }}>
-                        <SetText size={14} color={colors.grey}>วันที่สั่งซื้อสินค้า</SetText>
-                        <SetText size={14} color={colors.grey}>7 พ.ย. 27, 14:41</SetText>
+                        <SetText color={colors.grey}>วันที่สั่งซื้อสินค้า</SetText>
+                        <SetText color={colors.grey}>{formatDate(order?.timestamp!)}</SetText>
                     </View>
-                    <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
-                        <SetText size={14} color={colors.whereblack} type='bold'>ข้อมูลการจัดส่ง</SetText>
-                        <SetText size={14} color={colors.grey}>ยังไม่มีข้อมูลการจัดส่ง</SetText>
-                    </View>
+                    {(orderState.received_user === order.status) && <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, borderBottomWidth: 1, borderColor: colors.line }}>
+                        <SetText color={colors.whereblack} type='bold'>ข้อมูลการจัดส่ง</SetText>
+                        <SetText>{formatTrackingNumber(order.tracking_number)}</SetText>
+                    </View>}
                     <View style={{ backgroundColor: colors.white, marginHorizontal: 10, paddingVertical: 5, marginBottom: 10 }}>
-                        <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }} onPress={() => console.log('go to my address')}>
+                    <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <SetText size={14} color={colors.whereblack} type='bold'>ที่อยู่ในการจัดส่ง</SetText>
+                            <SetText size={14} color={colors.grey}><ContactButton phone_number={order.store_address} who="ร้าน" /></SetText>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '100%' }}>
                             <Iconify icon="bx:bx-map" size={20} color={colors.whereblack} />
-                            <View style={{ flexDirection: 'column' }}>
-                                <SetText color={colors.whereblack} size={12} type="bold" style={{ marginBottom: 0 }}>ภูมิระพี เสริญวณิชกุล</SetText>
-                                <SetText color={colors.grey} type="small">ที่อยู่ xxxxxx</SetText>
+                            <View style={{ flexDirection: 'column', flexWrap: 'wrap', flex: 1, padding: 5 }}>
+                                <SetText
+                                    color={colors.whereblack}
+                                    size={12}
+                                    type="bold"
+                                    style={{ flexWrap: 'wrap', width: '100%' }}
+                                >
+                                    {order.user_address.split('|')[0]}, {order.user_phone}
+                                </SetText>
+                                <SetText
+                                    color={colors.grey}
+                                    type="small"
+                                    style={{ flex: 1, flexWrap: 'wrap', width: '100%' }}
+                                >
+                                    ที่อยู่ {order.user_address.split('|')[1]}
+                                </SetText>
                             </View>
-                            <View style={{ position: 'absolute', right: 0 }}>
-                                <Iconify icon="weui:back-filled" size={16} color={colors.whereblack} style={[{ transform: [{ rotate: '180deg' }] }]} />
-                            </View>
-                        </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-                {/* <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom }}>
-                    <TouchableOpacity style={{ padding: 10, gap: 10, overflow: 'hidden', flexDirection: 'row' }} onPress={() => setIsShow((s) => !s)}>
-                        <View style={{ width: 12, height: 12, borderRadius: 999, backgroundColor: colors.mediumpink, marginTop: 5 }} />
-                        <View>
-                            <SetText type="bold" size={14} color={colors.whereblack}>คำสั่งซื้อกำลังดำเนินการ</SetText>
-                            <SetText size={14} color={colors.grey}>บลาๆๆๆ</SetText>
-                        </View>
-                        <View style={{ position: 'absolute', right: 12, alignSelf: 'center' }}>
-                            <Iconify icon="weui:back-filled" size={16} color={colors.whereblack} style={[{ transform: [{ rotate: isShow ? '90deg' : '-90deg' }] }]} />
-                        </View>
-                    </TouchableOpacity>
-                    {isShow && <View style={{ borderTopWidth: 0.5, marginHorizontal: 10, borderColor: colors.line }}>
-                        {filterTab.slice(0, filterTab.length - 1).map((item: IFilterTab, index: number) => {
-                            console.log(statusIndex);
-                            return (
-                                <StatusCard key={index} item={item} color={index <= statusIndex ? colors.mediumpink : colors.grey} />
-                            )
-                        })}
-                    </View>}
-                </View> */}
                 <View style={{ marginTop: '3%', marginHorizontal: '5%', backgroundColor: colors.white, borderRadius: 10, ...styles.shadowCustom }}>
-                    {isShow2 ?
+                    {products[0] === undefined ? <ConfirmOrderCardSkeleton /> :isShow2 ?
                         <>
-                            {exampleData.map((item, index) => (
-                                <ConfirmOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />
-                            ))}
-                        </> : <ConfirmOrderCard item={exampleData[0]} setSelectedProduct={setSelectedProduct} />
+                            {products.map((item: IProduct | any, index: number) => <ConfirmOrderCard item={item} setSelectedProduct={setSelectedProduct} key={index} />)}
+                        </> : <ConfirmOrderCard item={products[0]} setSelectedProduct={setSelectedProduct} />
 
                     }
-                    <TouchableOpacity onPress={() => setIsShow2((s) => !s)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: '5%', borderTopWidth: 1, borderColor: colors.line, paddingVertical: '3%' }}>
+                    <TouchableOpacity disabled={products.length <= 1} onPress={() => setIsShow2((s) => !s)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: '5%', borderTopWidth: 1, borderColor: colors.line, paddingVertical: '3%' }}>
                         <SetText type='bold' size={14}>รวมจำนวนสินค้าทั้งหมด</SetText>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                            <SetText type='bold' size={14}>100 รายการ</SetText>
+                            <SetText type='bold' size={14}>{products.length} รายการ</SetText>
                             <Iconify icon="weui:back-filled" size={16} color={colors.whereblack} style={[{ transform: [{ rotate: isShow2 ? '90deg' : '-90deg' }] }]} />
                         </View>
                     </TouchableOpacity>
                 </View>
-                {/* <View style={{ marginTop: '3%', marginHorizontal: '5%', borderRadius: 10, overflow: 'hidden', backgroundColor: colors.white, ...styles.shadowCustom, marginBottom: '3%' }}>
-                    <View style={{ padding: 10, gap: 10, overflow: 'hidden', flexDirection: 'row' }}>
-                        <Iconify icon="streamline:credit-card-1-solid" size={20} color={colors.black} />
-                        <View>
-                            <SetText type="bold" size={14} color={colors.whereblack}>ข้อมูลการชำระเงิน</SetText>
-                            <SetText size={14} color={colors.grey}>ชำระเงินสำเร็จ</SetText>
-                        </View>
-                        <View style={{ position: 'absolute', right: 12, alignSelf: 'center' }}>
-                            <Iconify icon="lets-icons:check-fill" size={20} color={colors.success} />
-                        </View>
-                    </View>
-                </View> */}
             </ScrollView>
-            <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
-                <TouchableOpacity onPress={()=>console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+            {![orderState.cancel, orderState.success_user].includes(order.status) && <View style={{ borderTopWidth: 1, borderRadius: 20, borderTopColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: colors.white, position: 'absolute', width: '100%', bottom: 0, height: 100, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '5%', zIndex: 90, flex: 1, flexDirection: 'row', gap: 10 }}>
+                <TouchableOpacity onPress={() => Linking.openURL(`tel:${order.store_phone}`)} style={[{ flex: 1, backgroundColor: colors.lesspink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <Iconify icon="f7:phone-circle-fill" size={30} color={colors.mediumpink} />
-                    <SetText size={16} type="bold" color={colors.mediumpink} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 20}}>ติดต่อร้าน</SetText>
+                    <SetText size={16} type="bold" color={colors.mediumpink} style={{ flex: 1, width: '100%', textAlign: 'center' }}>ติดต่อร้าน</SetText>
                 </TouchableOpacity>
-                {/* <TouchableOpacity onPress={()=>console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                {order?.status === 'payment' && <TouchableOpacity onPress={()=>router.push(`/user-stack/payment/${order_id}`)} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <Iconify icon="pepicons-pop:credit-card-circle-filled" size={30} color={colors.white} />
-                    <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 20}}>ชำระเงิน</SetText>
-                </TouchableOpacity> */}
-                <TouchableOpacity onPress={()=>console.log('ติดต่อร้าน')} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
+                    <SetText size={16} type="bold" color={colors.white} style={{ flex: 1, width: '100%', textAlign: 'center' }}>ชำระเงิน</SetText>
+                </TouchableOpacity>}
+                {userOrderState[3].status.includes(order!.status) && <TouchableOpacity onPress={onReceivedOrder} style={[{ flex: 1, backgroundColor: colors.mediumpink, paddingVertical: 25, paddingHorizontal: 15, borderRadius: 12, alignItems: 'center', flexDirection: 'row', width: '100%' }, styles.shadowCustom]}>
                     <SetText size={16} type="bold" color={colors.white} style={{ position: 'absolute', width: '100%', textAlign: 'center', left: 15 }}>ฉันได้รับสินค้าแล้ว</SetText>
-                </TouchableOpacity>
-            </View>
+                </TouchableOpacity>}
+            </View>}
         </WrapBackground>
     );
 }
-
-const StatusCard = ({ item, color }: { item: IFilterTab, color: string }) => {
-    return (
-        <View style={{ padding: 8, gap: 10, overflow: 'hidden', flexDirection: 'row' }}>
-            <View style={{ width: 12, height: 12, borderRadius: 999, backgroundColor: color, marginTop: 5 }} />
-            <View>
-                <SetText type="bold" size={14} color={colors.whereblack}>{item.title}</SetText>
-                <SetText size={14} color={colors.grey}>{item.status}</SetText>
-            </View>
-        </View>
-    )
-}
-
-
-

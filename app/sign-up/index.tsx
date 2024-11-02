@@ -7,14 +7,31 @@ import { ScrollView } from "react-native";
 import { SetText } from "@/components/SetText";
 import { colors } from "@/utils/styles";
 import { useToast } from "@/contexts/ToastContext";
+import axios from "axios";
+import { useState } from "react";
 
 export default function SignUp() {
     const { showToast } = useToast();
     const router = useRouter();
+    const [username, setUsername] = useState('');
+    const [phone, setPhone] = useState('');
+    const [password1, setPassword1] = useState('');
+    const [password2, setPassword2] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
 
-    const signUpButtonClicked = () => {
-        showToast('สมัครสมาชิกสำเร็จ', 'ตอนนี้คุณสามารถลงชื่อเข้าใช้งานได้แล้ว', 4000);
-        router.replace('/user-tab/home');
+
+    const signUpButtonClicked = async() => {
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/register', {
+            username: username,
+            phone_number: phone,
+            password: password1,
+            confirm_password: password2,
+        }).then(async(res) => {
+            showToast('สมัครสมาชิกสำเร็จ', 'ตอนนี้คุณสามารถลงชื่อเข้าใช้งานได้แล้ว', 'success');
+            router.replace('/sign-in');
+        }).catch((err) => {
+            setErrorMsg(err.response.data.error);
+        });
     }
 
     return (
@@ -29,18 +46,24 @@ export default function SignUp() {
                                 key="username"
                                 iconHeader={<Iconify icon="ic:round-account-circle" size={25} color="#C8C8C8" />}
                                 textContentType="username"
+                                value={username}
+                                onChange={(e)=>setUsername(e.nativeEvent.text)}
                                 placeholder="ชื่อผู้ใช้งาน"
                             />
                             <FormInput
                                 key="phone"
                                 iconHeader={<Iconify icon="mingcute:phone-fill" size={25} color="#C8C8C8" />}
                                 textContentType="telephoneNumber"
+                                value={phone}
+                                onChange={(e)=>setPhone(e.nativeEvent.text)}
                                 placeholder="เบอร์โทรศัพท์"
                             />
                             <FormInput
                                 key="password"
                                 iconHeader={<Iconify icon="mdi:password" size={25} color="#C8C8C8" />}
                                 textContentType="password"
+                                value={password1}
+                                onChange={(e)=>setPassword1(e.nativeEvent.text)}
                                 placeholder="รหัสผ่าน"
                                 eye
                             />
@@ -48,11 +71,13 @@ export default function SignUp() {
                                 key="confirm-password"
                                 iconHeader={<Iconify icon="mdi:password" size={25} color="#C8C8C8" />}
                                 textContentType="password"
+                                value={password2}
+                                onChange={(e)=>setPassword2(e.nativeEvent.text)}
                                 placeholder="ยืนยันรหัสผ่าน"
                                 eye
                             />
 
-                            <SetText color={colors.red} style={styles.errorText}>The password isn't correct.</SetText>
+                            {errorMsg.length > 3 && <SetText color={colors.red} style={styles.errorText}>{errorMsg}</SetText>}
                         </View>
 
                         <View style={styles.signUpButton} onTouchEnd={() => signUpButtonClicked()}>

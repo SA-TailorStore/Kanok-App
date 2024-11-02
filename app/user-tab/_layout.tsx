@@ -1,13 +1,14 @@
 import { colors, styles } from '@/utils/styles';
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import React from 'react';
 import { Iconify } from 'react-native-iconify';
 import HomeIcon from "@/assets/icons/home";
 import AccountIcon from "@/assets/icons/account";
 import OrderIcon from "@/assets/icons/order";
+import { TouchableOpacity } from 'react-native';
 
 export default function TabLayout() {
-
+  const router = useRouter();
   return (
     <Tabs
       screenOptions={{

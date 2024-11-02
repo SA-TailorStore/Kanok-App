@@ -1,4 +1,4 @@
-import { Dimensions, StatusBar, StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -15,6 +15,7 @@ export const colors = {
     primary: '#F875AA',
     mediumpink: '#F47E9A',
     lesspink: '#FBEAEE',
+    nopink: '#F8E9EE',
     line: '#CCCCCC'
 };
 
@@ -24,7 +25,6 @@ export const headerTitleStyle = {
     fontSize: 25,
 };
 
-// tip: ไม่ต้องเขียน css ในนี้เขียนที่ไฟล์ของหน้านั้นๆเลย ง่ายกว่า!!!! 
 export const styles = StyleSheet.create({
     logoUserContainer: {
         display: 'flex',

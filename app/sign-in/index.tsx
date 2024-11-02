@@ -2,66 +2,35 @@ import WrapBackground from "@/components/WrapBackground";
 import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Iconify } from 'react-native-iconify';
 import { FormInput } from "@/components/FormInput";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { SetText } from "@/components/SetText";
 import { ScrollView } from "react-native";
 import { colors } from "@/utils/styles";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSession } from "@/contexts/SessionContext";
 
-const exampleUserData = {
-    "status": "ok",
-    "message": "Login success",
-    "data": {
-        "user_id": "1",
-        "username": "admin",
-        "display_name": "ภูมิระพี เสริญวณิชกุล",
-        "password": "12345678",
-        "phone_number": "0810000000",
-        "user_profile_url": "https://www.w3schools.com/w3images/avatar2.png",
-        "role": "user",
-        "address": "123 ถ.สุขุมวิท แขวงคลองตัน เขตคลองเตย กรุงเทพมหานคร 10110",
-        "created_at": 1631155200,
-    }
-}
-
 export default function SignIn() {
-    const router = useRouter();
-    const { setToken, getToken } = useSession();
+    const { setToken, checkRole, userContext } = useSession();
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [user, setUser] = useState<any>({});
+    const [errorMsg, setErrorMsg] = useState<string>('');
 
     const signButtonClicked = async() => {
-        router.replace("/user-tab/home");
-        // await axios.post(process.env.EXPO_PUBLIC_API_URL + '/login', {
-        //     username: username,
-        //     password: password,
-        // }).then(async(res) => {
-        //     console.log(res.data.data.token);
-        //     // await AsyncStorage.setItem('@access_token', res.data.data.token);
-        //     setToken(res.data.data.token);
-        //     router.replace("/user-tab/home");
-        // }).catch((err) => {
-        //     console.log(err)
-        // });
+        await axios.post(process.env.EXPO_PUBLIC_API_URL + '/api/login', {
+            username: username,
+            password: password,
+        }).then(async(res) => {
+            // console.log("Access Token: " + res.data.token);      
+            setToken(res.data.token);
+        }).catch((err) => {
+            setErrorMsg(err.response.data.error);
+        });
     }
 
     useEffect(() => {
-        // get token from async storage
-        // if token is not null, navigate to home
-        // else, do nothing
-        // const getToken = async () => {
-        //     const token = await AsyncStorage.getItem('@access_token')
-        //     console.log(token)
-        //     if (token != null) {
-        //         router.replace("/user-tab/home");
-        //     }
-        // }
-        // getToken();
-    }, [])
+        if (userContext) checkRole(userContext.role);
+    },[])
 
     return (
         <WrapBackground>
@@ -88,7 +57,7 @@ export default function SignIn() {
                                 placeholder="รหัสผ่าน"
                                 eye
                             />
-                            <SetText style={styles.errorText} color={colors.red}>The password isn't correct.</SetText>
+                            {errorMsg.length > 3 && <SetText style={styles.errorText} color={colors.red}>{errorMsg}</SetText>}
                         </View>
 
                         <TouchableOpacity style={styles.signInButton} onPress={signButtonClicked}>

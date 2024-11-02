@@ -8,11 +8,11 @@ const ToastContext = createContext<any>(null);
 export const useToast = () => useContext(ToastContext);
 
 export const ToastProvider = ({ children }: any) => {
-  const [toasts, setToasts] = useState<Array<{ id: number, title: string, message: string, duration: number }>>([]);
+  const [toasts, setToasts] = useState<Array<{ id: number, title: string, message: string, type: "success" | "error"; duration: number }>>([]);
 
-  const showToast = (title: string, message: string, duration: number = 4000) => {
+  const showToast = (title: string, message: string, type: 'success' | 'error', duration: number = 4000) => {
     const id = Date.now();
-    setToasts((prevToasts) => [...prevToasts, { id, title, message, duration }]);
+    setToasts((prevToasts) => [...prevToasts, { id, title, message, type, duration }]);
 
     setTimeout(() => {
       hideToast(id);
@@ -28,7 +28,7 @@ export const ToastProvider = ({ children }: any) => {
       {children}
       <View style={styles.toasterContainer}>
         {toasts.slice().reverse().map((toast) => (
-          <Toast key={toast.id} title={toast.title} message={toast.message} dura={toast.duration} />
+          <Toast key={toast.id} title={toast.title} message={toast.message} type={toast.type} dura={toast.duration} />
         ))}
       </View>
     </ToastContext.Provider>

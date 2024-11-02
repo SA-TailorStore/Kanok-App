@@ -3,9 +3,10 @@ import { Image, TouchableOpacity, View, type ImageSourcePropType } from "react-n
 import { colors, styles } from "@/utils/styles";
 import { useRouter } from "expo-router";
 import Knitwork from "@/assets/icons/knitwork";
-import StoreFront from "@/assets/icons/storefront-plus";
 import Slider from "@/components/Slider";
 import WrapBackground from "@/components/WrapBackground";
+import { useSession } from "@/contexts/SessionContext";
+import { useEffect } from "react";
 
 export type ChoiceProps = {
     title: string;
@@ -21,20 +22,27 @@ export type SliderItemProps = {
 const ads: SliderItemProps[] = [
     {
         title: "โปรโมชั่น",
-        img_url: require('@/assets/images/promote.png')
+        img_url: require('@/assets/images/banner_kanok3.png')
     },
     {
         title: "2",
-        img_url: require('@/assets/images/loading.png')
+        img_url: require('@/assets/images/banner_kanok4.jpg')
     },
     {
         title: "3",
-        img_url: require('@/assets/images/loading.png')
+        img_url: require('@/assets/images/banner_kanok5.png')
     }
 ]
 
 export default function HomePage() {
     const router = useRouter();
+    const { userContext } = useSession();
+
+    useEffect(() => {
+        if (userContext.display_name.length < 5 || userContext.address.length < 5 || userContext.phone_number.length < 5) {
+            router.push('/user-stack/my-address');
+        }
+    },[]); 
 
     const choice: ChoiceProps[] = [
         // {
@@ -45,15 +53,17 @@ export default function HomePage() {
         {
             title: "เลือกแบบที่ต้องการ",
             icon: <Knitwork />,
-            to: ()=>router.push('/user-stack/choose-design-user')
+            to: ()=>router.push('/user-stack/manage-design')
         },
     ]
 
+    if (!userContext) return null;
     return (
         <WrapBackground color={colors.mediumpink}>
             <View style={styles.logoUserContainer}>
                 <Image source={require('@/assets/images/logo-with-kanok.png')} />
-                <Image source={require('@/assets/images/Avatar.png')} style={styles.avatar} />
+                {userContext.user_profile_url === "-" && <Image source={require('@/assets/images/Avatar.png')} style={styles.avatar} />}
+                {userContext.user_profile_url !== "-" && <Image source={{uri: userContext.user_profile_url}} style={styles.avatar} />}
             </View>
 
             <View style={{ flex: 1, alignItems: 'center' }}>
@@ -73,10 +83,6 @@ export default function HomePage() {
                     </View>
 
                     <Slider items={ads} />
-
-                    <View style={[styles.orderCurrentContainer, styles.shadowCustom]}>
-                        <SetText style={{ color: colors.grey }}>ยังไม่มีคำสั่งซื้อในปัจจุบัน</SetText>
-                    </View>
                 </View>
             </View>            
         </WrapBackground>

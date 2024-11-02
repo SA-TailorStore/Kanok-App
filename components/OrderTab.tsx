@@ -2,41 +2,36 @@ import { colors } from "@/utils/styles";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { SetText } from "./SetText";
 import { useEffect, useState } from "react";
+import { storeOrderState, tailorOrderState, userOrderState } from "@/utils/orderState";
+import { useSession } from "@/contexts/SessionContext";
+import { IOrder } from "@/types/IOrder";
 
 export type IFilterTab = {
     title: string,
-    status: string
+    description?: string,
+    status: string[],
 }
 
-export const filterTab: IFilterTab[] = [
-    {
-        title: 'รอการดำเนินการ',
-        status: 'pending'
-    },
-    {
-        title: 'ที่ต้องชำระ',
-        status: 'payment'
-    },
-    {
-        title: 'กำลังดำเนินการ',
-        status: 'processing'
-    },
-    {
-        title: 'ที่ต้องได้รับ',
-        status: 'receiced'
-    },
-    {
-        title: 'สำเร็จ',
-        status: 'success'
-    },
-    {
-        title: 'ยกเลิก',
-        status: 'cancel'
-    },
-]
+export default function OrderTab({ output, orders }: { output: (status: string[]) => void, orders: IOrder[] }) {
+    const [selected, setSelected] = useState<string[]>(['all']);
+    const [tab, setTab] = useState<IFilterTab[]>([]);
+    const { userContext } = useSession();
 
-export default function OrderTab({ output }: { output: (status: string) => void }) {
-    const [selected, setSelected] = useState<string>('pending');
+    useEffect(() => {
+        switch (userContext?.role) {
+            case 'user':
+                setTab(userOrderState);
+                break;
+            case 'store':
+                setTab(storeOrderState);
+                break;
+            case 'tailor':
+                setTab(tailorOrderState);
+                break;
+            default:
+                break;
+        }
+    }, [])
 
     useEffect(() => {
         output(selected);
@@ -47,13 +42,16 @@ export default function OrderTab({ output }: { output: (status: string) => void 
             <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ flexDirection: 'row'}}
+                contentContainerStyle={{ flexDirection: 'row' }}
                 style={{ borderBottomWidth: 1, borderColor: colors.line }}
             >
-                {filterTab.map((item: IFilterTab, index: number) => {
+                <TouchableOpacity onPress={() => setSelected(['all'])}>
+                    <SetText type={selected.includes('all') ? 'bold' : 'default'} color={selected.includes('all') ? colors.black : colors.grey} style={[{ paddingHorizontal: 18, borderColor: colors.mediumpink }, selected.includes('all') ? { borderBottomWidth: 1 } : undefined]} size={14}>ทั้งหมด</SetText>
+                </TouchableOpacity>
+                {tab.map((item: IFilterTab, index: number) => {
                     return (
                         <TouchableOpacity key={index} onPress={() => setSelected(item.status)}>
-                            <SetText type={selected===item.status? 'bold': 'default'} color={selected===item.status? colors.black : colors.grey} style={[{ paddingHorizontal: 18, borderColor: colors.mediumpink }, selected === item.status? { borderBottomWidth: 1 } : undefined]} size={14}>{item.title}</SetText>
+                            <SetText type={item.status.includes(selected[0]) ? 'bold' : 'default'} color={selected.includes(item?.status[0]) ? colors.black : colors.grey} style={[{ paddingHorizontal: 16, borderColor: colors.mediumpink }, item.status?.includes(selected[0]) ? { borderBottomWidth: 1 } : undefined]} size={14}>{item.title}({orders?.filter((o) => item.status.includes(o.status)).length})</SetText>
                         </TouchableOpacity>
                     )
                 })}
